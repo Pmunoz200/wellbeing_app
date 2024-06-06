@@ -26,11 +26,12 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       initialRoute: '/authentication',
+      navigatorKey: mainNavigatorKey,
       routes: {
         "/authentication": (context) => LoginScreen(
               navigator: mainNavigatorKey,
             ),
-        '/token': (context) => const TokenPage(),
+        '/token': (context) => TokenPage(navigator: mainNavigatorKey),
       },
     );
   }

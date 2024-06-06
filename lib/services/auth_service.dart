@@ -1,15 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    clientId:
-        "349222374497-dv3p911p1d3okvsi7v9p4fjc8ot2m8gv.apps.googleusercontent.com",
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Sign in with Google
   Future<User?> signInWithGoogle() async {
@@ -29,17 +24,9 @@ class AuthService {
       return userCredential.user;
     } catch (e) {
       if (kDebugMode) {
-        print(e);
+        print("Error at the signIn with Google: $e");
       }
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-      return null;
+      throw ("Error at the signIn with Google");
     }
   }
 
@@ -57,15 +44,7 @@ class AuthService {
       if (kDebugMode) {
         print(e);
       }
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-      return null;
+      throw ("Error at the signIn with email and password: $e");
     }
   }
 
@@ -83,15 +62,7 @@ class AuthService {
       if (kDebugMode) {
         print(e);
       }
-      Fluttertoast.showToast(
-        msg: e.toString(),
-        toastLength: Toast.LENGTH_LONG,
-        gravity: ToastGravity.SNACKBAR,
-        backgroundColor: Colors.redAccent,
-        textColor: Colors.white,
-        fontSize: 14.0,
-      );
-      return null;
+      throw ("Error at the register with email and password: $e");
     }
   }
 
