@@ -15,9 +15,6 @@ For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
 
-# Configure git hooks
- ## Repository with needed instructions and files to enable git hooks for commits
-
 ## Set up for <u>development 🧑‍💻</u>
 
 ### 1. Set up the global Python virtual environment
