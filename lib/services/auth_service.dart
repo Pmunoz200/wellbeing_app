@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -5,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   // Sign in with Google
   Future<User?> signInWithGoogle() async {
@@ -21,6 +23,7 @@ class AuthService {
       );
       final UserCredential userCredential =
           await _auth.signInWithCredential(credential);
+      await _updateUserData(userCredential.user);
       return userCredential.user;
     } catch (e) {
       if (kDebugMode) {
@@ -39,6 +42,7 @@ class AuthService {
         email: email,
         password: password,
       );
+      await _updateUserData(userCredential.user);
       return userCredential.user;
     } catch (e) {
       if (kDebugMode) {
@@ -57,6 +61,7 @@ class AuthService {
         email: email,
         password: password,
       );
+      await _updateUserData(userCredential.user);
       return userCredential.user;
     } catch (e) {
       if (kDebugMode) {
@@ -66,7 +71,21 @@ class AuthService {
     }
   }
 
-    // Send password reset email
+  // Update user data in Firestore
+  Future<void> _updateUserData(User? user) async {
+    if (user != null) {
+      final userDoc = _firestore.collection('users').doc(user.uid);
+      final userSnapshot = await userDoc.get();
+      if (!userSnapshot.exists) {
+        await userDoc.set({
+          'email': user.email,
+          'onboardingCompleted': false,
+        });
+      }
+    }
+  }
+
+  // Send password reset email
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);

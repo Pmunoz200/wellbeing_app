@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini_folder/firebase_options.dart';
+import 'package:gemini_folder/onboarding/onboarding.dart';
 import 'package:gemini_folder/token_page.dart';
 import 'package:gemini_folder/user_authentication/login.dart';
 
@@ -32,6 +33,8 @@ class MyApp extends StatelessWidget {
               navigator: mainNavigatorKey,
             ),
         '/token': (context) => TokenPage(navigator: mainNavigatorKey),
+        '/onboarding': (context) =>
+            OnboardingScreen(navigator: mainNavigatorKey)
       },
     );
   }
