@@ -2,7 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini_folder/services/auth_service.dart';
-import 'package:gemini_folder/util/error_util.dart';
+import 'package:gemini_folder/user_authentication/dialogs.dart';
+import 'package:gemini_folder/util/toast_util.dart';
 
 class LoginScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> navigator;
@@ -122,6 +123,10 @@ class LoginScreenState extends State<LoginScreen> {
                 }
               },
               child: const Text('Register'),
+            ),
+            TextButton(
+              onPressed: () => showResetPasswordDialog(context, _authService),
+              child: const Text('Forgot Password?'),
             ),
           ],
         ),

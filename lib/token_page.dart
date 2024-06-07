@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemini_folder/services/auth_service.dart';
-import 'package:gemini_folder/util/error_util.dart';
+import 'package:gemini_folder/util/toast_util.dart';
 
 class TokenPage extends StatelessWidget {
   final GlobalKey<NavigatorState> navigator;
