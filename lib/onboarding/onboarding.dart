@@ -17,6 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<TextEditingController> _controllers = [];
   final List<bool> _isAnswerValid = [];
   final List<String?> _selectedOptions = [];
+  final List<Set<String>> _multipleSelections = [];
 
   final List<OnboardingQuestion> _questions = [
     // Personal Information
@@ -29,16 +30,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     // Physical Measurements
     OnboardingQuestion(
-      question: 'Current Weight',
+      question: 'Current Weight (Kg)',
       inputType: TextInputType.number,
     ),
     OnboardingQuestion(
-      question: 'Target Weight (Optional)',
+      question: 'Target Weight (Kg)',
       inputType: TextInputType.number,
       isOptional: true,
     ),
     OnboardingQuestion(
-      question: 'Height',
+      question: 'Height (cm)',
       inputType: TextInputType.number,
     ),
 
@@ -66,6 +67,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Improve Endurance/Resistance',
         'Custom',
       ],
+      allowMultipleSelections: true,
     ),
 
     // Dietary Preferences
@@ -74,36 +76,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       options: ['Indifferent', 'Vegetarian', 'Vegan', 'Custom'],
     ),
 
-    // Favorite foods
-    OnboardingQuestion(
-      question: 'Favorite Foods',
-      inputType: TextInputType.text,
-    ),
-
-    // Disliked foods
-    OnboardingQuestion(
-      question: 'Disliked Foods',
-      inputType: TextInputType.text,
-    ),
-
-    // Meal frequency
-    OnboardingQuestion(
-      question: 'Meal Frequency',
-      inputType: TextInputType.text,
-    ),
-
-    // Allergies
-    OnboardingQuestion(
-      question: 'Allergies',
-      inputType: TextInputType.text,
-    ),
-
     // Nutritional Goals
     OnboardingQuestion(
       question: 'Nutritional Goals',
       options: [
         'Let the App Decide',
-        'Custom Caloric Intake',
+        'Increase caloric intake',
+        'Decrease caloric intake',
+        'No preference',
         'Custom',
       ],
     ),
@@ -112,11 +92,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     OnboardingQuestion(
       question: 'Fitness Environment',
       options: ['Gym Workouts', 'Home Workouts', 'Outdoors', 'Custom'],
+      allowMultipleSelections: true,
     ),
 
     // Training Style
     OnboardingQuestion(
       question: 'Training Style',
+      inputType: TextInputType.none,
       options: [
         'Calisthenics',
         'Weight Training',
@@ -124,25 +106,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Crossfit',
         'Custom'
       ],
+      allowMultipleSelections: true, // Allow multiple selections
     ),
 
-    // Sports
+    // Other
     OnboardingQuestion(
-      question: 'Sports (Optional)',
-      inputType: TextInputType.text,
-      isOptional: true,
-    ),
-
-    // Medical conditions
-    OnboardingQuestion(
-      question: 'Medical Conditions (Optional)',
-      inputType: TextInputType.text,
-      isOptional: true,
-    ),
-
-    // Medications
-    OnboardingQuestion(
-      question: 'Medications (Optional)',
+      question:
+          'Other (Sports, Medical conditions, etc)',
       inputType: TextInputType.text,
       isOptional: true,
     ),
@@ -154,6 +124,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Choose between a text field or totle for the multiple selectable fields
           if ((question.inputType == TextInputType.text ||
                   question.inputType == TextInputType.number) &&
               question.options == null) ...[
@@ -169,57 +140,92 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               },
             ),
           ],
+          // For question with options, draw them depending on the flag for multiple choice
           if (question.options != null) ...[
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(question.question),
                 ...question.options!.map((option) {
-                  if (option == 'Custom' ||
-                      option == 'Optional' ||
-                      option == 'Other') {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RadioListTile<String>(
-                          title: Text(option),
-                          value: option,
-                          groupValue: _selectedOptions[index],
-                          onChanged: (newValue) {
-                            setState(() {
-                              _selectedOptions[index] = newValue;
-                              _isAnswerValid[index] = true;
-                            });
-                          },
-                        ),
-                        if (_selectedOptions[index] == option)
-                          TextField(
-                            controller: _controllers[index],
-                            decoration: InputDecoration(
-                              labelText: 'Enter Custom ${question.question}',
-                            ),
-                            onChanged: (value) {
-                              setState(() {
-                                _isAnswerValid[index] = value.isNotEmpty;
-                              });
-                            },
-                          ),
-                      ],
-                    );
-                  } else {
-                    return RadioListTile<String>(
+                  // For multiple select options
+                  if (question.allowMultipleSelections) {
+                    return CheckboxListTile(
                       title: Text(option),
-                      value: option,
-                      groupValue: _selectedOptions[index],
-                      onChanged: (newValue) {
+                      value: _multipleSelections[index].contains(option),
+                      onChanged: (bool? selected) {
                         setState(() {
-                          _selectedOptions[index] = newValue;
-                          _isAnswerValid[index] = true;
+                          if (selected == true) {
+                            _multipleSelections[index].add(option);
+                          } else {
+                            _multipleSelections[index].remove(option);
+                          }
+                          _isAnswerValid[index] =
+                              _multipleSelections[index].isNotEmpty ||
+                                  _controllers[index].text.isNotEmpty ||
+                                  question.isOptional;
                         });
                       },
                     );
+                  } else { // In the case a field is 
+                    if (option == 'Custom' || option == 'Other') {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          RadioListTile<String>(
+                            title: Text(option),
+                            value: option,
+                            groupValue: _selectedOptions[index],
+                            onChanged: (newValue) {
+                              setState(() {
+                                _selectedOptions[index] = newValue;
+                                _isAnswerValid[index] = true;
+                              });
+                            },
+                          ),
+                          if (_selectedOptions[index] == option)
+                            TextField(
+                              controller: _controllers[index],
+                              decoration: InputDecoration(
+                                labelText: 'Enter Custom ${question.question}',
+                              ),
+                              onChanged: (value) {
+                                setState(() {
+                                  _isAnswerValid[index] = value.isNotEmpty;
+                                });
+                              },
+                            ),
+                        ],
+                      );
+                    } else {
+                      return RadioListTile<String>(
+                        title: Text(option),
+                        value: option,
+                        groupValue: _selectedOptions[index],
+                        onChanged: (newValue) {
+                          setState(() {
+                            _selectedOptions[index] = newValue;
+                            _isAnswerValid[index] = true;
+                          });
+                        },
+                      );
+                    }
                   }
                 }),
+                if (question.allowMultipleSelections &&
+                    question.options!.contains('Custom')) ...[
+                  if (_multipleSelections[index].contains('Custom'))
+                    TextField(
+                      controller: _controllers[index],
+                      decoration: InputDecoration(
+                        labelText: 'Enter Custom ${question.question}',
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _isAnswerValid[index] = value.isNotEmpty;
+                        });
+                      },
+                    ),
+                ],
               ],
             ),
           ],
@@ -250,6 +256,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       _controllers.add(TextEditingController());
       _isAnswerValid.add(_questions[i].isOptional);
       _selectedOptions.add(null);
+      _multipleSelections.add(<String>{});
     }
   }
 
@@ -278,10 +285,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         final data = {
           // Prepare data for updating user document
           for (var i = 0; i < _questions.length; i++)
-            _questions[i].question: _controllers[i].text.isEmpty
-                ? _selectedOptions[
-                    i] // Use selected option if text field is empty
-                : _controllers[i].text, // Otherwise, use text field value
+            _questions[i].question: _questions[i].allowMultipleSelections
+                ? _multipleSelections[i]
+                    .toList() // Store multiple selections as a list
+                : _controllers[i].text.isEmpty
+                    ? _selectedOptions[
+                        i] // Use selected option if text field is empty
+                    : _controllers[i].text, // Otherwise, use text field value
           'onboardingCompleted': true,
         };
         // Update user document in Firestore
@@ -308,7 +318,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           ),
