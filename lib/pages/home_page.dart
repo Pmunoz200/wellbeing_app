@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/pages/home_page/exercise_widget.dart';
+import 'package:gemini_folder/pages/home_page/food_widget.dart';
+import 'package:gemini_folder/pages/home_page/home_widget.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -10,24 +13,9 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    const Row(
-      children: [
-        Icon(Icons.fitness_center),
-        Text('Exercise'),
-      ],
-    ),
-    const Row(
-      children: [
-        Icon(Icons.fastfood),
-        Text('Food'),
-      ],
-    ),
-    const Row(
-      children: [
-        Icon(Icons.home),
-        Text('Home'),
-      ],
-    ),
+    ExerciseWidgetPage(),
+    FoodWidgetPage(),
+    HomeWidgetPage(),
   ];
 
   void _onItemTapped(int index) {
