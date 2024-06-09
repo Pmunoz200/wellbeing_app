@@ -28,12 +28,6 @@ class _HomePageState extends State<HomePage> {
         Text('Home'),
       ],
     ),
-    const Row(
-      children: [
-        Icon(Icons.person),
-        Text('Profile'),
-      ],
-    ),
   ];
 
   void _onItemTapped(int index) {
@@ -49,7 +43,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('WELLBEING APP'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.notifications),
+            icon: const Icon(Icons.person),
             onPressed: () {
               // Navigate to the notification page
             },
@@ -76,10 +70,6 @@ class _HomePageState extends State<HomePage> {
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
           ),
         ],
         currentIndex: _selectedIndex,
