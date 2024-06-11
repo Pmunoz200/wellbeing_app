@@ -14,8 +14,8 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _widgetOptions = <Widget>[
     ExerciseWidgetPage(),
-    FoodWidgetPage(),
     HomeWidgetPage(),
+    FoodWidgetPage(),
   ];
 
   void _onItemTapped(int index) {
@@ -48,16 +48,16 @@ class _HomePageState extends State<HomePage> {
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.fitness_center),
-            label: 'Excersice',
+            label: 'Exersice',
             backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.fastfood),
-            label: 'Food',
           ),
           const BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',
+          ),
+          const BottomNavigationBarItem(
+            icon: Icon(Icons.fastfood),
+            label: 'Food',
           ),
         ],
         currentIndex: _selectedIndex,
