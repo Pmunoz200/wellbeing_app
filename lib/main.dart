@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:gemini_folder/firebase_options.dart';
+import 'package:gemini_folder/firebase/firebase_options.dart';
 import 'package:gemini_folder/onboarding/onboarding.dart';
 import 'package:gemini_folder/token_page.dart';
 import 'package:gemini_folder/user_authentication/login.dart';
