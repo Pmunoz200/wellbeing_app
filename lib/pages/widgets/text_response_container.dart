@@ -19,12 +19,20 @@ class TextResponseContainer extends StatelessWidget {
                 text,
                 style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 16.0,
+                  fontSize: 14.0,
                 ),
               ),
             ),
           ),
         ),
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.only(right: 16.0),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: Text("Summary", style: TextStyle(color: Colors.grey[800], fontSize: 15.0, fontWeight: FontWeight.bold)))
+            ,
+          )
       ],
     );
   }
