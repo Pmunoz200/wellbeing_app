@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/chat/message_input.dart';
 import 'package:gemini_folder/chat/mock_chat_service.dart';
-import 'package:gemini_folder/chat/stream_based_chat_display.dart';
+import 'package:gemini_folder/chat/chat_display.dart';
 
 class ChatScaffold extends StatefulWidget {
   const ChatScaffold({super.key});
@@ -13,8 +14,6 @@ class ChatScaffold extends StatefulWidget {
 class _ChatScaffoldState extends State<ChatScaffold> {
   // Create a mock chat service
   final MockChatService _chatService = MockChatService();
-  // Controller for the text input field
-  final TextEditingController _controller = TextEditingController();
   // List to hold chat messages
   final List<String> _messages = [];
 
@@ -22,22 +21,13 @@ class _ChatScaffoldState extends State<ChatScaffold> {
   void dispose() {
     // Dispose of resources when the widget is disposed
     _chatService.dispose();
-    _controller.dispose();
     super.dispose();
   }
 
-// Function to send a message
-  void _sendMessage() {
-    if (_controller.text.isNotEmpty) {
-      // Get the message from the text input field
-      String message = _controller.text;
-
-      // Add the message to the stream
-      _chatService.addMessage(message);
-
-      // Clear the text field after sending the message
-      _controller.clear();
-    }
+  // Function to send a message to a stream
+  // Probably should be modified later
+  void _sendMessage(message) {
+    _chatService.addMessage(message);
   }
 
   @override
@@ -80,36 +70,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
             bottom: 0,
             left: 0,
             right: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(100.0),
-                child: Container(
-                  color: Colors.lightGreen,
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          // Text input field for typing messages
-                          child: TextField(
-                            controller: _controller,
-                            decoration: const InputDecoration(
-                              hintText: 'Enter a message',
-                            ),
-                          ),
-                        ),
-                        IconButton(
-                          // Button to send messages
-                          icon: const Icon(Icons.send),
-                          onPressed: _sendMessage,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            child: MessageInput(sendMessageFunction: _sendMessage),
           ),
         ],
       ),
