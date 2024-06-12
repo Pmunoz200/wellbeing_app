@@ -26,9 +26,15 @@ class _ChatScaffoldState extends State<ChatScaffold> {
     super.dispose();
   }
 
-  // Function to send a message
+// Function to send a message
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
+      // Get the message from the text input field
+      String message = _controller.text;
+
+      // Add the message to the stream
+      _chatService.addMessage(message);
+
       // Clear the text field after sending the message
       _controller.clear();
     }
@@ -40,32 +46,69 @@ class _ChatScaffoldState extends State<ChatScaffold> {
       appBar: AppBar(
         title: const Text('Chat'),
       ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          Expanded(
-            // Display chat messages using StreamBasedChatDisplay widget
-            child: StreamBasedChatDisplay(
-                messageStream: _chatService.messageStream, messages: _messages),
+          Column(
+            children: <Widget>[
+              // StreamBuilder widget to handle changes in the message stream
+              Expanded(
+                child: StreamBuilder<String>(
+                  stream: _chatService.messageStream,
+                  builder: (context, snapshot) {
+                    // Handle different states of the stream (error, empty, loading, has content)
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // Display a loading indicator while waiting for data
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      // Display an error message if there's an error with the stream
+                      return Center(child: Text('Error: ${snapshot.error}'));
+                    } else if (snapshot.data == null || !snapshot.hasData) {
+                      // Display a message when there are no messages yet
+                      return const Center(child: Text('No messages yet'));
+                    } else {
+                      // Add new message to the list of messages
+                      _messages.add(snapshot.data!);
+                    }
+                    // Pass the updated messages list to StreamBasedChatDisplay
+                    return StreamBasedChatDisplay(messages: _messages);
+                  },
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  // Text input field for typing messages
-                  child: TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter a message',
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(100.0),
+                child: Container(
+                  color: Colors.lightGreen,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(32, 0, 0, 0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          // Text input field for typing messages
+                          child: TextField(
+                            controller: _controller,
+                            decoration: const InputDecoration(
+                              hintText: 'Enter a message',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          // Button to send messages
+                          icon: const Icon(Icons.send),
+                          onPressed: _sendMessage,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                IconButton(
-                  // Button to send messages
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
-              ],
+              ),
             ),
           ),
         ],
