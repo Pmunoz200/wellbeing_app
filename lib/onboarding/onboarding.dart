@@ -125,62 +125,91 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // Calculate padding based on screen dimensions
     double horizontalPadding = screenWidth * 0.05; // 5% of screen width
 
-    return Padding(
-      // Use 10% of the total screen width for padding
-      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          // Use a text field in case the answer requires just an input.
-          // Uses corresponding keyboard.
-          if ((question.inputType == TextInputType.text ||
-                  question.inputType == TextInputType.number) &&
-              question.options == null) ...[
-            TextField(
-              controller: _controllers[index],
-              decoration: InputDecoration(labelText: question.question),
-              keyboardType: question.inputType,
-              onChanged: (value) {
-                setState(() {
-                  _isAnswerValid[index] =
-                      value.isNotEmpty || question.isOptional;
-                });
-              },
-            ),
-          ],
-          // For question with options, draw them depending on the flag for multiple choice
-          if (question.options != null) ...[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(question.question),
-                ...question.options!.map((option) {
-                  // For multiple select options
-                  if (question.allowMultipleSelections) {
-                    return CheckboxListTile(
-                      title: Text(option),
-                      value: _multipleSelections[index].contains(option),
-                      onChanged: (bool? selected) {
-                        setState(() {
-                          if (selected == true) {
-                            _multipleSelections[index].add(option);
-                          } else {
-                            _multipleSelections[index].remove(option);
-                          }
-                          _isAnswerValid[index] =
-                              _multipleSelections[index].isNotEmpty ||
-                                  _controllers[index].text.isNotEmpty ||
-                                  question.isOptional;
-                        });
-                      },
-                    );
-                  } else {
-                    // In the case a field is an open answer
-                    if (option == 'Custom' || option == 'Other') {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          RadioListTile<String>(
+    return Center(
+      child: SingleChildScrollView(
+        child: Padding(
+          // Use 10% of the total screen width for padding
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Use a text field in case the answer requires just an input.
+              // Uses corresponding keyboard.
+              if ((question.inputType == TextInputType.text ||
+                      question.inputType == TextInputType.number) &&
+                  question.options == null) ...[
+                TextField(
+                  controller: _controllers[index],
+                  decoration: InputDecoration(labelText: question.question),
+                  keyboardType: question.inputType,
+                  onChanged: (value) {
+                    setState(() {
+                      _isAnswerValid[index] =
+                          value.isNotEmpty || question.isOptional;
+                    });
+                  },
+                ),
+              ],
+              // For question with options, draw them depending on the flag for multiple choice
+              if (question.options != null) ...[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(question.question),
+                    ...question.options!.map((option) {
+                      // For multiple select options
+                      if (question.allowMultipleSelections) {
+                        return CheckboxListTile(
+                          title: Text(option),
+                          value: _multipleSelections[index].contains(option),
+                          onChanged: (bool? selected) {
+                            setState(() {
+                              if (selected == true) {
+                                _multipleSelections[index].add(option);
+                              } else {
+                                _multipleSelections[index].remove(option);
+                              }
+                              _isAnswerValid[index] =
+                                  _multipleSelections[index].isNotEmpty ||
+                                      _controllers[index].text.isNotEmpty ||
+                                      question.isOptional;
+                            });
+                          },
+                        );
+                      } else {
+                        // In the case a field is an open answer
+                        if (option == 'Custom' || option == 'Other') {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              RadioListTile<String>(
+                                title: Text(option),
+                                value: option,
+                                groupValue: _selectedOptions[index],
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    _selectedOptions[index] = newValue;
+                                    _isAnswerValid[index] = true;
+                                  });
+                                },
+                              ),
+                              if (_selectedOptions[index] == option)
+                                TextField(
+                                  controller: _controllers[index],
+                                  decoration: InputDecoration(
+                                    labelText: 'Enter Custom ${question.question}',
+                                  ),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _isAnswerValid[index] = value.isNotEmpty;
+                                    });
+                                  },
+                                ),
+                            ],
+                          );
+                        } else {
+                          // Case for single fixed answe
+                          return RadioListTile<String>(
                             title: Text(option),
                             value: option,
                             groupValue: _selectedOptions[index],
@@ -190,72 +219,47 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                                 _isAnswerValid[index] = true;
                               });
                             },
+                          );
+                        }
+                      }
+                    }),
+                    // Custom option for text input, for question with multiple answers
+                    if (question.allowMultipleSelections &&
+                        question.options!.contains('Custom')) ...[
+                      if (_multipleSelections[index].contains('Custom'))
+                        TextField(
+                          controller: _controllers[index],
+                          decoration: InputDecoration(
+                            labelText: 'Enter Custom ${question.question}',
                           ),
-                          if (_selectedOptions[index] == option)
-                            TextField(
-                              controller: _controllers[index],
-                              decoration: InputDecoration(
-                                labelText: 'Enter Custom ${question.question}',
-                              ),
-                              onChanged: (value) {
-                                setState(() {
-                                  _isAnswerValid[index] = value.isNotEmpty;
-                                });
-                              },
-                            ),
-                        ],
-                      );
-                    } else {
-                      // Case for single fixed answe
-                      return RadioListTile<String>(
-                        title: Text(option),
-                        value: option,
-                        groupValue: _selectedOptions[index],
-                        onChanged: (newValue) {
-                          setState(() {
-                            _selectedOptions[index] = newValue;
-                            _isAnswerValid[index] = true;
-                          });
-                        },
-                      );
-                    }
-                  }
-                }),
-                // Custom option for text input, for question with multiple answers
-                if (question.allowMultipleSelections &&
-                    question.options!.contains('Custom')) ...[
-                  if (_multipleSelections[index].contains('Custom'))
-                    TextField(
-                      controller: _controllers[index],
-                      decoration: InputDecoration(
-                        labelText: 'Enter Custom ${question.question}',
-                      ),
-                      onChanged: (value) {
-                        setState(() {
-                          _isAnswerValid[index] = value.isNotEmpty;
-                        });
-                      },
-                    ),
-                ],
+                          onChanged: (value) {
+                            setState(() {
+                              _isAnswerValid[index] = value.isNotEmpty;
+                            });
+                          },
+                        ),
+                    ],
+                  ],
+                ),
               ],
-            ),
-          ],
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: _isAnswerValid[index]
-                ? () {
-                    if (index == _questions.length - 1) {
-                      _completeOnboarding();
-                    } else {
-                      _nextPage();
-                    }
-                  }
-                : null,
-            child: Text(index == _questions.length - 1
-                ? 'Complete Onboarding'
-                : 'Next'),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _isAnswerValid[index]
+                    ? () {
+                        if (index == _questions.length - 1) {
+                          _completeOnboarding();
+                        } else {
+                          _nextPage();
+                        }
+                      }
+                    : null,
+                child: Text(index == _questions.length - 1
+                    ? 'Complete Onboarding'
+                    : 'Next'),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
