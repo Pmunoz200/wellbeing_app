@@ -9,22 +9,27 @@ class ChatScaffold extends StatefulWidget {
   State<ChatScaffold> createState() => _ChatScaffoldState();
 }
 
+// Define the state for the chat screen
 class _ChatScaffoldState extends State<ChatScaffold> {
-  // I use a mock stream of data as gemini generates a stream too.
+  // Create a mock chat service
   final MockChatService _chatService = MockChatService();
+  // Controller for the text input field
   final TextEditingController _controller = TextEditingController();
+  // List to hold chat messages
   final List<String> _messages = [];
 
   @override
   void dispose() {
+    // Dispose of resources when the widget is disposed
     _chatService.dispose();
     _controller.dispose();
     super.dispose();
   }
 
+  // Function to send a message
   void _sendMessage() {
     if (_controller.text.isNotEmpty) {
-      // Here, you would normally send the message to the server or add it to the stream
+      // Clear the text field after sending the message
       _controller.clear();
     }
   }
@@ -38,14 +43,16 @@ class _ChatScaffoldState extends State<ChatScaffold> {
       body: Column(
         children: <Widget>[
           Expanded(
+            // Display chat messages using StreamBasedChatDisplay widget
             child: StreamBasedChatDisplay(
-                messageStram: _chatService.messageStream, messages: _messages),
+                messageStream: _chatService.messageStream, messages: _messages),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
               children: <Widget>[
                 Expanded(
+                  // Text input field for typing messages
                   child: TextField(
                     controller: _controller,
                     decoration: const InputDecoration(
@@ -54,6 +61,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
                   ),
                 ),
                 IconButton(
+                  // Button to send messages
                   icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),

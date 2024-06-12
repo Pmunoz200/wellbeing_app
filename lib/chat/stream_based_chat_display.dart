@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
+// Widget to display chat messages based on a stream
 class StreamBasedChatDisplay extends StatelessWidget {
   const StreamBasedChatDisplay({
     super.key,
-    required Stream<String> messageStram,
+    required Stream<String> messageStream,
     required List<String> messages,
-  })  : _messageStream = messageStram,
+  })  : _messageStream = messageStream,
         _messages = messages;
 
   final Stream<String> _messageStream;
@@ -13,23 +14,25 @@ class StreamBasedChatDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // I use a stream builder as it helps me handle the changing state of the stream
     return StreamBuilder<String>(
+      // StreamBuilder widget to handle changes in the message stream
       stream: _messageStream,
       builder: (context, snapshot) {
-        // First we consider the loading, error, new, and empty states of the stream
+        // Handle different states of the stream
         if (snapshot.connectionState == ConnectionState.waiting) {
+          // Display a loading indicator while waiting for data
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
+          // Display an error message if there's an error with the stream
           return Center(child: Text('Error: ${snapshot.error}'));
         } else if (snapshot.data == null || !snapshot.hasData) {
+          // Display a message when there are no messages yet
           return const Center(child: Text('No messages yet'));
         } else {
-          // Only add the new message if snapshot has data
-          // setState is not necesary as the builder handles the rebuild
+          // Add new message to the list of messages
           _messages.add(snapshot.data!);
         }
-        // Display a list of messages if there is a stream
+        // Display a list of messages
         return ListView.builder(
           itemCount: _messages.length,
           itemBuilder: (context, index) {
