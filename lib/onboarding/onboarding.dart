@@ -104,6 +104,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Weight Training',
         'Cardio',
         'Crossfit',
+        "Athlete",
         'Custom'
       ],
       allowMultipleSelections: true, // Allow multiple selections
@@ -111,20 +112,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
     // Other
     OnboardingQuestion(
-      question:
-          'Other (Sports, Medical conditions, etc)',
+      question: 'Other (Sports, Medical conditions, etc)',
       inputType: TextInputType.text,
       isOptional: true,
     ),
   ];
 
-  Widget _buildQuestionPage(OnboardingQuestion question, int index) {
+  Widget _buildQuestionPage(
+      OnboardingQuestion question, int index, BuildContext context) {
+    // Get the width and height of the screen
+    double screenWidth = MediaQuery.of(context).size.width;
+    // Calculate padding based on screen dimensions
+    double horizontalPadding = screenWidth * 0.05; // 5% of screen width
+
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      // Use 10% of the total screen width for padding
+      padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          // Choose between a text field or totle for the multiple selectable fields
+          // Use a text field in case the answer requires just an input.
+          // Uses corresponding keyboard.
           if ((question.inputType == TextInputType.text ||
                   question.inputType == TextInputType.number) &&
               question.options == null) ...[
@@ -166,7 +174,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         });
                       },
                     );
-                  } else { // In the case a field is 
+                  } else {
+                    // In the case a field is an open answer
                     if (option == 'Custom' || option == 'Other') {
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,6 +206,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ],
                       );
                     } else {
+                      // Case for single fixed answe
                       return RadioListTile<String>(
                         title: Text(option),
                         value: option,
@@ -211,6 +221,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     }
                   }
                 }),
+                // Custom option for text input, for question with multiple answers
                 if (question.allowMultipleSelections &&
                     question.options!.contains('Custom')) ...[
                   if (_multipleSelections[index].contains('Custom'))
@@ -342,7 +353,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         controller: _pageController,
         itemCount: _questions.length,
         itemBuilder: (context, index) {
-          return _buildQuestionPage(_questions[index], index);
+          return _buildQuestionPage(_questions[index], index, context);
         },
       ),
     );
