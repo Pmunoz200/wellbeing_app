@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/chat/message_class.dart';
 
-// Widget to display chat messages based on a stream
 class StreamBasedChatDisplay extends StatelessWidget {
   const StreamBasedChatDisplay({
     super.key,
     required this.messages,
   });
 
-  final List<String> messages;
+  final List<MessageObject> messages;
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,16 @@ class StreamBasedChatDisplay extends StatelessWidget {
       child: ListView.builder(
         itemCount: messages.length,
         itemBuilder: (context, index) {
+          final message = messages[index];
           return ListTile(
-            title: Text(messages[index]),
+            title: message.textMessage != null
+                ? Text(message.textMessage!)
+                : const Text("<<Empty Text>>"),
+            subtitle: Text('Sent by ${message.owner}'),
+            trailing: message.audioMessage != null
+                ? const Icon(Icons.audiotrack)
+                : null,
+            // You can customize the trailing widget further if needed
           );
         },
       ),

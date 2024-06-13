@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/chat/message_class.dart';
 import 'package:gemini_folder/chat/message_input.dart';
 import 'package:gemini_folder/chat/mock_chat_service.dart';
 import 'package:gemini_folder/chat/chat_display.dart';
@@ -15,7 +16,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
   // Create a mock chat service
   final MockChatService _chatService = MockChatService();
   // List to hold chat messages
-  final List<String> _messages = [];
+  final List<MessageObject> _messages = [];
 
   @override
   void dispose() {
@@ -42,7 +43,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
             children: <Widget>[
               // StreamBuilder widget to handle changes in the message stream
               Expanded(
-                child: StreamBuilder<String>(
+                child: StreamBuilder<MessageObject>(
                   stream: _chatService.messageStream,
                   builder: (context, snapshot) {
                     // Handle different states of the stream (error, empty, loading, has content)
@@ -67,7 +68,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
             ],
           ),
           Positioned(
-            bottom: 0,
+            bottom: 5,
             left: 0,
             right: 0,
             child: MessageInput(sendMessageFunction: _sendMessage),
