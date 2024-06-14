@@ -42,8 +42,6 @@ class _MessageInputState extends State<MessageInput> {
     await _recorder.openRecorder();
   }
 
-  // In case the user does not allow the app to use the mic,
-  // we can offer to take them to the config to change it.
   Future<void> _requestPermissionDialog() {
     return showDialog(
       context: context,
@@ -189,43 +187,89 @@ class _MessageInputState extends State<MessageInput> {
         ),
         child: Row(
           children: <Widget>[
-            IconButton(
-              onPressed: () {},
-              icon: GestureDetector(
-                onLongPress: _startRecording,
-                onLongPressUp: _stopRecording,
-                onTap: () {
-                  // Option to delete recorded audio;
-                  if (audioData != null) {
-                    setState(() {
-                      audioData = null;
-                    });
-                    _shoeMessageToast("Audio deleted");
-                  }
-                },
-                child: Icon(
-                  Icons.mic,
-                  color: (_isRecording)
-                      ? Colors.red
-                      : audioData != null
+            /// Message input was divided into three parts: left and right buttons, and central input
+            /// The central input shows the data that will be sent, and the buttons allos to handle it.
+            /// The central input has two textField widgets, one is read only but this made it easy to
+            /// keep is symetric.
+            Column(
+              // Left widget to handle audio input.
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: GestureDetector(
+                    onLongPress: _startRecording,
+                    onLongPressUp: _stopRecording,
+                    onTap: () {
+                      // Option to delete recorded audio;
+                      if (audioData != null) {
+                        setState(() {
+                          audioData = null;
+                        });
+                        _shoeMessageToast("Audio deleted");
+                      }
+                    },
+                    child: Icon(
+                      audioData == null ? Icons.mic : Icons.delete,
+                      color: (_isRecording)
                           ? Colors.blue
-                          : Theme.of(context).colorScheme.onPrimaryContainer,
+                          : audioData != null
+                              ? Colors.red
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onPrimaryContainer,
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
             Expanded(
-              child: TextField(
-                controller: _controller,
-                decoration: const InputDecoration(
-                  hintText: 'Enter a message',
-                  border: InputBorder.none,
-                ),
+              // Central widget to visualize the current message to send
+              child: Column(
+                children: [
+                  if (audioData != null) ...[
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: null,
+                            readOnly: true,
+                            decoration: InputDecoration(
+                              icon: Icon(
+                                Icons.audiotrack,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onPrimaryContainer,
+                              ),
+                              fillColor: Theme.of(context).colorScheme.primary,
+                              hintText: 'Audio file.',
+                              border: InputBorder.none,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                  TextField(
+                    controller: _controller,
+                    decoration: const InputDecoration(
+                      hintText: 'Enter a message',
+                      border: InputBorder.none,
+                    ),
+                  ),
+                ],
               ),
             ),
-            IconButton(
-              icon: Icon(Icons.send,
-                  color: Theme.of(context).colorScheme.onPrimaryContainer),
-              onPressed: _handleSendMessage,
+            Column(
+              // Send message widget
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.send,
+                      color: Theme.of(context).colorScheme.onPrimaryContainer),
+                  onPressed: _handleSendMessage,
+                ),
+              ],
             ),
           ],
         ),
