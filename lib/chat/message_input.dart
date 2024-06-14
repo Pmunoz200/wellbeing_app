@@ -180,99 +180,110 @@ class _MessageInputState extends State<MessageInput> {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.circular(180.0)),
-          color: Theme.of(context).colorScheme.primaryContainer,
-        ),
-        child: Row(
-          children: <Widget>[
-            /// Message input was divided into three parts: left and right buttons, and central input
-            /// The central input shows the data that will be sent, and the buttons allos to handle it.
-            /// The central input has two textField widgets, one is read only but this made it easy to
-            /// keep is symetric.
-            Column(
-              // Left widget to handle audio input.
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: GestureDetector(
-                    onLongPress: _startRecording,
-                    onLongPressUp: _stopRecording,
-                    onTap: () {
-                      // Option to delete recorded audio;
-                      if (audioData != null) {
-                        setState(() {
-                          audioData = null;
-                        });
-                        _shoeMessageToast("Audio deleted");
-                      }
-                    },
-                    child: Icon(
-                      audioData == null ? Icons.mic : Icons.delete,
-                      color: (_isRecording)
-                          ? Colors.blue
-                          : audioData != null
-                              ? Colors.red
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onPrimaryContainer,
-                    ),
+      child: Row(
+        children: [
+          IconButton(
+              onPressed: () {}, icon: Icon(Icons.camera_enhance_rounded)),
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadius.all(Radius.circular(180.0)),
+                color: Theme.of(context).colorScheme.primaryContainer,
+              ),
+              child: Row(
+                children: <Widget>[
+                  /// Message input was divided into three parts: left and right buttons, and central input
+                  /// The central input shows the data that will be sent, and the buttons allos to handle it.
+                  /// The central input has two textField widgets, one is read only but this made it easy to
+                  /// keep is symetric.
+                  Column(
+                    // Left widget to handle audio input.
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: GestureDetector(
+                          onLongPress: _startRecording,
+                          onLongPressUp: _stopRecording,
+                          onTap: () {
+                            // Option to delete recorded audio;
+                            if (audioData != null) {
+                              setState(() {
+                                audioData = null;
+                              });
+                              _shoeMessageToast("Audio deleted");
+                            }
+                          },
+                          child: Icon(
+                            audioData == null ? Icons.mic : Icons.delete,
+                            color: (_isRecording)
+                                ? Colors.blue
+                                : audioData != null
+                                    ? Colors.red
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onPrimaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-            Expanded(
-              // Central widget to visualize the current message to send
-              child: Column(
-                children: [
-                  if (audioData != null) ...[
-                    Row(
+                  Expanded(
+                    // Central widget to visualize the current message to send
+                    child: Column(
                       children: [
-                        Expanded(
-                          child: TextField(
-                            controller: null,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              icon: Icon(
-                                Icons.audiotrack,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimaryContainer,
+                        if (audioData != null) ...[
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: null,
+                                  readOnly: true,
+                                  decoration: InputDecoration(
+                                    icon: Icon(
+                                      Icons.audiotrack,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimaryContainer,
+                                    ),
+                                    fillColor:
+                                        Theme.of(context).colorScheme.primary,
+                                    hintText: 'Audio file.',
+                                    border: InputBorder.none,
+                                  ),
+                                ),
                               ),
-                              fillColor: Theme.of(context).colorScheme.primary,
-                              hintText: 'Audio file.',
-                              border: InputBorder.none,
-                            ),
+                            ],
+                          )
+                        ],
+                        TextField(
+                          controller: _controller,
+                          decoration: const InputDecoration(
+                            hintText: 'Enter a message',
+                            border: InputBorder.none,
                           ),
                         ),
                       ],
-                    )
-                  ],
-                  TextField(
-                    controller: _controller,
-                    decoration: const InputDecoration(
-                      hintText: 'Enter a message',
-                      border: InputBorder.none,
                     ),
+                  ),
+                  Column(
+                    // Send message widget
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.send,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onPrimaryContainer),
+                        onPressed: _handleSendMessage,
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-            Column(
-              // Send message widget
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.send,
-                      color: Theme.of(context).colorScheme.onPrimaryContainer),
-                  onPressed: _handleSendMessage,
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

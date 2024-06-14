@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/chat/audio_player_widget.dart';
 import 'package:gemini_folder/chat/message_class.dart';
 
 class StreamBasedChatDisplay extends StatelessWidget {
@@ -22,9 +23,8 @@ class StreamBasedChatDisplay extends StatelessWidget {
                 : const Text("<<Empty Text>>"),
             subtitle: Text('Sent by ${message.owner}'),
             trailing: message.audioMessage != null
-                ? const Icon(Icons.audiotrack)
+                ? AudioPlayerWidget(audioData: message.audioMessage!)
                 : null,
-            // You can customize the trailing widget further if needed
           );
         },
       ),
