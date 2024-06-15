@@ -22,12 +22,42 @@ class StreamBasedChatDisplay extends StatelessWidget {
                 ? Text(message.textMessage!)
                 : const Text("<<Empty Text>>"),
             subtitle: Text('Sent by ${message.owner}'),
-            trailing: message.audioMessage != null
-                ? AudioPlayerWidget(audioData: message.audioMessage!)
-                : null,
+            trailing: _buildTrailingWidget(message),
           );
         },
       ),
     );
+  }
+
+  Widget? _buildTrailingWidget(MessageObject message) {
+    List<Widget> widgets = [];
+
+    if (message.audioMessage != null) {
+      widgets.add(AudioPlayerWidget(audioData: message.audioMessage!));
+    }
+
+    if (message.pictureMessage != null) {
+      widgets.add(Image.memory(
+        message.pictureMessage!,
+        width: 50,
+        height: 50,
+        fit: BoxFit.cover,
+      ));
+    }
+
+    // Return null if no widgets to show
+    if (widgets.isEmpty) {
+      return null;
+    }
+
+    // Wrap widgets in a row if there are multiple
+    if (widgets.length > 1) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: widgets,
+      );
+    } else {
+      return widgets.first;
+    }
   }
 }

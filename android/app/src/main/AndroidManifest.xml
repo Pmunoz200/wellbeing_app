@@ -44,4 +44,6 @@
     </queries>
     <!-- Permissions options for the `microphone` or `speech` group -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+
 </manifest>

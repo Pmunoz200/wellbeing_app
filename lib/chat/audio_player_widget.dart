@@ -6,10 +6,10 @@ import 'package:permission_handler/permission_handler.dart';
 class AudioPlayerWidget extends StatefulWidget {
   final Uint8List audioData;
 
-  const AudioPlayerWidget({required this.audioData, Key? key}) : super(key: key);
+  const AudioPlayerWidget({required this.audioData, super.key});
 
   @override
-  _AudioPlayerWidgetState createState() => _AudioPlayerWidgetState();
+  State<AudioPlayerWidget> createState() => _AudioPlayerWidgetState();
 }
 
 class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
@@ -41,7 +41,8 @@ class _AudioPlayerWidgetState extends State<AudioPlayerWidget> {
       } else {
         // Handle permission denied
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Microphone permission is required to play audio')),
+          SnackBar(
+              content: Text('Microphone permission is required to play audio')),
         );
         return;
       }

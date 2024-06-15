@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'dart:io';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:gemini_folder/chat/message_class.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -20,59 +21,95 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
-  Uint8List? audioData;
+  Uint8List? _audioData;
+  Uint8List? _imageData;
 
-  Future<void> _initializeRecorder() async {
-    // Check microphone permission status
-    // In case it is needed, I can send users to to app settings with: openAppSettings();
-    var status = await Permission.microphone.status;
-    if (status != PermissionStatus.granted) {
-      // Request microphone permission if it is not granted or denied
-      await _requestMicrophonePermission();
-      // Handle case where microphone permission is not granted
-      if (status == PermissionStatus.denied ||
-          status == PermissionStatus.permanentlyDenied) {
-        // Display dialog informing the user about the requirement to grant microphone permission
-        _requestPermissionDialog();
+  //////////////// FUNCTIONS TO HANDLE USER PERMISSIONS AND ITS INTERACTIONS WITH THEM ////////////////
+  Future<void> _initializeRecorderAndCamera() async {
+    // Check microphone and camera permission status
+    var microphoneStatus = await Permission.microphone.status;
+    var cameraStatus = await Permission.camera.status;
+
+    // List to keep track of missing permissions
+    List<String> missingPermissions = [];
+
+    // If microphone permission is not granted, add to missing permissions list
+    if (microphoneStatus != PermissionStatus.granted) {
+      missingPermissions.add("Microphone");
+    }
+
+    // If camera permission is not granted, add to missing permissions list
+    if (cameraStatus != PermissionStatus.granted) {
+      missingPermissions.add("Camera");
+    }
+
+    // Request permissions if there are any missing
+    if (missingPermissions.isNotEmpty) {
+      await _requestPermissions();
+
+      // Update the status after requesting permissions
+      microphoneStatus = await Permission.microphone.status;
+      cameraStatus = await Permission.camera.status;
+
+      // Handle case where permissions are still not granted
+      if (microphoneStatus != PermissionStatus.granted ||
+          cameraStatus != PermissionStatus.granted) {
+        _requestPermissionDialog(missingPermissions);
         return;
       }
     }
 
-    // Open audio session
-    await _recorder.openRecorder();
+    // Open audio session if microphone permission is granted
+    if (microphoneStatus == PermissionStatus.granted) {
+      await _recorder.openRecorder();
+    }
   }
 
-  Future<void> _requestPermissionDialog() {
+  Future<void> _requestPermissionDialog(List<String> missingPermissions) {
     return showDialog(
       context: context,
-      builder: (BuildContext context) => AlertDialog(
-        title: const Text("Permission Required"),
-        content: const Text(
-            "Microphone permission is required for audio recording."),
-        actions: <Widget>[
-          TextButton(
-            child: const Text("Go to Settings"),
-            onPressed: () async {
-              Navigator.of(context).pop(); // Close dialog
-              await openAppSettings(); // Open app settings
-            },
-          ),
-          TextButton(
-            child: const Text("Close"),
-            onPressed: () {
-              Navigator.of(context).pop(); // Close dialog
-            },
-          ),
-        ],
-      ),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Permission Required"),
+          content: Text(
+              "The following permissions are required: ${missingPermissions.join(', ')}. Please grant these permissions to continue."),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Go to Settings"),
+              onPressed: () async {
+                Navigator.of(context).pop(); // Close dialog
+                await openAppSettings(); // Open app settings
+              },
+            ),
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close dialog
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 
-  Future<void> _requestMicrophonePermission() async {
-    var status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      // Handle case where user denied or did not grant microphone permission
-      _showErrorToast("Microphone permission are required for the audio");
+  Future<void> _requestPermissions() async {
+    List<String> missingPermissions = [];
+
+    // Request microphone permission
+    var microphoneStatus = await Permission.microphone.request();
+    if (microphoneStatus != PermissionStatus.granted) {
+      missingPermissions.add("Microphone");
+    }
+
+    // Request camera permission
+    var cameraStatus = await Permission.camera.request();
+    if (cameraStatus != PermissionStatus.granted) {
+      missingPermissions.add("Camera");
+    }
+
+    if (missingPermissions.isNotEmpty) {
+      _showErrorToast("Permissions required: ${missingPermissions.join(', ')}");
       return;
     }
   }
@@ -97,6 +134,7 @@ class _MessageInputState extends State<MessageInput> {
     );
   }
 
+  //////////////// FUNCTIONS TO HANDLE AUDIO RECORDING AND MANAGING OF THE RESULTING FILE ////////////////
   void _startRecording() async {
     if (!_isRecording) {
       try {
@@ -119,7 +157,7 @@ class _MessageInputState extends State<MessageInput> {
       try {
         String? path = await _recorder.stopRecorder();
         if (path != null) {
-          audioData = await _loadAudioFile(path);
+          _audioData = await _loadAudioFile(path);
           // _sendMessage(audioMessage: audioData);
           _shoeMessageToast("Recording stopped");
         }
@@ -138,35 +176,63 @@ class _MessageInputState extends State<MessageInput> {
     return await file.readAsBytes();
   }
 
+  //////////////// FUNCTIONS TO HANDLE THE CAMERA AND THE RESULTING FILE ////////////////
+  Future<void> _pickImage() async {
+    final ImagePicker picker = ImagePicker();
+
+    // Open the camera to pick an image
+    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+
+    // If an image was picked, read it as bytes (Uint8List) and store it in the state
+    if (image != null) {
+      setState(() {
+        _imageData = File(image.path)
+            .readAsBytesSync(); // Read the image file as bytes and store it in _imageData
+      });
+    }
+  }
+
+  //////////////// FUNCTIONS TO HANDLE AND SENDING THE MESSAGE OBJECT ////////////////
   void _handleSendMessage() {
     String? textMessage;
-    Uint8List? audioMessage = audioData;
+    Uint8List? audioMessage = _audioData;
+    Uint8List? pictureMessage = _imageData;
     if (_controller.text.isNotEmpty) {
       textMessage = _controller.text;
       _controller.clear();
     }
-    if (textMessage != null || audioMessage != null) {
-      _sendMessage(textMessage: textMessage, audioMessage: audioMessage);
+    if (textMessage != null || audioMessage != null || pictureMessage != null) {
+      _sendMessage(
+          textMessage: textMessage,
+          audioMessage: audioMessage,
+          pictureMessage: pictureMessage);
     }
     setState(() {
-      audioData = null;
+      _audioData = null;
+      _imageData = null;
     });
   }
 
-  void _sendMessage({String? textMessage, Uint8List? audioMessage}) {
+  void _sendMessage(
+      // This functions is the one risponsible of sending the message object to the db
+      {String? textMessage,
+      Uint8List? audioMessage,
+      Uint8List? pictureMessage}) {
     MessageObject messageObject = MessageObject(
       textMessage: textMessage,
       audioMessage: audioMessage,
+      pictureMessage: pictureMessage,
       date: DateTime.now(),
       owner: 'User', // Replace with actual owner identifier
     );
     widget.sendMessageFunction?.call(messageObject);
   }
 
+  //////////////// FUNCTIONS OF THE REQUIRED OVERRIDES ////////////////
   @override
   void initState() {
     super.initState();
-    _initializeRecorder();
+    _initializeRecorderAndCamera();
   }
 
   @override
@@ -182,8 +248,17 @@ class _MessageInputState extends State<MessageInput> {
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: Row(
         children: [
+          // Button to start working with the camera
           IconButton(
-              onPressed: () {}, icon: Icon(Icons.camera_enhance_rounded)),
+              onPressed: () async {
+                await _pickImage();
+              },
+              icon: Icon(
+                Icons.camera_enhance_rounded,
+                color: _imageData != null
+                    ? Colors.blue
+                    : Theme.of(context).colorScheme.onSurface,
+              )),
           Expanded(
             child: Container(
               decoration: BoxDecoration(
@@ -200,6 +275,7 @@ class _MessageInputState extends State<MessageInput> {
                     // Left widget to handle audio input.
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      //
                       IconButton(
                         onPressed: () {},
                         icon: GestureDetector(
@@ -207,18 +283,18 @@ class _MessageInputState extends State<MessageInput> {
                           onLongPressUp: _stopRecording,
                           onTap: () {
                             // Option to delete recorded audio;
-                            if (audioData != null) {
+                            if (_audioData != null) {
                               setState(() {
-                                audioData = null;
+                                _audioData = null;
                               });
                               _shoeMessageToast("Audio deleted");
                             }
                           },
                           child: Icon(
-                            audioData == null ? Icons.mic : Icons.delete,
+                            _audioData == null ? Icons.mic : Icons.delete,
                             color: (_isRecording)
                                 ? Colors.blue
-                                : audioData != null
+                                : _audioData != null
                                     ? Colors.red
                                     : Theme.of(context)
                                         .colorScheme
@@ -232,7 +308,7 @@ class _MessageInputState extends State<MessageInput> {
                     // Central widget to visualize the current message to send
                     child: Column(
                       children: [
-                        if (audioData != null) ...[
+                        if (_audioData != null) ...[
                           Row(
                             children: [
                               Expanded(
