@@ -251,6 +251,11 @@ class _MessageInputState extends State<MessageInput> {
           // Button to start working with the camera
           IconButton(
               onPressed: () async {
+                if (_imageData != null) {
+                  setState(() {
+                    _imageData = null;
+                  });
+                }
                 await _pickImage();
               },
               icon: Icon(
@@ -308,9 +313,9 @@ class _MessageInputState extends State<MessageInput> {
                     // Central widget to visualize the current message to send
                     child: Column(
                       children: [
-                        if (_audioData != null) ...[
-                          Row(
-                            children: [
+                        Row(
+                          children: [
+                            if (_audioData != null) ...[
                               Expanded(
                                 child: TextField(
                                   controller: null,
@@ -328,10 +333,37 @@ class _MessageInputState extends State<MessageInput> {
                                     border: InputBorder.none,
                                   ),
                                 ),
-                              ),
+                              )
                             ],
-                          )
-                        ],
+                            if (_imageData != null) ...[
+                              Expanded(
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(8, 4, 0, 0),
+                                  child: Stack(
+                                    alignment: Alignment.center,
+                                    children: [
+                                      Image.memory(
+                                        _imageData!,
+                                        width: 64,
+                                        fit: BoxFit.cover,
+                                      ),
+                                      IconButton(
+                                        icon: const Icon(Icons.close),
+                                        onPressed: () {
+                                          setState(() {
+                                            _imageData = null;
+                                          });
+                                        },
+                                        color: Colors.white,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ]
+                          ],
+                        ),
                         TextField(
                           controller: _controller,
                           decoration: const InputDecoration(
