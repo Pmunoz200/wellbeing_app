@@ -245,7 +245,7 @@ class _MessageInputState extends State<MessageInput> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 5.0),
       child: Row(
         children: [
           // Button to start working with the camera
@@ -267,7 +267,7 @@ class _MessageInputState extends State<MessageInput> {
           Expanded(
             child: Container(
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.all(Radius.circular(180.0)),
+                borderRadius: const BorderRadius.all(Radius.circular(15)),
                 color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: Row(
@@ -312,65 +312,81 @@ class _MessageInputState extends State<MessageInput> {
                   Expanded(
                     // Central widget to visualize the current message to send
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          children: [
-                            if (_audioData != null) ...[
-                              Expanded(
-                                child: TextField(
-                                  controller: null,
-                                  readOnly: true,
-                                  decoration: InputDecoration(
-                                    icon: Icon(
-                                      Icons.audiotrack,
-                                      color: Theme.of(context)
+                        Container(
+                          color: Colors.grey.withOpacity(0.5),
+                          child: Row(
+                            // Row with the audio and picture information if present
+                            children: [
+                              if (_audioData != null) ...[
+                                Expanded(
+                                  child: TextField(
+                                    controller: null,
+                                    readOnly: true,
+                                    decoration: InputDecoration(
+                                      icon: Icon(
+                                        Icons.audiotrack,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onPrimaryContainer,
+                                      ),
+                                      fillColor: Theme.of(context)
                                           .colorScheme
-                                          .onPrimaryContainer,
+                                          .primary,
+                                      hintText: 'Audio file.',
+                                      border: InputBorder.none,
                                     ),
-                                    fillColor:
-                                        Theme.of(context).colorScheme.primary,
-                                    hintText: 'Audio file.',
-                                    border: InputBorder.none,
                                   ),
-                                ),
-                              )
+                                )
+                              ],
+                              if (_imageData != null) ...[
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        Image.memory(
+                                          _imageData!,
+                                          width: 64,
+                                          fit: BoxFit.cover,
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () {
+                                            setState(() {
+                                              _imageData = null;
+                                            });
+                                          },
+                                          color: Colors.white,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ]
                             ],
-                            if (_imageData != null) ...[
-                              Expanded(
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(8, 4, 0, 0),
-                                  child: Stack(
-                                    alignment: Alignment.center,
-                                    children: [
-                                      Image.memory(
-                                        _imageData!,
-                                        width: 64,
-                                        fit: BoxFit.cover,
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.close),
-                                        onPressed: () {
-                                          setState(() {
-                                            _imageData = null;
-                                          });
-                                        },
-                                        color: Colors.white,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ]
-                          ],
-                        ),
-                        TextField(
-                          controller: _controller,
-                          decoration: const InputDecoration(
-                            hintText: 'Enter a message',
-                            border: InputBorder.none,
                           ),
                         ),
+                        LayoutBuilder(builder: (context, constraints) {
+                          double maxHeight =
+                              MediaQuery.of(context).size.height / 5;
+                          return SingleChildScrollView(
+                              child: ConstrainedBox(
+                            constraints: BoxConstraints(maxHeight: maxHeight),
+                            child: TextField(
+                              controller: _controller,
+                              maxLines: null,
+                              keyboardType: TextInputType.multiline,
+                              decoration: const InputDecoration(
+                                hintText: 'Enter text...',
+                                border: InputBorder.none,
+                              ),
+                            ),
+                          ));
+                        }),
                       ],
                     ),
                   ),
