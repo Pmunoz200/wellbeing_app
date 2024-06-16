@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 
-class TextResponseContainer extends StatelessWidget {
-  final String text;
+class TextResponseContainer extends StatefulWidget {
+  final List<String> texts;
   final String title;
 
-  const TextResponseContainer({required this.text, required this.title});
+  const TextResponseContainer({required this.texts, required this.title});
+
+  @override
+  _TextResponseContainerState createState() => _TextResponseContainerState();
+}
+
+class _TextResponseContainerState extends State<TextResponseContainer> {
+  int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +24,7 @@ class TextResponseContainer extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                text,
+                widget.texts[_currentIndex],
                 style: const TextStyle(
                   color: Colors.black,
                   fontSize: 14.0,
@@ -31,9 +38,41 @@ class TextResponseContainer extends StatelessWidget {
           padding: EdgeInsets.only(right: 16.0),
           child: Align(
             alignment: Alignment.bottomRight,
-            child: Text(title, style: TextStyle(color: Colors.grey[800], fontSize: 15.0, fontWeight: FontWeight.bold)))
-            ,
-          )
+            child: Text(
+              widget.title,
+              style: TextStyle(
+                color: Colors.grey[800],
+                fontSize: 15.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                setState(() {
+                  if (_currentIndex > 0) {
+                    _currentIndex--;
+                  }
+                });
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.arrow_forward),
+              onPressed: () {
+                setState(() {
+                  if (_currentIndex < widget.texts.length - 1) {
+                    _currentIndex++;
+                  }
+                });
+              },
+            ),
+          ],
+        ),
       ],
     );
   }
