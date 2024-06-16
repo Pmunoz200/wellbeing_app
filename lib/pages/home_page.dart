@@ -10,7 +10,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int _selectedIndex = 0;
+  int _selectedIndex = 1;
 
   final List<Widget> _widgetOptions = <Widget>[
     ExerciseWidgetPage(),
@@ -35,33 +35,55 @@ class _HomePageState extends State<HomePage> {
             onPressed: () {
               // Navigate to the notification page
             },
-            color: Colors.lightBlueAccent,
+            color: Colors.black,
           ),],
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.primary,
+              Color(0xFFEDF1F8),
+              Color(0xFFFFFFFF),
+            ],
+          ),
+        ),
+        child: Center(
+          child: _widgetOptions.elementAt(_selectedIndex),
+        ),
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.lightBlueAccent,
-        unselectedItemColor: Colors.grey[400],
-        items: <BottomNavigationBarItem>[
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(
+        top: BorderSide(
+          color: Colors.black,
+          width: 0.5,
+        ),
+          ),
+        ),
+        child: BottomNavigationBar(
+          selectedItemColor: Colors.black,
+          unselectedItemColor: Colors.grey[400],
+          items: const <BottomNavigationBarItem>[
+        BottomNavigationBarItem(
+          icon: Icon(Icons.fitness_center),
+          label: 'Exercise',
+        ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.fitness_center),
-            label: 'Exersice',
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          const BottomNavigationBarItem(
-            icon: Icon(Icons.fastfood),
-            label: 'Food',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
+          icon: Icon(Icons.home),
+          label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.fastfood),
+          label: 'Food',
+        ),
+          ],
+          currentIndex: _selectedIndex,
+          onTap: _onItemTapped,
+        ),
       )
     );
   }
