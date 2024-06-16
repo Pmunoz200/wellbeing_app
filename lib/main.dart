@@ -4,6 +4,7 @@ import 'package:gemini_folder/firebase/firebase_options.dart';
 import 'package:gemini_folder/onboarding/onboarding.dart';
 import 'package:gemini_folder/token_page.dart';
 import 'package:gemini_folder/user_authentication/login.dart';
+import 'pages/home_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
             ),
         '/token': (context) => TokenPage(navigator: mainNavigatorKey),
         '/onboarding': (context) =>
-            OnboardingScreen(navigator: mainNavigatorKey)
+            OnboardingScreen(navigator: mainNavigatorKey),
       },
     );
   }
