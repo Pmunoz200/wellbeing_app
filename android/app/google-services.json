@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "project_number": "662176364515",
+    "project_id": "wellbeing-app-d5a53",
+    "storage_bucket": "wellbeing-app-d5a53.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662176364515:android:2765eb4c169a9bc42c12d6",
+        "android_client_info": {
+          "package_name": "com.example.gemini_folder"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662176364515-vt4ijd5atdo9093p39thmbi0h2dpj84t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy6IPJsxq0m6JSEfkXXru_SS-G-tQBitA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662176364515-vt4ijd5atdo9093p39thmbi0h2dpj84t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "662176364515-ocqgnq7vuvitgj43rhe8v01g8de426k4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geminiFolder"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:662176364515:android:9ad0fc0ce6e001e42c12d6",
+        "android_client_info": {
+          "package_name": "com.wellbeing.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "662176364515-vt4ijd5atdo9093p39thmbi0h2dpj84t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDy6IPJsxq0m6JSEfkXXru_SS-G-tQBitA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "662176364515-vt4ijd5atdo9093p39thmbi0h2dpj84t.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "662176364515-ocqgnq7vuvitgj43rhe8v01g8de426k4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.geminiFolder"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
