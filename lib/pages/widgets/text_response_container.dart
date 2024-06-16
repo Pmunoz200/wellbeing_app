@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class TextResponseContainer extends StatelessWidget {
   final String text;
+  final String title;
 
-  const TextResponseContainer({required this.text});
+  const TextResponseContainer({required this.text, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +31,7 @@ class TextResponseContainer extends StatelessWidget {
           padding: EdgeInsets.only(right: 16.0),
           child: Align(
             alignment: Alignment.bottomRight,
-            child: Text("Summary", style: TextStyle(color: Colors.grey[800], fontSize: 15.0, fontWeight: FontWeight.bold)))
+            child: Text(title, style: TextStyle(color: Colors.grey[800], fontSize: 15.0, fontWeight: FontWeight.bold)))
             ,
           )
       ],
