@@ -21,6 +21,7 @@ class _MessageInputState extends State<MessageInput> {
   final TextEditingController _controller = TextEditingController();
   final FlutterSoundRecorder _recorder = FlutterSoundRecorder();
   bool _isRecording = false;
+  // Variables of type required as input for the audio and photo libraries
   Uint8List? _audioData;
   Uint8List? _imageData;
 
@@ -158,7 +159,6 @@ class _MessageInputState extends State<MessageInput> {
         String? path = await _recorder.stopRecorder();
         if (path != null) {
           _audioData = await _loadAudioFile(path);
-          // _sendMessage(audioMessage: audioData);
           _shoeMessageToast("Recording stopped");
         }
       } catch (e) {
@@ -223,7 +223,7 @@ class _MessageInputState extends State<MessageInput> {
       audioMessage: audioMessage,
       pictureMessage: pictureMessage,
       date: DateTime.now(),
-      owner: 'User', // Replace with actual owner identifier
+      owner: 'User', // TODO: Replace with actual owner identifier
     );
     widget.sendMessageFunction?.call(messageObject);
   }
@@ -273,9 +273,9 @@ class _MessageInputState extends State<MessageInput> {
               child: Row(
                 children: <Widget>[
                   /// Message input was divided into three parts: left and right buttons, and central input
-                  /// The central input shows the data that will be sent, and the buttons allos to handle it.
+                  /// The central input shows the data that will be sent, and the buttons allows to handle it.
                   /// The central input has two textField widgets, one is read only but this made it easy to
-                  /// keep is symetric.
+                  /// keep it symetric.
                   Column(
                     // Left widget to handle audio input.
                     mainAxisAlignment: MainAxisAlignment.center,
