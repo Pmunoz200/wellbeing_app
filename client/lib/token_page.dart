@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gemini_folder/profile_static_content.dart';
 import 'package:gemini_folder/services/auth_service.dart';
 import 'package:gemini_folder/util/toast_util.dart';
 
@@ -27,7 +28,7 @@ class TokenPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Token Page'),
+        title: const Text('Profile Page'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -38,22 +39,9 @@ class TokenPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'User Information',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'User ID: ${user?.uid ?? "No user logged in"}',
-              style: const TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              'Email: ${user?.email ?? "No email available"}',
-              style: const TextStyle(fontSize: 16),
-            ),
+            ProfileTopContent(user: user),
+            const Divider(),
           ],
         ),
       ),
