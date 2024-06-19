@@ -71,13 +71,16 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         actions: [
-          IconButton(
-            icon: const Icon(Icons.person),
-            onPressed: () {
-              // Navigate to the notification page
-            },
-            color: Colors.black,
-          ),],
+          MaterialButton(
+          onPressed: () {},
+          color: Colors.black,
+          textColor: Colors.white,
+          shape: CircleBorder(),
+          child: const Icon(
+            Icons.person,
+            size: 30,
+          ),
+        )],
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: Container(
