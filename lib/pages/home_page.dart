@@ -10,11 +10,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  int _selectedIndex = 1;
+  int _selectedIndex = 0;
 
   final List<Widget> _widgetOptions = <Widget>[
-    ExerciseWidgetPage(),
     HomeWidgetPage(),
+    ExerciseWidgetPage(),
     FoodWidgetPage(),
   ];
 
@@ -41,13 +41,14 @@ class _HomePageState extends State<HomePage> {
       ),
       body: Container(
         decoration: BoxDecoration(
+          color: Colors.white,
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
               Theme.of(context).colorScheme.primary,
-              Color(0xFFEDF1F8),
-              Color(0xFFFFFFFF),
+              Colors.white,
+              Colors.white,
             ],
           ),
         ),
@@ -68,13 +69,13 @@ class _HomePageState extends State<HomePage> {
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.grey[400],
           items: const <BottomNavigationBarItem>[
-        BottomNavigationBarItem(
-          icon: Icon(Icons.fitness_center),
-          label: 'Exercise',
-        ),
           BottomNavigationBarItem(
           icon: Icon(Icons.home),
           label: 'Home',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.fitness_center),
+          label: 'Exercise',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.fastfood),
