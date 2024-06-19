@@ -51,13 +51,6 @@ class _MessageInputState extends State<MessageInput> {
       // Update the status after requesting permissions
       microphoneStatus = await Permission.microphone.status;
       cameraStatus = await Permission.camera.status;
-
-      // Handle case where permissions are still not granted
-      if (microphoneStatus != PermissionStatus.granted ||
-          cameraStatus != PermissionStatus.granted) {
-        _requestPermissionDialog(missingPermissions);
-        return;
-      }
     }
 
     // Open audio session if microphone permission is granted
@@ -137,18 +130,27 @@ class _MessageInputState extends State<MessageInput> {
 
   //////////////// FUNCTIONS TO HANDLE AUDIO RECORDING AND MANAGING OF THE RESULTING FILE ////////////////
   void _startRecording() async {
-    if (!_isRecording) {
-      try {
-        await _recorder.startRecorder(
-          toFile: 'audio_record.aac',
-          codec: Codec.aacADTS,
-        );
-        setState(() {
-          _isRecording = true;
-        });
-        _shoeMessageToast("Hold button to record");
-      } catch (e) {
-        _showErrorToast("Error starting recording: $e");
+    // Check microphone permission status
+    var microphoneStatus = await Permission.microphone.status;
+    // Handle case where permissions are still not granted
+    if (microphoneStatus != PermissionStatus.granted) {
+      _requestPermissionDialog(["Microphone"]);
+      return;
+    } else {
+      if (!_isRecording) {
+        try {
+          await _recorder.openRecorder();
+          await _recorder.startRecorder(
+            toFile: 'audio_record.aac',
+            codec: Codec.aacADTS,
+          );
+          setState(() {
+            _isRecording = true;
+          });
+          _shoeMessageToast("Hold button to record");
+        } catch (e) {
+          _showErrorToast("Error starting recording: $e");
+        }
       }
     }
   }
@@ -179,16 +181,22 @@ class _MessageInputState extends State<MessageInput> {
   //////////////// FUNCTIONS TO HANDLE THE CAMERA AND THE RESULTING FILE ////////////////
   Future<void> _pickImage() async {
     final ImagePicker picker = ImagePicker();
+    // Check camera permission status
+    var cameraStatus = await Permission.camera.status;
 
-    // Open the camera to pick an image
-    final XFile? image = await picker.pickImage(source: ImageSource.camera);
+    if (cameraStatus != PermissionStatus.granted) {
+      _requestPermissionDialog(["Camera"]);
+    } else {
+      // Open the camera to pick an image
+      final XFile? image = await picker.pickImage(source: ImageSource.camera);
 
-    // If an image was picked, read it as bytes (Uint8List) and store it in the state
-    if (image != null) {
-      setState(() {
-        _imageData = File(image.path)
-            .readAsBytesSync(); // Read the image file as bytes and store it in _imageData
-      });
+      // If an image was picked, read it as bytes (Uint8List) and store it in the state
+      if (image != null) {
+        setState(() {
+          _imageData = File(image.path)
+              .readAsBytesSync(); // Read the image file as bytes and store it in _imageData
+        });
+      }
     }
   }
 
