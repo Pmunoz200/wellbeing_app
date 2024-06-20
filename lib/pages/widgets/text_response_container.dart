@@ -28,7 +28,10 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Text('text $i', style:  Theme.of(context).textTheme.bodyMedium)
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium),
+                  )
                 );
               },
             );
