@@ -1,9 +1,12 @@
-from firebase_functions import firestore_fn, https_fn
+from firebase_functions import https_fn
 from firebase_admin import initialize_app, firestore
 import google.cloud.firestore
 import json
 from datetime import datetime
 import logging
+from utils.date_utils import parse_date, normalize_date, time_frame, time_str
+from prompts.prompt import prompt
+import google.generativeai as genai
 
 # Initialize the Firebase app
 initialize_app()
@@ -15,108 +18,190 @@ logging.basicConfig(level=logging.INFO)
 firestore_client = firestore.client()
 
 
-def validate_and_parse_date(
-    date_str: str, date_format: str = "%Y-%m-%dT%H:%M:%S"
-) -> datetime:
-    """Validate and parse the date string into a datetime object."""
+def retrieve_user_information(uid: str) -> dict:
+    """Retrieve user information from Firestore."""
     try:
-        return datetime.strptime(date_str, date_format)
-    except ValueError as e:
-        raise ValueError(f"Invalid date format. Use {date_format}. Error: {str(e)}")
+        doc = firestore_client.collection("users").document(uid).get()
+        if doc.exists:
+            return doc.to_dict()
+        return {}
+    except Exception as e:
+        logging.error(f"Error in retrieve_user_information: {str(e)}")
+        raise
 
 
-def normalize_date(date_obj: datetime) -> datetime:
-    """Normalize the date to midnight."""
-    return datetime(date_obj.year, date_obj.month, date_obj.day)
-
-
-@https_fn.on_request()
-def add_message(req: https_fn.Request) -> https_fn.Response:
-    """Add a message to the Firestore database."""
+def retrieve_messages_document(
+    uid: str, date: datetime
+) -> google.cloud.firestore.DocumentSnapshot:
+    """Retrieve messages document from Firestore for a specific user and date."""
+    normalized_date = normalize_date(date)
     try:
-        date_str = req.args.get("date")
-        uid = req.args.get("uid")
-        query = req.args.get("query")
-
-        if not query:
-            return https_fn.Response("No query parameter provided", status=400)
-        if not date_str:
-            return https_fn.Response("No date parameter provided", status=400)
-        if not uid:
-            return https_fn.Response("No uid parameter provided", status=400)
-
-        date_obj = validate_and_parse_date(date_str)
-        normalized_date = normalize_date(date_obj)
-
-        message_entry = {
-            "role": "user",
-            "content": query,
-            "timestamp": date_obj,
-        }
-
         docs = (
             firestore_client.collection("messages")
             .where("uid", "==", uid)
             .where("date", "==", normalized_date)
             .stream()
         )
-
         doc = next(docs, None)
+        return doc
+    except Exception as e:
+        logging.error(f"Error in retrieve_messages_document: {str(e)}")
+        raise
 
+
+def gemini_message(role: str, content: str, date: datetime) -> dict:
+    """Create a formatted message for the Gemini model."""
+    if role == "user":
+        content = f"{time_str(date)}: {content}"
+    return {
+        "role": role,
+        "parts": [content],
+    }
+
+
+def db_message(role: str, content: str, date: datetime) -> dict:
+    """Format message for Firestore."""
+    return {
+        "gemini_message": gemini_message(role, content, date),
+        "timestamp": date,
+    }
+
+
+def call_gemini(messages, user_information, temperature=0.7, max_output_tokens=500):
+    """Call the Gemini model to generate a response."""
+    try:
+        # Configure the generation parameters
+        gen_config = genai.types.GenerationConfig(
+            candidate_count=1,
+            max_output_tokens=max_output_tokens,
+            temperature=temperature,
+            response_mime_type="application/json",
+        )
+
+        # Format system instructions with user information
+        sys_instruct = prompt.format(user_information=user_information)
+        model = genai.GenerativeModel(
+            "gemini-1.5-flash",
+            generation_config=gen_config,
+            system_instruction=sys_instruct,
+        )
+
+        # Generate response from the model
+        response = model.generate_content(messages)
+        text = response.text
+
+        return text
+    except Exception as e:
+        logging.error(f"Error in call_gemini: {str(e)}")
+        raise
+
+
+def get_gemini_response(
+    db_conversation: list, query, user_information: dict, date: datetime
+) -> list:
+    """Get a response from the Gemini model and update the conversation."""
+    try:
+        # Add user query to the conversation
+        db_conversation.append(db_message("user", query, date))
+        query_messages = [message["gemini_message"] for message in db_conversation]
+        response = call_gemini(query_messages, user_information)
+        db_conversation.append(db_message("model", response, date))
+        return db_conversation
+    except Exception as e:
+        logging.error(f"Error in get_gemini_response: {str(e)}")
+        raise
+
+
+def app_conversation(db_conversation: list) -> list:
+    """Format conversation for the app."""
+    app_messages = []
+    for db_message in db_conversation:
+        message = db_message["gemini_message"]
+        if message["role"] == "model":
+            app_message = {
+                "role": message["role"],
+                "content": message["parts"][0],
+            }
+            app_messages.append(app_message)
+    return app_messages
+
+
+def update_db(doc, db_conversation, uid, date: datetime, messages: list) -> str:
+    """Update Firestore with the conversation."""
+    try:
         if doc is None:
+            # Add new document if it doesn't exist
             firestore_client.collection("messages").add(
                 {
                     "uid": uid,
-                    "date": normalized_date,
-                    "messages": [message_entry],
+                    "date": normalize_date(date),
+                    "conversation": db_conversation,
                 }
             )
         else:
-            doc.reference.update({"messages": firestore.ArrayUnion([message_entry])})
-
-        return https_fn.Response("Message added successfully", status=200)
-
+            # Update existing document
+            doc.reference.update({"conversation": messages})
+        return "Success"
     except Exception as e:
-        logging.error(f"Error in add_message: {str(e)}")
-        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
+        logging.error(f"Error in update_db: {str(e)}")
+        raise
 
 
 @https_fn.on_request()
 def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
     """Retrieve user messages by date."""
     try:
+        # Parse and validate input parameters
         date_str = req.args.get("date")
         uid = req.args.get("uid")
 
-        if not date_str:
-            return https_fn.Response("No date parameter provided", status=400)
-        if not uid:
-            return https_fn.Response("No uid parameter provided", status=400)
+        if not date_str or not uid:
+            return https_fn.Response("Missing date or uid parameter", status=400)
 
-        date_obj = validate_and_parse_date(date_str, "%Y-%m-%d")
-        normalized_date = normalize_date(date_obj)
+        date_obj = parse_date(date_str)
 
-        docs = (
-            firestore_client.collection("messages")
-            .where("uid", "==", uid)
-            .where("date", "==", normalized_date)
-            .stream()
-        )
+        # Retrieve messages document and user information
+        doc = retrieve_messages_document(uid, date_obj)
+        user_information = retrieve_user_information(uid)
 
-        doc = next(docs, None)
-
+        # Check if document exists, if not, create a new conversation
         if doc is None:
-            return https_fn.Response(
-                "No messages found for the provided uid and date", status=404
+            db_conversation = []
+        else:
+            db_conversation = doc.to_dict().get("conversation", [])
+
+        # Initialize messages if empty
+        if len(db_conversation) < 2:
+            db_conversation = get_gemini_response(
+                db_conversation,
+                "I haven't tracked anything today, but you can give me suggestions based on the time of day.",
+                user_information,
+                date_obj,
+            )
+            update_status = update_db(
+                doc, db_conversation, uid, date_obj, db_conversation
             )
 
-        messages = doc.to_dict().get("messages", [])
+        # Check if the time frame is different
+        else:
+            last_message = db_conversation[-1]
+            last_time = last_message["timestamp"]
+            last_time_frame = time_frame(last_time)
+            current_time_frame = time_frame(date_obj)
 
-        for message in messages:
-            message["timestamp"] = message["timestamp"].strftime("%Y-%m-%dT%H:%M:%S")
+            if last_time_frame != current_time_frame:
+                db_conversation = get_gemini_response(
+                    db_conversation,
+                    "I haven't tracked anything new today, but you can give me suggestions based on the time of day.",
+                    user_information,
+                    date_obj,
+                )
+                update_status = update_db(
+                    doc, db_conversation, uid, date_obj, db_conversation
+                )
 
         return https_fn.Response(
-            response=json.dumps({"messages": messages}),
+            response=json.dumps({"conversation": app_conversation(db_conversation)}),
             status=200,
             mimetype="application/json",
         )
@@ -127,4 +212,53 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
 
     except Exception as e:
         logging.error(f"Error in get_user_messages_by_date: {str(e)}")
+        return https_fn.Response(f"Internal server error: {str(e)}", status=500)
+
+
+@https_fn.on_request()
+def get_response(req: https_fn.Request) -> https_fn.Response:
+    """Add a message to the Firestore database and get a response."""
+    try:
+        # Parse and validate input parameters
+        uid = req.args.get("uid")
+        query = req.args.get("query")
+        date_str = req.args.get("date")
+
+        if not uid or not query or not date_str:
+            return https_fn.Response(
+                "Missing uid, query, or date parameter", status=400
+            )
+
+        date_obj = parse_date(date_str)
+
+        # Retrieve messages document and user information
+        doc = retrieve_messages_document(uid, date_obj)
+        user_information = retrieve_user_information(uid)
+
+        # Check if document exists, if not, create a new conversation
+        if doc is None:
+            db_conversation = []
+        else:
+            db_conversation = doc.to_dict().get("conversation", [])
+
+        # Get response from Gemini model and update conversation
+        db_conversation = get_gemini_response(
+            db_conversation, query, user_information, date_obj
+        )
+
+        # Update Firestore with the new conversation
+        update_status = update_db(doc, db_conversation, uid, date_obj, db_conversation)
+
+        return https_fn.Response(
+            response=json.dumps({"conversation": app_conversation(db_conversation)}),
+            status=200,
+            mimetype="application/json",
+        )
+
+    except ValueError as ve:
+        logging.warning(f"Validation error in get_response: {str(ve)}")
+        return https_fn.Response(str(ve), status=400)
+
+    except Exception as e:
+        logging.error(f"Error in get_response: {str(e)}")
         return https_fn.Response(f"Internal server error: {str(e)}", status=500)
