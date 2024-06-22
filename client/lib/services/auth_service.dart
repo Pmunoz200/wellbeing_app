@@ -78,6 +78,7 @@ class AuthService {
       final userSnapshot = await userDoc.get();
       if (!userSnapshot.exists) {
         await userDoc.set({
+          'name': user.displayName ?? '',
           'email': user.email,
           'onboardingCompleted': false,
         });
