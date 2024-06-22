@@ -134,6 +134,10 @@ meta
 2.12
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.15.0/
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/meta-1.15.0/lib/
+nested
+2.12
+file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/
+file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/lib/
 path
 3.0
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/path-1.9.0/
@@ -142,6 +146,10 @@ plugin_platform_interface
 3.0
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8/
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.8/lib/
+provider
+2.12
+file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.2/
+file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.2/lib/
 source_span
 2.18
 file:///C:/Users/jjj19/AppData/Local/Pub/Cache/hosted/pub.dev/source_span-1.10.0/
