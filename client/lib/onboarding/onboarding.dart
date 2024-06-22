@@ -213,7 +213,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 // I use the String "Custom" as a flag on the result, to check later
                 // the values in the controllers an replace it for the final value
                 // of the textField.
-                print("OPTIONS: ${question.options}");
                 setState(() {
                   newProfile[question.parameterName]
                       .retainWhere((e) => e != "Custom");
