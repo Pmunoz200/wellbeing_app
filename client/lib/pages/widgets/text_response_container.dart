@@ -32,6 +32,9 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
         ),
         MaterialButton(onPressed: () {
           widget.callback();
+          setState(() {
+            isExpanded = !isExpanded;
+          });
         }, child: Text("Expand")),
       ],
     );
