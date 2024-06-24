@@ -10,8 +10,11 @@ import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> navigator;
+  final int?
+      focusQuestionIndex; // Optionally, you can pass the index of the question to start on.
 
-  const OnboardingScreen({required this.navigator, super.key});
+  const OnboardingScreen(
+      {required this.navigator, super.key, this.focusQuestionIndex});
 
   @override
   State<OnboardingScreen> createState() => _OnboardingScreenState();
@@ -19,7 +22,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final user = FirebaseAuth.instance.currentUser;
-  final PageController _pageController = PageController();
+  late PageController _pageController;
   final List<TextEditingController> _controllers = [];
   late Profile newProfile;
   final List<OnboardingQuestion> _questions = questions;
@@ -255,7 +258,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         await userDoc.set(newProfile.toMap());
         // ignore: use_build_context_synchronously
         provider.userProfile = newProfile;
-        widget.navigator.currentState?.pushReplacementNamed('/token');
+        widget.navigator.currentState?.pushReplacementNamed('/home');
       } catch (e) {
         showErrorToast("An error ocurred while saving the onboarding");
         return;
@@ -277,11 +280,59 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     for (var i = 0; i < _questions.length; i++) {
       _controllers.add(TextEditingController());
     }
+
+    _pageController =
+        PageController(initialPage: widget.focusQuestionIndex ?? 0);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    for (var controller in _controllers) {
+      controller.dispose();
+    }
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     MainProvider provider = Provider.of<MainProvider>(context, listen: false);
+    if (provider.userProfile != null) {
+      newProfile = provider.userProfile!;
+      int questionIndex = 0;
+      for (OnboardingQuestion question in questions) {
+        // Set the values on the controllers to the selected ones;
+        if (question.inputType != null &&
+            newProfile[question.parameterName] != null) {
+          if (question.inputType == TextInputType.text) {
+            _controllers[questionIndex].text =
+                newProfile[question.parameterName] ?? "";
+          } else {
+            _controllers[questionIndex].text =
+                newProfile[question.parameterName].toString();
+          }
+        } else if (question.options != null &&
+            question.allowMultipleSelections) {
+          if (question.addCustomField &&
+              newProfile[question.parameterName]
+                  .any((e) => !question.options!.contains(e))) {
+            // If there is a custom field (which is known as it is not contained on the options)
+            // put it in the controller and substitute it for the "Custom" flag;
+            String customValue = newProfile[question.parameterName]
+                .firstWhere((e) => !question.options!.contains(e));
+            _controllers[questionIndex].text = customValue;
+            newProfile[question.parameterName]
+                .removeWhere((e) => e == customValue);
+            newProfile[question.parameterName].add("Custom");
+          }
+          //TODO: Add the possibility for a question with options but no multiple selection
+          // to add the custom field selection, the value in the controller, and set the 
+          // "Custom" flag
+        }
+        questionIndex++;
+      }
+    }
+
     return Scaffold(
       // appBar: AppBar(title: const Text('Onboarding')),
       body: PageView.builder(
