@@ -9,7 +9,7 @@ class TextResponseContainer extends StatefulWidget {
   final ValueGetter<bool> getIsExpanded;
   final VoidCallback callback;
 
-  const TextResponseContainer({required this.texts, required this.title, required this.getIsExpanded, required this.callback});
+  TextResponseContainer({required this.texts, required this.title, required this.getIsExpanded, required this.callback});
 
   @override
   _TextResponseContainerState createState() => _TextResponseContainerState();
