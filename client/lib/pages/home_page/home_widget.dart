@@ -1,31 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/pages/widgets/text_response_container.dart';
 
+const String tryText = "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap.";
+const List<String> textList = [tryText, "1" + tryText, "2" + tryText];
 class HomeWidgetPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('HOME'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return const Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
-            Icon(
-              Icons.home,
-              size: 50,
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Home Widget Page',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            TextResponseContainer(texts: textList, title: "Summary",),
+            TextResponseContainer(texts: textList, title: "Suggestions",),
           ],
-        ),
-      ),
-    );
+      );
   }
 }
