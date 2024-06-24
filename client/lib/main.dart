@@ -24,8 +24,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.green),
-        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromRGBO(108, 162, 218, 0.5)),
+        cardColor: const Color(0xFFE3E7EE),
+        textTheme: TextTheme(
+          bodyMedium: const TextStyle(fontFamily: 'Montserrat', fontSize: 14.0),
+          bodyLarge: TextStyle(fontFamily: 'Montserrat', fontSize: 16.0, color: Colors.grey[700], fontWeight: FontWeight.bold),
+        ),
       ),
       initialRoute: '/authentication',
       navigatorKey: mainNavigatorKey,
@@ -33,7 +37,7 @@ class MyApp extends StatelessWidget {
         "/authentication": (context) => LoginScreen(
               navigator: mainNavigatorKey,
             ),
-        '/token': (context) => TokenPage(navigator: mainNavigatorKey),
+        '/token': (context) => HomePage(),
         '/onboarding': (context) =>
             OnboardingScreen(navigator: mainNavigatorKey),
       },
