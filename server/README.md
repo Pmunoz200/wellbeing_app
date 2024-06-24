@@ -14,6 +14,10 @@ This API provides endpoints for retrieving messages by user and date, and for ad
       - [Request](#request-1)
       - [Response](#response-1)
       - [Example](#example-1)
+    - [GET /get\_detailed\_response](#get-get_detailed_response)
+      - [Request](#request-2)
+      - [Response](#response-2)
+      - [Example](#example-2)
   - [Error Handling](#error-handling)
   - [Additional Notes](#additional-notes)
 
@@ -205,6 +209,44 @@ curl -X GET "https://your-api-url/get_response?uid=user123&query=Tell%20me%20a%2
       }
     }
   ]
+}
+```
+
+### GET /get_detailed_response
+
+Add a message to the Firestore database and get a detailed response.
+
+#### Request
+
+- **Method:** GET
+- **URL:** `/get_detailed_response`
+- **Query Parameters:**
+  - `uid` (string, required): The user ID.
+  - `index` (string, required): The index of the message in the conversation.
+  - `container` (string, required): The container to retrieve details for (summary, suggestion, food_summary, food_suggestion, exercise_summary, exercise_suggestion).
+  - `date` (string, required): The date in `%Y-%m-%dT%H:%M:%S` format.
+
+#### Response
+
+- **Status:** 200 OK
+- **Body:** JSON object containing the detailed response.
+  ```json
+  {
+    "content": "Detailed content message"
+  }
+  ```
+
+#### Example
+
+**Request:**
+```sh
+curl -X GET "https://your-api-url/get_detailed_response?uid=user123&index=0&container=food_summary&date=2024-06-22T12:05:00"
+```
+
+**Response:**
+```json
+{
+  "content": "You've had three eggs for breakfast, which is a good source of protein. Each egg provides approximately 70 calories, 6 grams of protein, and 5 grams of fat. This means your breakfast has contributed about 210 calories, 18 grams of protein, and 15 grams of fat to your daily intake. While eggs are a nutritious choice, it's important to remember that they are relatively high in cholesterol. It's a good idea to balance your intake with other foods that are lower in cholesterol and saturated fat. You haven't tracked any other food yet today, so it's important to keep track of your food intake throughout the day to ensure you're getting enough nutrients and calories to meet your needs."
 }
 ```
 

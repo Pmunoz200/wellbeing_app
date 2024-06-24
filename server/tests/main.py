@@ -32,19 +32,23 @@ def get_detail_response_request(server_url, date_str, uid, index, container):
 
 if __name__ == "__main__":
     server_url = "http://127.0.0.1:5001/wellbeing-app-d5a53/us-central1"
-    date_str = "2021-06-01T00:00:00"
-    # uid = str(random.randint(0, 1000))
+
+    date_str = "2021-06-01T14:00:00"
     uid = "manuel"
+
+    # get user messages by date
     """ messages_request = get_user_messages_by_date_request(server_url, date_str, uid)
-    # print(json.dumps(messages_request, indent=4))
-    query = "I ate three eggs for breakfast."
-    response_request = get_response_request(server_url, date_str, uid, query)
-    # print(json.dumps(response_request, indent=4))
-    for message in response_request["conversation"]:
+    for message in messages_request["conversation"]:
         content = json.loads(message["content"])
-        print(json.dumps(content, indent=4))
- """
-    detailed_response_request = get_detail_response_request(
-        server_url, date_str, uid, 1, "food_suggestion"
+        print(json.dumps(content, indent=4)) """
+
+    # get response
+    """ query = "I ate three eggs for breakfast."
+    response_request = get_response_request(server_url, date_str, uid, query)
+    print(json.dumps(response_request, indent=4)) """
+
+    # get detailed response
+    """ detailed_response_request = get_detail_response_request(
+        server_url, date_str, uid, 2, "food_summary"
     )
-    print(detailed_response_request)
+    print(detailed_response_request) """
