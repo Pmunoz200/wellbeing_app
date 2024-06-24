@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:gemini_folder/pages/home_page/exercise_widget.dart';
 import 'package:gemini_folder/pages/widgets/expandable_card_widget.dart';
 
 class TextResponseContainer extends StatefulWidget {
   final List<String> texts;
   final String title;
+  final ValueGetter<bool> getIsExpanded;
+  final VoidCallback callback;
 
-  const TextResponseContainer({required this.texts, required this.title});
+  const TextResponseContainer({required this.texts, required this.title, required this.getIsExpanded, required this.callback});
 
   @override
   _TextResponseContainerState createState() => _TextResponseContainerState();
@@ -14,19 +17,21 @@ class TextResponseContainer extends StatefulWidget {
 
 class _TextResponseContainerState extends State<TextResponseContainer> {
   bool isExpanded = false;
+  void initState() {
+    super.initState();
+    isExpanded = widget.getIsExpanded();
+  }
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ExpandableCardContainer(
-          isExpanded: isExpanded,
-          collapsedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: isExpanded,),
-          expandedChild: TextResponseContainerWidget(texts: widget.texts, title: "", isExpanded: isExpanded,),
+          isExpanded: this.isExpanded,
+          collapsedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: this.isExpanded,),
+          expandedChild: TextResponseContainerWidget(texts: widget.texts, title: "", isExpanded: this.isExpanded,),
         ),
         MaterialButton(onPressed: () {
-          setState(() {
-            isExpanded = !isExpanded;
-          });
+          widget.callback();
         }, child: Text("Expand")),
       ],
     );
