@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:gemini_folder/pages/widgets/expandable_card_widget.dart';
 
 class TextResponseContainer extends StatefulWidget {
   final List<String> texts;
@@ -12,13 +13,39 @@ class TextResponseContainer extends StatefulWidget {
 }
 
 class _TextResponseContainerState extends State<TextResponseContainer> {
+  bool isExpanded = false;
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
+        ExpandableCardContainer(
+          isExpanded: isExpanded,
+          collapsedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: isExpanded,),
+          expandedChild: TextResponseContainerWidget(texts: widget.texts, title: "", isExpanded: isExpanded,),
+        ),
+        MaterialButton(onPressed: () {
+          setState(() {
+            isExpanded = !isExpanded;
+          });
+        }, child: Text("Expand")),
+      ],
+    );
+  }
+}
+  class TextResponseContainerWidget extends StatelessWidget {
+    final List<String> texts;
+    final String title;
+    final bool isExpanded;
+
+    const TextResponseContainerWidget({required this.texts, required this.title, required this.isExpanded});
+    @override
+    Widget build(BuildContext context) {
+      final double aspectRation = isExpanded ? 1 : 2;
+      return Column(
+      children: [
         CarouselSlider(
-          options: CarouselOptions(initialPage: widget.texts.length, aspectRatio: 2, enableInfiniteScroll: false, autoPlay: false, viewportFraction: 0.9),
-          items: widget.texts.map((i) {
+          options: CarouselOptions(initialPage: texts.length, aspectRatio: aspectRation, enableInfiniteScroll: false, autoPlay: false, viewportFraction: 0.95),
+          items: texts.map((i) {
             return Builder(
               builder: (BuildContext context) {
                 return Container(
@@ -30,7 +57,12 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium),
+                    child: Column(
+                      children: [
+                        Flexible(
+                          child: Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium)),
+                      ],
+                    ),
                   )
                 );
               },
@@ -42,12 +74,12 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
           child: Align(
             alignment: Alignment.bottomRight,
             child: Text(
-              widget.title,
+              title,
               style: Theme.of(context).textTheme.bodyLarge,
             ),
           ),
         ),
       ],
     );
+    }
   }
-}
