@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gemini_folder/onboarding/question_class.dart';
-import 'package:gemini_folder/user_authentication/profile_class.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_class.dart';
+import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 
 class ProfileDataList extends StatelessWidget {
   final List<OnboardingQuestion> profileQuestions;
