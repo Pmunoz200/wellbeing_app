@@ -36,10 +36,25 @@ class MyApp extends StatelessWidget {
         "/authentication": (context) => LoginScreen(
               navigator: mainNavigatorKey,
             ),
-        '/onboarding': (context) =>
-            OnboardingScreen(navigator: mainNavigatorKey),
         '/home': (context) => const HomePage(),
         '/profile': (context) => ProfileWidgetPage(navigator: mainNavigatorKey),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/onboarding') {
+          // This route is handled like this as an argument can be passed
+          // on the navigation and it needs to be passe dto the Widget.
+          final index = settings.arguments as int?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return OnboardingScreen(
+                navigator: mainNavigatorKey,
+                focusQuestionIndex: index,
+              );
+            },
+          );
+        }
+        // Default case
+        return null;
       },
     );
   }
