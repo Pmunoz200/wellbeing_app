@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemini_folder/onboarding/question_class.dart';
+import 'package:gemini_folder/onboarding/questions_list.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/user_authentication/profile_class.dart';
 import 'package:gemini_folder/util/toast_util.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> navigator;
@@ -19,134 +22,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final PageController _pageController = PageController();
   final List<TextEditingController> _controllers = [];
   late Profile newProfile;
-  final List<OnboardingQuestion> _questions = [
-    OnboardingQuestion(
-      question: 'Age',
-      parameterName: 'age',
-      inputType: TextInputType.number,
-      isOptional: false,
-      allowMultipleSelections: false,
-      addCustomField: false,
-    ),
-    OnboardingQuestion(
-      question: 'Gender',
-      parameterName: 'gender',
-      isOptional: false,
-      allowMultipleSelections: false,
-      options: ["Male", "Female"],
-      addCustomField: true,
-    ),
-    // Physical Measurements
-    OnboardingQuestion(
-        question: 'Current Weight (Kg)',
-        parameterName: 'currentWeight',
-        inputType: TextInputType.number,
-        isOptional: false,
-        allowMultipleSelections: false,
-        addCustomField: false),
-    OnboardingQuestion(
-        question: 'Target Weight (Kg)',
-        parameterName: 'targetWeight',
-        inputType: TextInputType.number,
-        isOptional: true,
-        allowMultipleSelections: false,
-        addCustomField: false),
-    OnboardingQuestion(
-        question: 'Height (cm)',
-        parameterName: 'height',
-        inputType: TextInputType.number,
-        isOptional: false,
-        allowMultipleSelections: false,
-        addCustomField: false),
-
-    // Activity Level
-    OnboardingQuestion(
-        question: 'Activity Level',
-        parameterName: 'activityLevel',
-        options: [
-          'Sedentary: Little or no exercise',
-          'Lightly Active: Light exercise or sports 1-3 days a week',
-          'Moderately Active: Moderate exercise or sports 3-5 days a week',
-          'Very Active: Hard exercise or sports 6-7 days a week',
-          'Super Active: Very hard exercise, physical job, or training twice a day',
-        ],
-        isOptional: false,
-        allowMultipleSelections: false,
-        addCustomField: false),
-    OnboardingQuestion(
-      question: 'Goal',
-      parameterName: 'goal',
-      options: [
-        'General Health',
-        'Lose Weight',
-        'Gain Muscle',
-        'Body Recomposition (Gain muscle + Lose fat)',
-        'Gain Strength',
-        'Improve Endurance/Resistance',
-      ],
-      isOptional: false,
-      allowMultipleSelections: true,
-      addCustomField: true,
-    ),
-    // Dietary Preferences
-    OnboardingQuestion(
-      question: 'Dietary Preferences',
-      parameterName: 'dietaryPreferences',
-      options: ['Indifferent', 'Vegetarian', 'Vegan'],
-      isOptional: false,
-      allowMultipleSelections: false,
-      addCustomField: true,
-    ),
-
-    // Nutritional Goals
-    OnboardingQuestion(
-      question: 'Nutritional Goals',
-      parameterName: 'nutritionalGoals',
-      options: [
-        'Let the App Decide',
-        'Increase caloric intake',
-        'Decrease caloric intake',
-        'No preference',
-      ],
-      isOptional: false,
-      allowMultipleSelections: false,
-      addCustomField: true,
-    ),
-    // Fitness Environment
-    OnboardingQuestion(
-      question: 'Fitness Environment',
-      parameterName: 'fitnessEnvironment',
-      options: ['Gym Workouts', 'Home Workouts', 'Outdoors'],
-      allowMultipleSelections: true,
-      isOptional: false,
-      addCustomField: true,
-    ),
-    // Training Style
-    OnboardingQuestion(
-      question: 'Training Style',
-      parameterName: 'trainingStyle',
-      options: [
-        'Calisthenics',
-        'Weight Training',
-        'Cardio',
-        'Crossfit',
-        "Athlete",
-      ],
-      allowMultipleSelections: true,
-      isOptional: false,
-      addCustomField: true,
-    ),
-
-    // Other
-    OnboardingQuestion(
-      question: 'Other (Sports, Medical conditions, etc)',
-      parameterName: 'other',
-      inputType: TextInputType.text,
-      isOptional: true,
-      allowMultipleSelections: false,
-      addCustomField: false,
-    ),
-  ];
+  final List<OnboardingQuestion> _questions = questions;
 
   Widget _buildInputMethod(OnboardingQuestion question, int pageIndex) {
     late Column tempWidget;
@@ -273,7 +149,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return tempWidget;
   }
 
-  void _completeForm() async {
+  void _completeForm(MainProvider provider) async {
     // Should I separate the concern of communicating with the db
     // on a separate service?
     final userDoc =
@@ -377,6 +253,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         newProfile.onboardingCompleted = true;
         // Update user document in Firestore
         await userDoc.set(newProfile.toMap());
+        // ignore: use_build_context_synchronously
+        provider.userProfile = newProfile;
         widget.navigator.currentState?.pushReplacementNamed('/token');
       } catch (e) {
         showErrorToast("An error ocurred while saving the onboarding");
@@ -403,6 +281,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MainProvider provider = Provider.of<MainProvider>(context, listen: false);
     return Scaffold(
       // appBar: AppBar(title: const Text('Onboarding')),
       body: PageView.builder(
@@ -421,7 +300,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ElevatedButton(
                     onPressed: () {
                       _questions.length - 1 == index
-                          ? _completeForm()
+                          ? _completeForm(provider)
                           : _nextPage();
                     },
                     child: _questions.length - 1 == index
