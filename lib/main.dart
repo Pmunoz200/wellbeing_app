@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:gemini_folder/firebase/firebase_options.dart';
 import 'package:gemini_folder/onboarding/onboarding.dart';
 import 'package:gemini_folder/pages/profile_page/profile_widget.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/user_authentication/login.dart';
+import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 
 void main() async {
@@ -11,7 +13,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => MainProvider(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
