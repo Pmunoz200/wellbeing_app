@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/services/auth_service.dart';
 import 'package:gemini_folder/services/database_service.dart';
-import 'package:gemini_folder/user_authentication/dialogs.dart';
-import 'package:gemini_folder/user_authentication/profile_class.dart';
+import 'package:gemini_folder/pages/user_authentication_page/dialogs.dart';
+import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:gemini_folder/util/toast_util.dart';
 import 'package:provider/provider.dart';
 

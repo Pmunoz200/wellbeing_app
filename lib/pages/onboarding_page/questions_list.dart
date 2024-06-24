@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gemini_folder/onboarding/question_class.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_class.dart';
 
 final List<OnboardingQuestion> questions = [
   OnboardingQuestion(

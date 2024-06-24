@@ -1,13 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:gemini_folder/onboarding/question_class.dart';
-import 'package:gemini_folder/onboarding/questions_list.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_class.dart';
+import 'package:gemini_folder/pages/onboarding_page/questions_list.dart';
 import 'package:gemini_folder/pages/profile_page/profile_static_content.dart';
 import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/services/auth_service.dart';
 import 'package:gemini_folder/services/database_service.dart';
-import 'package:gemini_folder/user_authentication/profile_class.dart';
+import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:gemini_folder/util/toast_util.dart';
 import 'package:provider/provider.dart';
 
