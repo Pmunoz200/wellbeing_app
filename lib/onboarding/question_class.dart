@@ -13,7 +13,7 @@ class OnboardingQuestion {
     required this.question,
     this.inputType,
     this.options,
-    required this.isOptional,
+    this.isOptional = false,
     required this.allowMultipleSelections,
     required this.parameterName,
     required this.addCustomField,
