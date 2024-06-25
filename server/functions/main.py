@@ -4,15 +4,14 @@ import google.cloud.firestore
 import json
 from datetime import datetime
 import logging
-from utils.date_utils import parse_date, normalize_date, time_frame, time_str
-import google.generativeai as genai
+
+from utils.date_utils import parse_date, normalize_date, time_frame
 from utils.prompt_utils import (
     no_logs_user_prompt,
     new_time_frame_user_prompt,
-    system_instructions,
     detailed_response_user_prompt,
-    system_instructions_without_format,
 )
+from utils.gemini_utils import get_gemini_response, app_conversation
 
 # Initialize the Firebase app
 initialize_app()
@@ -24,6 +23,7 @@ logging.basicConfig(level=logging.INFO)
 firestore_client = firestore.client()
 
 
+# ----------------------------------- Database Functions -----------------------------------
 def retrieve_user_information(uid: str) -> dict:
     """Retrieve user information from Firestore."""
     try:
@@ -75,99 +75,12 @@ def retrieve_detailed_messages_document(
         raise
 
 
-def gemini_message(role: str, content: str, date: datetime) -> dict:
-    """Create a formatted message for the Gemini model."""
-    if role == "user":
-        content = f"{time_str(date)}: {content}"
-    return {
-        "role": role,
-        "parts": [content],
-    }
-
-
-def db_message(role: str, content: str, date: datetime) -> dict:
-    """Format message for Firestore."""
-    return {
-        "gemini_message": gemini_message(role, content, date),
-        "timestamp": date,
-    }
-
-
-def call_gemini(
-    messages,
-    user_information,
-    temperature=0.7,
-    max_output_tokens=500,
-    output_format=True,
-):
-    """Call the Gemini model to generate a response."""
-    try:
-        # Configure the generation parameters
-        gen_config = genai.types.GenerationConfig(
-            candidate_count=1,
-            max_output_tokens=max_output_tokens,
-            temperature=temperature,
-            response_mime_type="application/json",
-        )
-
-        # Format system instructions with user information
-        if output_format:
-            sys_instruct = system_instructions.format(user_information=user_information)
-        else:
-            sys_instruct = system_instructions_without_format
-
-        model = genai.GenerativeModel(
-            "gemini-1.5-flash",
-            generation_config=gen_config,
-            system_instruction=sys_instruct,
-        )
-
-        # Generate response from the model
-        response = model.generate_content(messages)
-        text = response.text
-
-        return text
-    except Exception as e:
-        logging.error(f"Error in call_gemini: {str(e)}")
-        raise
-
-
-def get_gemini_response(
-    db_conversation: list,
-    query,
-    user_information: dict,
-    date: datetime,
-    output_format=True,
-) -> list:
-    """Get a response from the Gemini model and update the conversation."""
-    try:
-        # Add user query to the conversation
-        db_conversation.append(db_message("user", query, date))
-        query_messages = [message["gemini_message"] for message in db_conversation]
-        response = call_gemini(query_messages, user_information, output_format)
-        db_conversation.append(db_message("model", response, date))
-        return db_conversation
-    except Exception as e:
-        logging.error(f"Error in get_gemini_response: {str(e)}")
-        raise
-
-
-def app_conversation(db_conversation: list) -> list:
-    """Format conversation for the app."""
-    app_messages = []
-    for db_message in db_conversation:
-        message = db_message["gemini_message"]
-        if message["role"] == "model":
-            app_message = {
-                "role": message["role"],
-                "content": message["parts"][0],
-            }
-            app_messages.append(app_message)
-    return app_messages
-
-
 def update_messages_db(
-    doc, db_conversation, uid, date: datetime, messages: list
+    doc: google.cloud.firestore.DocumentSnapshot,
+    db_conversation: list,
+    uid: str,
+    date: datetime,
+    messages: list,
 ) -> str:
     """Update Firestore with the conversation."""
     try:
@@ -190,7 +103,12 @@ def update_messages_db(
 
 
 def update_detailed_messages_db(
-    detailed_doc, content, uid, date: datetime, index: int, container: str
+    detailed_doc: google.cloud.firestore.DocumentSnapshot,
+    content: str,
+    uid: str,
+    date: datetime,
+    index: int,
+    container: str,
 ) -> str:
     """Update Firestore with the conversation."""
     try:
@@ -223,7 +141,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         uid = req.args.get("uid")
 
         if not date_str or not uid:
-            return https_fn.Response("Missing date or uid parameter", status=400)
+            return https_fn.Response("Missing date or uid parameter", status=422)
 
         date_obj = parse_date(date_str)
 
@@ -293,7 +211,7 @@ def get_response(req: https_fn.Request) -> https_fn.Response:
 
         if not uid or not query or not date_str:
             return https_fn.Response(
-                "Missing uid, query, or date parameter", status=400
+                "Missing uid, query, or date parameter", status=422
             )
 
         date_obj = parse_date(date_str)
@@ -345,7 +263,7 @@ def get_detailed_response(req: https_fn.Request) -> https_fn.Response:
 
         if not uid or not index or not date_str or not container:
             return https_fn.Response(
-                "Missing uid, index, container, or date parameter", status=400
+                "Missing uid, index, container, or date parameter", status=422
             )
 
         index = int(index)
