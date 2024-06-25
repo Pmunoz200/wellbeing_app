@@ -26,6 +26,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final List<TextEditingController> _controllers = [];
   late Profile newProfile;
   final List<OnboardingQuestion> _questions = questions;
+  // I use this so I dont change the profile each time the app builds but only at the first one (Can't be at the init)
+  late bool profileInitialized;
 
   Widget _buildInputMethod(OnboardingQuestion question, int pageIndex) {
     late Column tempWidget;
@@ -181,7 +183,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 .any((e) => e == "Custom") &&
             _controllers[pageIndex].text.isNotEmpty) {
           // If there is a flag 'Custom' and the consroller is not empty
-          newProfile[question.parameterName].remove((e) => e == "Custom");
+          newProfile[question.parameterName].removeWhere((e) => e == "Custom");
           newProfile[question.parameterName].add(_controllers[pageIndex].text);
         } else if (newProfile[question.parameterName]
                 .any((e) => e == "Custom") &&
@@ -276,6 +278,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   void initState() {
     super.initState();
+    profileInitialized = false;
     newProfile = Profile.empty(userId: user!.uid, email: user!.email);
     for (var i = 0; i < _questions.length; i++) {
       _controllers.add(TextEditingController());
@@ -297,7 +300,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   @override
   Widget build(BuildContext context) {
     MainProvider provider = Provider.of<MainProvider>(context, listen: false);
-    if (provider.userProfile != null) {
+    if (provider.userProfile != null && !profileInitialized) {
       newProfile = provider.userProfile!;
       int questionIndex = 0;
       for (OnboardingQuestion question in questions) {
@@ -325,16 +328,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 .removeWhere((e) => e == customValue);
             newProfile[question.parameterName].add("Custom");
           }
-          //TODO: Add the possibility for a question with options but no multiple selection
-          // to add the custom field selection, the value in the controller, and set the 
+          //Add the possibility for a question with options but no multiple selection
+          // to add the custom field selection, the value in the controller, and set the
           // "Custom" flag
+        } else if (question.options != null &&
+            !question.allowMultipleSelections) {
+          if (question.addCustomField &&
+              !question.options!.contains(newProfile[question.parameterName])) {
+            _controllers[questionIndex].text =
+                newProfile[question.parameterName];
+            newProfile[question.parameterName] = "Custom";
+          }
         }
         questionIndex++;
       }
+      setState(() {
+        profileInitialized = true;
+      });
     }
 
     return Scaffold(
-      // appBar: AppBar(title: const Text('Onboarding')),
+      appBar: provider.userProfile != null ? AppBar() : null,
       body: PageView.builder(
         controller: _pageController,
         itemCount: _questions.length,
