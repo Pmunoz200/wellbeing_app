@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 class OnboardingQuestion {
   final String question;
-  final TextInputType inputType;
+  final TextInputType? inputType;
   final List<String>? options;
   final bool isOptional;
-  final bool allowMultipleSelections; // New flag for multiple selections
+  final bool allowMultipleSelections;
+  final String parameterName; // Name to use in the db
+  final bool addCustomField; // Allows users to add a custom entry value
 
   OnboardingQuestion({
     required this.question,
-    this.inputType = TextInputType.text,
+    this.inputType,
     this.options,
     this.isOptional = false,
-    this.allowMultipleSelections = false, // Default to false
+    required this.allowMultipleSelections,
+    required this.parameterName,
+    required this.addCustomField,
   });
 }

@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/token': (context) => HomePage(),
         '/onboarding': (context) =>
             OnboardingScreen(navigator: mainNavigatorKey),
+        'home': (context) => HomePage(),
       },
     );
   }

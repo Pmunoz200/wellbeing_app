@@ -46,7 +46,7 @@ class LoginScreenState extends State<LoginScreen> {
       final onboardingCompleted =
           userSnapshot.data()?['onboardingCompleted'] ?? false;
       if (onboardingCompleted) {
-        widget.navigator.currentState?.pushReplacementNamed('/token');
+        widget.navigator.currentState?.pushReplacementNamed('/home');
       } else {
         widget.navigator.currentState?.pushReplacementNamed('/onboarding');
       }

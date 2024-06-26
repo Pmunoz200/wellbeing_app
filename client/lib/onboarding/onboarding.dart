@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemini_folder/onboarding/question_class.dart';
+import 'package:gemini_folder/user_authentication/profile_class.dart';
+import 'package:gemini_folder/util/toast_util.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> navigator;
@@ -13,51 +15,67 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
+  final user = FirebaseAuth.instance.currentUser;
   final PageController _pageController = PageController();
   final List<TextEditingController> _controllers = [];
-  final List<bool> _isAnswerValid = [];
-  final List<String?> _selectedOptions = [];
-  final List<Set<String>> _multipleSelections = [];
-
+  late Profile newProfile;
   final List<OnboardingQuestion> _questions = [
-    // Personal Information
-    OnboardingQuestion(question: 'Name', inputType: TextInputType.text),
-    OnboardingQuestion(question: 'Age', inputType: TextInputType.number),
+    OnboardingQuestion(
+      question: 'Age',
+      parameterName: 'age',
+      inputType: TextInputType.number,
+      isOptional: false,
+      allowMultipleSelections: false,
+      addCustomField: false,
+    ),
     OnboardingQuestion(
       question: 'Gender',
-      options: ['Male', 'Female', 'Other'],
+      parameterName: 'gender',
+      isOptional: false,
+      allowMultipleSelections: false,
+      options: ["Male", "Female"],
+      addCustomField: true,
     ),
-
     // Physical Measurements
     OnboardingQuestion(
-      question: 'Current Weight (Kg)',
-      inputType: TextInputType.number,
-    ),
+        question: 'Current Weight (Kg)',
+        parameterName: 'currentWeight',
+        inputType: TextInputType.number,
+        isOptional: false,
+        allowMultipleSelections: false,
+        addCustomField: false),
     OnboardingQuestion(
-      question: 'Target Weight (Kg)',
-      inputType: TextInputType.number,
-      isOptional: true,
-    ),
+        question: 'Target Weight (Kg)',
+        parameterName: 'targetWeight',
+        inputType: TextInputType.number,
+        isOptional: true,
+        allowMultipleSelections: false,
+        addCustomField: false),
     OnboardingQuestion(
-      question: 'Height (cm)',
-      inputType: TextInputType.number,
-    ),
+        question: 'Height (cm)',
+        parameterName: 'height',
+        inputType: TextInputType.number,
+        isOptional: false,
+        allowMultipleSelections: false,
+        addCustomField: false),
 
     // Activity Level
     OnboardingQuestion(
-      question: 'Activity Level',
-      options: [
-        'Sedentary: Little or no exercise',
-        'Lightly Active: Light exercise or sports 1-3 days a week',
-        'Moderately Active: Moderate exercise or sports 3-5 days a week',
-        'Very Active: Hard exercise or sports 6-7 days a week',
-        'Super Active: Very hard exercise, physical job, or training twice a day',
-      ],
-    ),
-
-    // Goal
+        question: 'Activity Level',
+        parameterName: 'activityLevel',
+        options: [
+          'Sedentary: Little or no exercise',
+          'Lightly Active: Light exercise or sports 1-3 days a week',
+          'Moderately Active: Moderate exercise or sports 3-5 days a week',
+          'Very Active: Hard exercise or sports 6-7 days a week',
+          'Super Active: Very hard exercise, physical job, or training twice a day',
+        ],
+        isOptional: false,
+        allowMultipleSelections: false,
+        addCustomField: false),
     OnboardingQuestion(
       question: 'Goal',
+      parameterName: 'goal',
       options: [
         'General Health',
         'Lose Weight',
@@ -65,279 +83,305 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         'Body Recomposition (Gain muscle + Lose fat)',
         'Gain Strength',
         'Improve Endurance/Resistance',
-        'Custom',
       ],
+      isOptional: false,
       allowMultipleSelections: true,
+      addCustomField: true,
     ),
-
     // Dietary Preferences
     OnboardingQuestion(
       question: 'Dietary Preferences',
-      options: ['Indifferent', 'Vegetarian', 'Vegan', 'Custom'],
+      parameterName: 'dietaryPreferences',
+      options: ['Indifferent', 'Vegetarian', 'Vegan'],
+      isOptional: false,
+      allowMultipleSelections: false,
+      addCustomField: true,
     ),
 
     // Nutritional Goals
     OnboardingQuestion(
       question: 'Nutritional Goals',
+      parameterName: 'nutritionalGoals',
       options: [
         'Let the App Decide',
         'Increase caloric intake',
         'Decrease caloric intake',
         'No preference',
-        'Custom',
       ],
+      isOptional: false,
+      allowMultipleSelections: false,
+      addCustomField: true,
     ),
-
     // Fitness Environment
     OnboardingQuestion(
       question: 'Fitness Environment',
-      options: ['Gym Workouts', 'Home Workouts', 'Outdoors', 'Custom'],
+      parameterName: 'fitnessEnvironment',
+      options: ['Gym Workouts', 'Home Workouts', 'Outdoors'],
       allowMultipleSelections: true,
+      isOptional: false,
+      addCustomField: true,
     ),
-
     // Training Style
     OnboardingQuestion(
       question: 'Training Style',
-      inputType: TextInputType.none,
+      parameterName: 'trainingStyle',
       options: [
         'Calisthenics',
         'Weight Training',
         'Cardio',
         'Crossfit',
         "Athlete",
-        'Custom'
       ],
-      allowMultipleSelections: true, // Allow multiple selections
+      allowMultipleSelections: true,
+      isOptional: false,
+      addCustomField: true,
     ),
 
     // Other
     OnboardingQuestion(
       question: 'Other (Sports, Medical conditions, etc)',
+      parameterName: 'other',
       inputType: TextInputType.text,
       isOptional: true,
+      allowMultipleSelections: false,
+      addCustomField: false,
     ),
   ];
 
-  Widget _buildQuestionPage(
-      OnboardingQuestion question, int index, BuildContext context) {
-    // Get the width and height of the screen
-    double screenWidth = MediaQuery.of(context).size.width;
-    // Calculate padding based on screen dimensions
-    double horizontalPadding = screenWidth * 0.05; // 5% of screen width
+  Widget _buildInputMethod(OnboardingQuestion question, int pageIndex) {
+    late Column tempWidget;
 
-    return Center(
-      child: SingleChildScrollView(
-        child: Padding(
-          // Use 10% of the total screen width for padding
-          padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Use a text field in case the answer requires just an input.
-              // Uses corresponding keyboard.
-              if ((question.inputType == TextInputType.text ||
-                      question.inputType == TextInputType.number) &&
-                  question.options == null) ...[
-                TextField(
-                  controller: _controllers[index],
-                  decoration: InputDecoration(labelText: question.question),
-                  keyboardType: question.inputType,
-                  onChanged: (value) {
-                    setState(() {
-                      _isAnswerValid[index] =
-                          value.isNotEmpty || question.isOptional;
-                    });
-                  },
-                ),
-              ],
-              // For question with options, draw them depending on the flag for multiple choice
-              if (question.options != null) ...[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(question.question),
-                    ...question.options!.map((option) {
-                      // For multiple select options
-                      if (question.allowMultipleSelections) {
-                        return CheckboxListTile(
-                          title: Text(option),
-                          value: _multipleSelections[index].contains(option),
-                          onChanged: (bool? selected) {
-                            setState(() {
-                              if (selected == true) {
-                                _multipleSelections[index].add(option);
-                              } else {
-                                _multipleSelections[index].remove(option);
-                              }
-                              _isAnswerValid[index] =
-                                  _multipleSelections[index].isNotEmpty ||
-                                      _controllers[index].text.isNotEmpty ||
-                                      question.isOptional;
-                            });
-                          },
-                        );
-                      } else {
-                        // In the case a field is an open answer
-                        if (option == 'Custom' || option == 'Other') {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RadioListTile<String>(
-                                title: Text(option),
-                                value: option,
-                                groupValue: _selectedOptions[index],
-                                onChanged: (newValue) {
-                                  setState(() {
-                                    _selectedOptions[index] = newValue;
-                                    _isAnswerValid[index] = true;
-                                  });
-                                },
-                              ),
-                              if (_selectedOptions[index] == option)
-                                TextField(
-                                  controller: _controllers[index],
-                                  decoration: InputDecoration(
-                                    labelText: 'Enter Custom ${question.question}',
-                                  ),
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _isAnswerValid[index] = value.isNotEmpty;
-                                    });
-                                  },
-                                ),
-                            ],
-                          );
-                        } else {
-                          // Case for single fixed answe
-                          return RadioListTile<String>(
-                            title: Text(option),
-                            value: option,
-                            groupValue: _selectedOptions[index],
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedOptions[index] = newValue;
-                                _isAnswerValid[index] = true;
-                              });
-                            },
-                          );
-                        }
-                      }
-                    }),
-                    // Custom option for text input, for question with multiple answers
-                    if (question.allowMultipleSelections &&
-                        question.options!.contains('Custom')) ...[
-                      if (_multipleSelections[index].contains('Custom'))
-                        TextField(
-                          controller: _controllers[index],
-                          decoration: InputDecoration(
-                            labelText: 'Enter Custom ${question.question}',
-                          ),
-                          onChanged: (value) {
-                            setState(() {
-                              _isAnswerValid[index] = value.isNotEmpty;
-                            });
-                          },
-                        ),
-                    ],
-                  ],
-                ),
-              ],
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _isAnswerValid[index]
-                    ? () {
-                        if (index == _questions.length - 1) {
-                          _completeOnboarding();
-                        } else {
-                          _nextPage();
-                        }
-                      }
-                    : null,
-                child: Text(index == _questions.length - 1
-                    ? 'Complete Onboarding'
-                    : 'Next'),
-              ),
-            ],
+    if (question.inputType != null) {
+      // question is either a text or a number to write
+      tempWidget = Column(
+        children: [
+          TextField(
+            controller: _controllers[pageIndex],
+            decoration: InputDecoration(labelText: question.question),
+            keyboardType: question.inputType,
           ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    for (var i = 0; i < _questions.length; i++) {
-      _controllers.add(TextEditingController());
-      _isAnswerValid.add(_questions[i].isOptional);
-      _selectedOptions.add(null);
-      _multipleSelections.add(<String>{});
+        ],
+      );
+    } else if (question.options != null &&
+        question.allowMultipleSelections == true) {
+      // question with single multiple options for an answer
+      tempWidget = Column(
+        children: [
+          Text(question.question),
+          ...question.options!.map<Widget>((option) {
+            return CheckboxListTile.adaptive(
+                title: Text(option),
+                value: newProfile[question.parameterName].contains(option),
+                onChanged: (bool? newValue) {
+                  if (newProfile[question.parameterName].contains(option)) {
+                    // add value when picked
+                    setState(() {
+                      newProfile[question.parameterName].remove(option);
+                    });
+                  } else {
+                    // remove value if already present
+                    setState(() {
+                      newProfile[question.parameterName].add(option);
+                    });
+                  }
+                });
+          })
+        ],
+      );
+      if (question.addCustomField) {
+        // Add custom open field on multiple selection
+        tempWidget.children.add(CheckboxListTile.adaptive(
+            title: newProfile[question.parameterName]
+                        .any((e) => !question.options!.contains(e)) &&
+                    newProfile[question.parameterName].length > 0
+                ? TextField(
+                    controller: _controllers[pageIndex],
+                    decoration: InputDecoration(
+                        labelText: "Custom",
+                        enabled: newProfile[question.parameterName]
+                                .any((e) => !question.options!.contains(e)) &&
+                            newProfile[question.parameterName].length > 0),
+                    keyboardType: TextInputType.text,
+                  )
+                : const Text("Custom"),
+            // Check that at least one of the elements of the profile is not in the options
+            value: newProfile[question.parameterName]
+                    .any((e) => !question.options!.contains(e)) &&
+                newProfile[question.parameterName].length > 0,
+            onChanged: (bool? newValue) {
+              if (!newValue!) {
+                // I use the String "Custom" as a flag on the result, to check later
+                // the values in the controllers an replace it for the final value
+                // of the textField.
+                print("OPTIONS: ${question.options}");
+                setState(() {
+                  newProfile[question.parameterName]
+                      .retainWhere((e) => e != "Custom");
+                });
+              } else {
+                setState(() {
+                  newProfile[question.parameterName].add("Custom");
+                });
+              }
+            }));
+      }
+    } else if (question.options != null &&
+        question.allowMultipleSelections == false) {
+      tempWidget = Column(
+        children: [
+          Text(question.question),
+          ...question.options!.map<Widget>((option) {
+            return RadioListTile<String>(
+              title: Text(option),
+              value: option,
+              onChanged: (newValue) {
+                setState(() {
+                  newProfile[question.parameterName] = newValue;
+                });
+              },
+              groupValue: newProfile[question.parameterName],
+            );
+          })
+        ],
+      );
+      if (question.addCustomField == true) {
+        // Add custom open field for single answers of multiple selection
+        tempWidget.children.add(RadioListTile<String>(
+            title: newProfile[question.parameterName] == "Custom"
+                ? TextField(
+                    controller: _controllers[pageIndex],
+                    keyboardType: TextInputType.text,
+                    decoration:
+                        const InputDecoration(labelText: "Input Custom"),
+                  )
+                : const Text("Custom"),
+            value: "Custom",
+            groupValue: newProfile[question.parameterName],
+            onChanged: (newValue) {
+              setState(() {
+                newProfile[question.parameterName] = newValue;
+              });
+            }));
+      }
+    } else {
+      tempWidget = const Column(
+        children: [
+          Text("Missing Question"),
+        ],
+      );
     }
+
+    return tempWidget;
   }
 
-  void _completeOnboarding() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDoc =
-          FirebaseFirestore.instance.collection('users').doc(user.uid);
-
-      // Initialize a list to store the indices of unanswered non-optional questions
-      List<int> unansweredIndices = [];
-
-      // Check if all non-optional questions have valid answers
-      bool allNonOptionalQuestionsAnswered = true;
-      for (var i = 0; i < _questions.length; i++) {
-        if (!_questions[i].isOptional && !_isAnswerValid[i]) {
-          // If a non-optional question doesn't have a valid answer, set the flag to false
-          allNonOptionalQuestionsAnswered = false;
-          // Add the index of the unanswered question to the list
-          unansweredIndices.add(i);
+  void _completeForm() async {
+    // Should I separate the concern of communicating with the db
+    // on a separate service?
+    final userDoc =
+        FirebaseFirestore.instance.collection('users').doc(user!.uid);
+    int pageIndex = 0;
+    List<String> missingFields = [];
+    for (OnboardingQuestion question in _questions) {
+      if (question.inputType != null) {
+        // Add to the profile the values from the controllers
+        if (_controllers[pageIndex].text.isNotEmpty) {
+          newProfile[question.parameterName] = _controllers[pageIndex].text;
+        } else {
+          if (!question.isOptional) {
+            missingFields.add(question.question);
+          }
+        }
+      } else if (question.options != null &&
+          question.allowMultipleSelections == true) {
+        // Control results for multiple selection
+        if (newProfile[question.parameterName].isEmpty &&
+            !question.isOptional) {
+          if (!question.isOptional) {
+            missingFields.add(question.question);
+          }
+        } else if (newProfile[question.parameterName]
+                .any((e) => e == "Custom") &&
+            _controllers[pageIndex].text.isNotEmpty) {
+          // If there is a flag 'Custom' and the consroller is not empty
+          newProfile[question.parameterName].remove((e) => e == "Custom");
+          newProfile[question.parameterName].add(_controllers[pageIndex].text);
+        } else if (newProfile[question.parameterName]
+                .any((e) => e == "Custom") &&
+            _controllers[pageIndex].text.isEmpty) {
+          if (!question.isOptional) {
+            missingFields.add("Custom field: ${question.question}");
+          }
+        }
+      } else if (question.options != null &&
+          question.allowMultipleSelections == false) {
+        // Control results for single answer multiple options
+        if (newProfile[question.parameterName] == null &&
+            question.isOptional != true) {
+          if (!question.isOptional) {
+            missingFields.add(question.question);
+          }
+        } else if (newProfile[question.parameterName] == "Custom") {
+          if (_controllers[pageIndex].text.isNotEmpty) {
+            // If there is a custom answer, put it in the profile
+            newProfile[question.parameterName] = _controllers[pageIndex].text;
+          } else {
+            if (!question.isOptional) {
+              missingFields.add("Custom field: ${question.question}");
+            }
+          }
         }
       }
-
-      if (allNonOptionalQuestionsAnswered) {
-        // If all non-optional questions have valid answers, proceed with completing onboarding
-        final data = {
-          // Prepare data for updating user document
-          for (var i = 0; i < _questions.length; i++)
-            _questions[i].question: _questions[i].allowMultipleSelections
-                ? _multipleSelections[i]
-                    .toList() // Store multiple selections as a list
-                : _controllers[i].text.isEmpty
-                    ? _selectedOptions[
-                        i] // Use selected option if text field is empty
-                    : _controllers[i].text, // Otherwise, use text field value
-          'onboardingCompleted': true,
-        };
-        // Update user document in Firestore
-        await userDoc.update(data);
-        // Navigate to the token screen upon successful completion
-        widget.navigator.currentState?.pushReplacementNamed('/token');
-      } else {
-        // If any non-optional question is unanswered, show an alert dialog
-        showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Incomplete Onboarding'),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text('Please complete the following questions:'),
-                const SizedBox(height: 8),
-                // Display the list of unanswered questions
-                for (var index in unansweredIndices)
-                  Text(_questions[index].question),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
-              ),
+      pageIndex++;
+    }
+    if (missingFields.isNotEmpty) {
+      // If any non-optional question is unanswered, show an alert dialog
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Incomplete Onboarding'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Please complete the following questions:'),
+              const SizedBox(height: 8),
+              // Display the list of unanswered questions
+              for (var field in missingFields) Text(field),
             ],
           ),
-        );
+          actions: [
+            TextButton(
+              onPressed: () {
+                String? value2Delete;
+                for (OnboardingQuestion question in _questions) {
+                  if (question.options != null &&
+                      question.allowMultipleSelections == true) {
+                    if (newProfile[question.parameterName]
+                        .any((e) => !question.options!.contains(e))) {
+                      value2Delete = newProfile[question.parameterName]
+                          .firstWhere((e) => !question.options!.contains(e));
+                      newProfile[question.parameterName]
+                          .removeWhere((e) => e == value2Delete);
+                    }
+                  }
+                }
+                Navigator.pop(context);
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } else {
+      try {
+        newProfile.name = user!.displayName;
+        newProfile.onboardingCompleted = true;
+        // Update user document in Firestore
+        await userDoc.set(newProfile.toMap());
+        widget.navigator.currentState?.pushReplacementNamed('/token');
+      } catch (e) {
+        showErrorToast("An error ocurred while saving the onboarding");
+        return;
       }
     }
   }
@@ -350,6 +394,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    newProfile = Profile.empty(userId: user!.uid, email: user!.email);
+    for (var i = 0; i < _questions.length; i++) {
+      _controllers.add(TextEditingController());
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       // appBar: AppBar(title: const Text('Onboarding')),
@@ -357,7 +410,27 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         controller: _pageController,
         itemCount: _questions.length,
         itemBuilder: (context, index) {
-          return _buildQuestionPage(_questions[index], index, context);
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8.0),
+                  child: _buildInputMethod(_questions[index], index),
+                ),
+                ElevatedButton(
+                    onPressed: () {
+                      _questions.length - 1 == index
+                          ? _completeForm()
+                          : _nextPage();
+                    },
+                    child: _questions.length - 1 == index
+                        ? const Text("Send onboarding")
+                        : const Text("Next")),
+              ],
+            ),
+          );
         },
       ),
     );

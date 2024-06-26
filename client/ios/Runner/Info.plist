@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- PERMISSIONS FOR THE MICROPHONE AND THE CAMERA -->
+	<key>NSCameraUsageDescription</key>
+	<string>Our app needs access to your camera to take photos and videos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Our app needs access to your microphone to record audio.</string>
 </dict>
 </plist>
