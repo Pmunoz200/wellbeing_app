@@ -54,13 +54,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    IconButton(
+          leading: IconButton(
                       icon: const Icon(Icons.arrow_back),
                       onPressed: () {
                         // Handle previous date logic
@@ -68,25 +62,21 @@ class _HomePageState extends State<HomePage> {
                       },
                       color: Colors.black,
                     ),
-                    Expanded(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            DateFormat('EEEE, MMM d')
-                                .format(_selectedDate)
-                                .toString(), // Fix the DateTime.format method
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Don't show 4 the current date
-                    _selectedDate.isBefore(
+          title: Center(
+            child: Text(
+                              DateFormat('EEEE, MMM d')
+                                  .format(_selectedDate)
+                                  .toString(), // Fix the DateTime.format method
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                      // Don't show 4 the current date
+            ),
+          ),
+          actions: [
+            _selectedDate.isBefore(
                             startOfTomorrow.subtract(const Duration(days: 1)))
                         ? IconButton(
                             icon: const Icon(Icons.arrow_forward),
@@ -101,25 +91,16 @@ class _HomePageState extends State<HomePage> {
                         : const SizedBox(
                             width: 48,
                           ),
-                  ],
-                ),
-              ),
-              Container(
+            Container(
                 width: 40,
                 height: 40,
-                decoration: const BoxDecoration(
-                    shape: BoxShape.circle, color: Colors.black),
+                margin: EdgeInsets.zero,
                 child: IconButton(
                   onPressed: () {},
-                  icon: const Icon(
-                    Icons.person,
-                    size: 20,
-                    color: Colors.white,
-                  ),
+                  constraints: const BoxConstraints(),
+                  icon: Image.asset("assets/icon_profile.png")
                 ),
-              )
-            ],
-          ),
+              )],
           backgroundColor: Theme.of(context).primaryColor,
         ),
         body: Container(
