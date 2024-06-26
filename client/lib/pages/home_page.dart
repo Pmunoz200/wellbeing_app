@@ -3,6 +3,7 @@ import 'home_page/home_app_bar.dart';
 import 'package:gemini_folder/pages/home_page/exercise_widget.dart';
 import 'package:gemini_folder/pages/home_page/food_widget.dart';
 import 'package:gemini_folder/pages/home_page/home_widget.dart';
+import 'package:gemini_folder/pages/home_page/home_bottom_bar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -75,35 +76,9 @@ class _HomePageState extends State<HomePage> {
             child: _widgetOptions.elementAt(_selectedIndex),
           ),
         ),
-        bottomNavigationBar: Container(
-          decoration: const BoxDecoration(
-            border: Border(
-              top: BorderSide(
-                color: Colors.black,
-                width: 0.5,
-              ),
-            ),
-          ),
-          child: BottomNavigationBar(
-            selectedItemColor: Colors.black,
-            unselectedItemColor: Colors.grey[400],
-            items: const <BottomNavigationBarItem>[
-              BottomNavigationBarItem(
-                icon: Icon(Icons.home),
-                label: 'Home',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.fitness_center),
-                label: 'Exercise',
-              ),
-              BottomNavigationBarItem(
-                icon: Icon(Icons.fastfood),
-                label: 'Food',
-              ),
-            ],
-            currentIndex: _selectedIndex,
-            onTap: _onItemTapped,
-          ),
+        bottomNavigationBar: HomeBottomBar(
+          selectedIndex: _selectedIndex,
+          onItemTapped: _onItemTapped,
         ));
   }
 }
