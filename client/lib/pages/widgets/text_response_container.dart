@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:gemini_folder/pages/home_page/exercise_widget.dart';
 import 'package:gemini_folder/pages/widgets/expandable_card_widget.dart';
+import 'package:drop_cap_text/drop_cap_text.dart';
 
 class TextResponseContainer extends StatefulWidget {
   final List<String> texts;
@@ -24,6 +24,7 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
   @override
   Widget build(BuildContext context) {
     void handleExpandedChange() {
+      widget.callback();
       setState(() {
         isExpanded = !isExpanded;
       });
@@ -59,12 +60,19 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Stack(
-                    fit: StackFit.loose,
-                    alignment: Alignment.topRight,
-                    children: [
-                          Positioned(
-                            child: IconButton(
+                  child:  Container(
+                      padding: EdgeInsets.all(8),
+                      child: DropCapText(
+                       'Text $i', 
+                       style:  Theme.of(context).textTheme.bodyMedium, 
+                        overflow: TextOverflow.ellipsis, 
+                        textAlign: TextAlign.justify,
+                        maxLines: isExpanded ? 100 : 4,
+                        dropCapPosition: DropCapPosition.end,
+                        dropCap: DropCap(
+                          width: 20,
+                          height: 20,
+                          child: IconButton(
                               padding: EdgeInsets.all(0),
                               constraints: BoxConstraints(),
                               onPressed: () {
@@ -72,19 +80,8 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                             }, 
                             icon: Icon(isExpanded ? Icons.zoom_in_map : Icons.zoom_out_map)
                             ),
-                          ),
-                            Positioned(
-                              child: Container(
-                                  padding: EdgeInsets.all(8),
-                                  child: Wrap(
-                                    children: [Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium, 
-                                    overflow: TextOverflow.ellipsis, 
-                                    textAlign: TextAlign.justify,
-                                    maxLines: isExpanded ? 100 : 4,),]
-                                  ),
-                                ),
-                            ),
-                        ],
+                      ),
+                      )
                       ),
                 );
               },
