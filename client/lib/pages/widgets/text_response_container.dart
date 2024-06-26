@@ -60,6 +60,7 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child: Stack(
+                    fit: StackFit.loose,
                     alignment: Alignment.topRight,
                     children: [
                           Positioned(
@@ -72,8 +73,8 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                             icon: Icon(isExpanded ? Icons.zoom_in_map : Icons.zoom_out_map)
                             ),
                           ),
-                            Wrap(
-                              children: [Container(
+                            Positioned(
+                              child: Container(
                                   padding: EdgeInsets.all(8),
                                   child: Wrap(
                                     children: [Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium, 
@@ -81,7 +82,7 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                                     textAlign: TextAlign.justify,
                                     maxLines: isExpanded ? 100 : 4,),]
                                   ),
-                                ),]
+                                ),
                             ),
                         ],
                       ),
