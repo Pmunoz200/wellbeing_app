@@ -61,24 +61,25 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                   child:  Container(
-                      padding: EdgeInsets.all(8),
+                      padding: EdgeInsets.all(12),
                       child: DropCapText(
                        'Text $i', 
+                       mode: DropCapMode.inside,
                        style:  Theme.of(context).textTheme.bodyMedium, 
                         overflow: TextOverflow.ellipsis, 
-                        textAlign: TextAlign.justify,
                         maxLines: isExpanded ? 100 : 4,
                         dropCapPosition: DropCapPosition.end,
+                        dropCapStyle: Theme.of(context).textTheme.bodyLarge,
                         dropCap: DropCap(
-                          width: 30,
-                          height: 30,
+                          width: 20,
+                          height: 20,
                           child: IconButton(
-                              padding: EdgeInsets.all(0),
+                              padding: EdgeInsets.fromLTRB(4, 0, 0, 4),
                               constraints: BoxConstraints(),
                               onPressed: () {
                               this.callback();
                             }, 
-                            icon: Icon(isExpanded ? Icons.zoom_in_map : Icons.zoom_out_map)
+                            icon: Image.asset(isExpanded ? "assets/icon_compress_button.png" : "assets/icon_expand_button.png")
                             ),
                       ),
                       )
