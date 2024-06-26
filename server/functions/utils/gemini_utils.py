@@ -11,7 +11,7 @@ from utils.prompt_utils import (
 
 def get_gemini_response(
     db_conversation: list,
-    query,
+    query: str,
     user_information: dict,
     date: datetime,
     output_format=True,
