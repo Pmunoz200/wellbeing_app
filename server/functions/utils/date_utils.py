@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-def parse_date(date_str: str, date_format: str = "%Y-%m-%dT%H:%M:%S") -> datetime:
+def parse_date(date: str, date_format: str = "%Y-%m-%dT%H:%M:%S") -> datetime:
     try:
         return datetime.strptime(date_str, date_format)
     except ValueError as e:
