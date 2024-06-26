@@ -1,14 +1,14 @@
 # Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
-.DS_Store
-.atom/
-.buildlog/
-.history
-.svn/
-migrate_working_dir/
+client/*.class
+client/*.log
+client/*.pyc
+client/*.swp
+client/.DS_Store
+client/.atom/
+client/.buildlog/
+client/.history
+client/.svn/
+client/migrate_working_dir/
 
 # IntelliJ related
 *.iml
@@ -24,13 +24,13 @@ migrate_working_dir/
 # Flutter/Dart/Pub related
 **/doc/api/
 **/ios/Flutter/.last_build_id
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-/build/
-pubspec.lock
+client/.dart_tool/
+client/.flutter-plugins
+client/.flutter-plugins-dependencies
+client/.pub-cache/
+client/.pub/
+client/build/
+client/pubspec.lock
 
 # Symbolication related
 app.*.symbols
