@@ -373,8 +373,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         ),
       );
     } else {
-      // TODO if the send method is sent twice (Because some fields where missing)
-      // clean the stuff stored, as they might be stored twice at the second send
       try {
         newProfile.name = user!.displayName;
         newProfile.onboardingCompleted = true;
