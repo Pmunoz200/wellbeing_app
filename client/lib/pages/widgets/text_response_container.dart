@@ -23,20 +23,15 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
   }
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ExpandableCardContainer(
+    void handleExpandedChange() {
+      setState(() {
+        isExpanded = !isExpanded;
+      });
+    }
+    return ExpandableCardContainer(
           isExpanded: this.isExpanded,
-          collapsedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: this.isExpanded,),
-          expandedChild: TextResponseContainerWidget(texts: widget.texts, title: "", isExpanded: this.isExpanded,),
-        ),
-        MaterialButton(onPressed: () {
-          widget.callback();
-          setState(() {
-            isExpanded = !isExpanded;
-          });
-        }, child: Text("Expand")),
-      ],
+          collapsedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: this.isExpanded, callback: handleExpandedChange),
+          expandedChild: TextResponseContainerWidget(texts: widget.texts, title: widget.title, isExpanded: this.isExpanded, callback: handleExpandedChange),
     );
   }
 }
@@ -44,11 +39,12 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
     final List<String> texts;
     final String title;
     final bool isExpanded;
+    final VoidCallback callback;
 
-    const TextResponseContainerWidget({required this.texts, required this.title, required this.isExpanded});
+    const TextResponseContainerWidget({required this.texts, required this.title, required this.isExpanded, required this.callback});
     @override
     Widget build(BuildContext context) {
-      final double aspectRation = isExpanded ? 1 : 2;
+      final double aspectRation = isExpanded ? 0.7 : 2;
       return Column(
       children: [
         CarouselSlider(
@@ -63,15 +59,32 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                     color: Theme.of(context).cardColor,
                     borderRadius: BorderRadius.circular(10.0),
                   ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        Flexible(
-                          child: Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium)),
-                      ],
-                    ),
-                  )
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                          Positioned(
+                            child: IconButton(
+                              padding: EdgeInsets.all(0),
+                              constraints: BoxConstraints(),
+                              onPressed: () {
+                              this.callback();
+                            }, 
+                            icon: Icon(isExpanded ? Icons.zoom_in_map : Icons.zoom_out_map)
+                            ),
+                          ),
+                            Wrap(
+                              children: [Container(
+                                  padding: EdgeInsets.all(8),
+                                  child: Wrap(
+                                    children: [Text('Text $i', style:  Theme.of(context).textTheme.bodyMedium, 
+                                    overflow: TextOverflow.ellipsis, 
+                                    textAlign: TextAlign.justify,
+                                    maxLines: isExpanded ? 100 : 4,),]
+                                  ),
+                                ),]
+                            ),
+                        ],
+                      ),
                 );
               },
             );
