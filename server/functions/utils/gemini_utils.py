@@ -40,11 +40,11 @@ def gemini_message(role: str, content: str, date: datetime) -> dict:
 
 
 def call_gemini(
-    messages,
-    user_information,
-    temperature=0.7,
-    max_output_tokens=500,
-    output_format=True,
+    messages: list[dict],
+    user_information: dict,
+    temperature: float = 0.7,
+    max_output_tokens: int = 500,
+    output_format: bool = True,
 ):
     """Call the Gemini model to generate a response."""
     try:
