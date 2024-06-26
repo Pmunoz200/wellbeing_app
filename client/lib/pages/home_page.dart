@@ -81,21 +81,22 @@ class _HomePageState extends State<HomePage> {
             size: 30,
           ),
         )],
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
       body: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Theme.of(context).colorScheme.primary,
+              Theme.of(context).primaryColor,
               Colors.white,
               Colors.white,
             ],
           ),
         ),
+        margin: const EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         child: Center(
           child: _widgetOptions.elementAt(_selectedIndex),
         ),
