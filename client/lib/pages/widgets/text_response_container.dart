@@ -70,8 +70,8 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
                         maxLines: isExpanded ? 100 : 4,
                         dropCapPosition: DropCapPosition.end,
                         dropCap: DropCap(
-                          width: 20,
-                          height: 20,
+                          width: 30,
+                          height: 30,
                           child: IconButton(
                               padding: EdgeInsets.all(0),
                               constraints: BoxConstraints(),
