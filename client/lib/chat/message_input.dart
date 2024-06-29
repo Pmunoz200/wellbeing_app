@@ -276,7 +276,7 @@ class _MessageInputState extends State<MessageInput> {
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadius.all(Radius.circular(15)),
-                color: Theme.of(context).colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.surfaceContainer,
               ),
               child: Row(
                 children: <Widget>[
