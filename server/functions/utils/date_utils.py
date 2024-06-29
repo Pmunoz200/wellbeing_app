@@ -3,10 +3,10 @@ from datetime import datetime
 
 def parse_date(date: str, date_format: str = "%Y-%m-%dT%H:%M:%S") -> datetime:
     try:
-        return datetime.strptime(date_str, date_format)
+        return datetime.strptime(date, date_format)
     except ValueError as e:
         raise ValueError(
-            f"Invalid date format {date_str}. Use {date_format}. Error: {str(e)}"
+            f"Invalid date format {date}. Use {date_format}. Error: {str(e)}"
         )
 
 
