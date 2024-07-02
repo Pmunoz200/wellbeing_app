@@ -19,14 +19,12 @@ initialize_app()
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 
-# Initialize Firestore client
-firestore_client = firestore.client()
-
 
 # ----------------------------------- Database Functions -----------------------------------
 def retrieve_user_information(uid: str) -> dict:
     """Retrieve user information from Firestore."""
     try:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
         doc = firestore_client.collection("users").document(uid).get()
         if doc.exists:
             return doc.to_dict()
@@ -42,6 +40,7 @@ def retrieve_messages_document(
     """Retrieve messages document from Firestore for a specific user and date."""
     normalized_date = normalize_date(date)
     try:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
         docs = (
             firestore_client.collection("messages")
             .where("uid", "==", uid)
@@ -60,6 +59,7 @@ def retrieve_detailed_messages_document(
 ) -> google.cloud.firestore.DocumentSnapshot:
     normalized_date = normalize_date(date)
     try:
+        firestore_client: google.cloud.firestore.Client = firestore.client()
         docs = (
             firestore_client.collection("detailed_messages")
             .where("uid", "==", uid)
@@ -85,6 +85,7 @@ def update_messages_db(
     """Update Firestore with the conversation."""
     try:
         if doc is None:
+            firestore_client: google.cloud.firestore.Client = firestore.client()
             # Add new document if it doesn't exist
             firestore_client.collection("messages").add(
                 {
@@ -113,6 +114,7 @@ def update_detailed_messages_db(
     """Update Firestore with the conversation."""
     try:
         if detailed_doc is None:
+            firestore_client: google.cloud.firestore.Client = firestore.client()
             # Add new document if it doesn't exist
             firestore_client.collection("detailed_messages").add(
                 {
@@ -155,7 +157,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         else:
             db_conversation = doc.to_dict().get("conversation", [])
 
-        # Initialize messages if empty
+        # Initialize messages if empty. If it has less than 2 messages, means the conversation is not complete
         if len(db_conversation) < 2:
             db_conversation = get_gemini_response(
                 db_conversation,
