@@ -1,9 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:gemini_folder/firebase/firebase_options.dart';
-import 'package:gemini_folder/onboarding/onboarding.dart';
+import 'package:gemini_folder/pages/onboarding_page/onboarding.dart';
+import 'package:gemini_folder/pages/profile_page/profile_widget.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
+import 'package:gemini_folder/pages/user_authentication_page/login.dart';
 import 'package:gemini_folder/util/app_theme.dart';
-import 'package:gemini_folder/user_authentication/login.dart';
+import 'package:provider/provider.dart';
 import 'pages/home_page.dart';
 
 void main() async {
@@ -11,7 +14,8 @@ void main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  runApp(MyApp());
+  runApp(ChangeNotifierProvider(
+      create: (context) => MainProvider(), child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -30,10 +34,25 @@ class MyApp extends StatelessWidget {
         "/authentication": (context) => LoginScreen(
               navigator: mainNavigatorKey,
             ),
-        '/token': (context) => HomePage(),
-        '/onboarding': (context) =>
-            OnboardingScreen(navigator: mainNavigatorKey),
-        '/home': (context) => HomePage(),
+        '/home': (context) => const HomePage(),
+        '/profile': (context) => ProfileWidgetPage(navigator: mainNavigatorKey),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/onboarding') {
+          // This route is handled like this as an argument can be passed
+          // on the navigation and it needs to be passe dto the Widget.
+          final index = settings.arguments as int?;
+          return MaterialPageRoute(
+            builder: (context) {
+              return OnboardingScreen(
+                navigator: mainNavigatorKey,
+                focusQuestionIndex: index,
+              );
+            },
+          );
+        }
+        // Default case
+        return null;
       },
     );
   }

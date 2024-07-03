@@ -1,9 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/services/auth_service.dart';
-import 'package:gemini_folder/user_authentication/dialogs.dart';
+import 'package:gemini_folder/services/database_service.dart';
+import 'package:gemini_folder/pages/user_authentication_page/dialogs.dart';
+import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:gemini_folder/util/toast_util.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   final GlobalKey<NavigatorState> navigator;
@@ -38,14 +42,17 @@ class LoginScreenState extends State<LoginScreen> {
   }
 
   // Check if the onboarding is required and navigate accordingly
-  Future<void> _navigateAfterLogin(User? user) async {
+  Future<void> _navigateAfterLogin(User? user, MainProvider provider) async {
     if (user != null) {
       final userDoc =
           FirebaseFirestore.instance.collection('users').doc(user.uid);
       final userSnapshot = await userDoc.get();
+      final Profile? userProfile =
+          await DatabaseService().getUserProfile(user.uid);
       final onboardingCompleted =
           userSnapshot.data()?['onboardingCompleted'] ?? false;
-      if (onboardingCompleted) {
+      if (onboardingCompleted && userProfile != null) {
+        provider.userProfile = userProfile;
         widget.navigator.currentState?.pushReplacementNamed('/home');
       } else {
         widget.navigator.currentState?.pushReplacementNamed('/onboarding');
@@ -55,6 +62,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    MainProvider provider = Provider.of<MainProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(title: const Text('Login')),
       body: Stack(
@@ -85,7 +93,7 @@ class LoginScreenState extends State<LoginScreen> {
                           _passwordController.text,
                         );
                         if (user != null) {
-                          await _navigateAfterLogin(user);
+                          await _navigateAfterLogin(user, provider);
                         } else {
                           showErrorToast('Login failed. Please try again.');
                         }
@@ -110,7 +118,7 @@ class LoginScreenState extends State<LoginScreen> {
                     try {
                       User? user = await _authService.signInWithGoogle();
                       if (user != null) {
-                        await _navigateAfterLogin(user);
+                        await _navigateAfterLogin(user, provider);
                       } else {
                         showErrorToast(
                             'Google sign-in failed. Please try again.');
@@ -140,7 +148,7 @@ class LoginScreenState extends State<LoginScreen> {
                           _passwordController.text,
                         );
                         if (user != null) {
-                          await _navigateAfterLogin(user);
+                          await _navigateAfterLogin(user, provider);
                         } else {
                           showErrorToast(
                               'Registration failed. Please try again.');
@@ -159,7 +167,8 @@ class LoginScreenState extends State<LoginScreen> {
                   child: const Text('Register'),
                 ),
                 TextButton(
-                  onPressed: () => showResetPasswordDialog(context, _authService),
+                  onPressed: () =>
+                      showResetPasswordDialog(context, _authService),
                   child: const Text('Forgot Password?'),
                 ),
               ],
