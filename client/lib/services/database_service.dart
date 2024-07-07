@@ -9,7 +9,8 @@ class DatabaseService {
       final userSnapshot = await userDoc.get();
       return Profile.fromMap(userSnapshot.data()!);
     } catch (e) {
-      throw("Error getting the user's profile.");
+      print(e);
+      throw("Error getting the user's profile: $e");
     }
   }
 }
