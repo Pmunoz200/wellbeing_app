@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
 import 'package:gemini_folder/pages/widgets/expandable_card_widget.dart';
 import 'package:drop_cap_text/drop_cap_text.dart';
 
@@ -9,10 +9,10 @@ class TextResponseContainer extends StatefulWidget {
   final ValueGetter<bool> getIsExpanded;
   final VoidCallback callback;
 
-  TextResponseContainer({required this.texts, required this.title, required this.getIsExpanded, required this.callback});
+  const TextResponseContainer({super.key, required this.texts, required this.title, required this.getIsExpanded, required this.callback});
 
   @override
-  _TextResponseContainerState createState() => _TextResponseContainerState();
+  State<TextResponseContainer> createState() => _TextResponseContainerState();
 }
 
 class _TextResponseContainerState extends State<TextResponseContainer> {

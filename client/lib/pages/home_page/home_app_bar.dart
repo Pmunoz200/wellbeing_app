@@ -47,7 +47,9 @@ class HomeAppBar extends StatelessWidget {
           height: 40,
           margin: EdgeInsets.zero,
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed('/profile');
+            },
             constraints: const BoxConstraints(),
             icon: Image.asset("assets/icon_profile.png"),
           ),
