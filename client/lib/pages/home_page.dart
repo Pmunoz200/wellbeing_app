@@ -19,6 +19,7 @@ class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   DateTime _selectedDate = DateTime.now();
   DateTime startOfTomorrow = DateTime.now();
+  final mainProvider = MainProvider();
 
   final List<Widget> _widgetOptions = <Widget>[
     HomeWidgetPage(),
@@ -52,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     startOfTomorrow = DateTime(
         startOfTomorrow.year, startOfTomorrow.month, startOfTomorrow.day + 1);
-    Provider.of<MainProvider>(context).fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, DateTime.now());
+    mainProvider.fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, DateTime.now());
   }
 
   @override
