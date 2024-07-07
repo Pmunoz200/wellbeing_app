@@ -26,7 +26,7 @@ class ApiService {
     }
   }
   // Method to get a list of messages on a specific date from the server
-  Future<ConversationModel> getUserMessagesByDate(String uid, String query, DateTime date) async {
+  Future<ConversationModel> getUserMessagesByDate(String uid, DateTime date) async {
     // Format the date to the required string format
     final String formattedDate = DateFormat("yyyy-MM-ddTHH:mm:ss").format(date);
     // Make a GET request to the server
