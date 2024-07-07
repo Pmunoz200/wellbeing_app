@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -77,11 +78,8 @@ class AuthService {
       final userDoc = _firestore.collection('users').doc(user.uid);
       final userSnapshot = await userDoc.get();
       if (!userSnapshot.exists) {
-        await userDoc.set({
-          'name': user.displayName ?? '',
-          'email': user.email,
-          'onboardingCompleted': false,
-        });
+        await userDoc
+            .set(Profile.empty(userId: user.uid, email: user.email).toMap());
       }
     }
   }
