@@ -38,11 +38,7 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
   }
 
   void _sendMessage(MessageObject message) {
-    // _chatService.addMessage(message);
     String textMessage = message.textMessage ?? "No text message";
-    setState(() {
-      textList.add(textMessage);
-    });
   }
 
   @override
