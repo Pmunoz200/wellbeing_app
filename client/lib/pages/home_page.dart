@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
+import 'package:provider/provider.dart';
 import 'home_page/home_app_bar.dart';
 import 'package:gemini_folder/pages/home_page/exercise_widget.dart';
 import 'package:gemini_folder/pages/home_page/food_widget.dart';
@@ -49,6 +52,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     startOfTomorrow = DateTime(
         startOfTomorrow.year, startOfTomorrow.month, startOfTomorrow.day + 1);
+    Provider.of<MainProvider>(context).fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, DateTime.now());
   }
 
   @override
