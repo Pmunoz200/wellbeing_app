@@ -2,6 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:gemini_folder/pages/onboarding_page/question_class.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/activity_level.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/dietary_preferences.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/fitness_enviroment.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/goals.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/nutritional_goal.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/other.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/personal_information.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/personal_measurments.dart';
+import 'package:gemini_folder/pages/onboarding_page/question_pages/training_style.dart';
 import 'package:gemini_folder/pages/onboarding_page/questions_list.dart';
 import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
@@ -23,136 +32,14 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   final user = FirebaseAuth.instance.currentUser;
   late PageController _pageController;
-  final List<TextEditingController> _controllers = [];
+  final List<TextEditingController> _controllers =
+      List<TextEditingController>.filled(13, TextEditingController());
   late Profile newProfile;
-  final List<OnboardingQuestion> _questions = questions;
   // I use this so I dont change the profile each time the app builds but only at the first one (Can't be at the init)
   late bool profileInitialized;
-
-  Widget _buildInputMethod(OnboardingQuestion question, int pageIndex) {
-    late Column tempWidget;
-
-    if (question.inputType != null) {
-      // question is either a text or a number to write
-      tempWidget = Column(
-        children: [
-          TextField(
-            controller: _controllers[pageIndex],
-            decoration: InputDecoration(labelText: question.question),
-            keyboardType: question.inputType,
-          ),
-        ],
-      );
-    } else if (question.options != null &&
-        question.allowMultipleSelections == true) {
-      // question with single multiple options for an answer
-      tempWidget = Column(
-        children: [
-          Text(question.question),
-          ...question.options!.map<Widget>((option) {
-            return CheckboxListTile.adaptive(
-                title: Text(option),
-                value: newProfile[question.parameterName].contains(option),
-                onChanged: (bool? newValue) {
-                  if (newProfile[question.parameterName].contains(option)) {
-                    // add value when picked
-                    setState(() {
-                      newProfile[question.parameterName].remove(option);
-                    });
-                  } else {
-                    // remove value if already present
-                    setState(() {
-                      newProfile[question.parameterName].add(option);
-                    });
-                  }
-                });
-          })
-        ],
-      );
-      if (question.addCustomField) {
-        // Add custom open field on multiple selection
-        tempWidget.children.add(CheckboxListTile.adaptive(
-            title: newProfile[question.parameterName]
-                        .any((e) => !question.options!.contains(e)) &&
-                    newProfile[question.parameterName].length > 0
-                ? TextField(
-                    controller: _controllers[pageIndex],
-                    decoration: InputDecoration(
-                        labelText: "Custom",
-                        enabled: newProfile[question.parameterName]
-                                .any((e) => !question.options!.contains(e)) &&
-                            newProfile[question.parameterName].length > 0),
-                    keyboardType: TextInputType.text,
-                  )
-                : const Text("Custom"),
-            // Check that at least one of the elements of the profile is not in the options
-            value: newProfile[question.parameterName]
-                    .any((e) => !question.options!.contains(e)) &&
-                newProfile[question.parameterName].length > 0,
-            onChanged: (bool? newValue) {
-              if (!newValue!) {
-                // I use the String "Custom" as a flag on the result, to check later
-                // the values in the controllers an replace it for the final value
-                // of the textField.
-                setState(() {
-                  newProfile[question.parameterName]
-                      .retainWhere((e) => e != "Custom");
-                });
-              } else {
-                setState(() {
-                  newProfile[question.parameterName].add("Custom");
-                });
-              }
-            }));
-      }
-    } else if (question.options != null &&
-        question.allowMultipleSelections == false) {
-      tempWidget = Column(
-        children: [
-          Text(question.question),
-          ...question.options!.map<Widget>((option) {
-            return RadioListTile<String>(
-              title: Text(option),
-              value: option,
-              onChanged: (newValue) {
-                setState(() {
-                  newProfile[question.parameterName] = newValue;
-                });
-              },
-              groupValue: newProfile[question.parameterName],
-            );
-          })
-        ],
-      );
-      if (question.addCustomField == true) {
-        // Add custom open field for single answers of multiple selection
-        tempWidget.children.add(RadioListTile<String>(
-            title: newProfile[question.parameterName] == "Custom"
-                ? TextField(
-                    controller: _controllers[pageIndex],
-                    keyboardType: TextInputType.text,
-                    decoration:
-                        const InputDecoration(labelText: "Input Custom"),
-                  )
-                : const Text("Custom"),
-            value: "Custom",
-            groupValue: newProfile[question.parameterName],
-            onChanged: (newValue) {
-              setState(() {
-                newProfile[question.parameterName] = newValue;
-              });
-            }));
-      }
-    } else {
-      tempWidget = const Column(
-        children: [
-          Text("Missing Question"),
-        ],
-      );
-    }
-
-    return tempWidget;
-  }
+  List<Widget> questionPages = [];
+  List<String> selectedGoals = [];
+  List<String> selectedDietaryPreferences = [];
 
   void _nextPage() {
     _pageController.nextPage(
@@ -166,9 +53,62 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     super.initState();
     profileInitialized = false;
     newProfile = Profile.empty(userId: user!.uid, email: user!.email);
-    for (var i = 0; i < _questions.length; i++) {
-      _controllers.add(TextEditingController());
-    }
+    questionPages.addAll([
+      PersonalInformationPage(controllerList: _controllers.sublist(0, 4)),
+      PersonalMeasuresPage(controllerList: _controllers.sublist(4, 7)),
+      ActivityLevelPage(onSelected: (String activityLevel) {
+        newProfile['activityLevel'] = activityLevel;
+      }),
+      GoalPage(
+          controller: _controllers[7],
+          onGoalSelected: (String goal, {bool remove = false}) {
+            if (remove) {
+              newProfile['goal'].remove(goal);
+            } else {
+              newProfile['goal'].add(goal);
+            }
+          }),
+      DietaryPreferencesPage(
+          controller: _controllers[8],
+          onPreferenceSelected: (String preference, {bool remove = false}) {
+            setState(() {
+              if (remove) {
+                selectedDietaryPreferences.remove(preference);
+              } else {
+                selectedDietaryPreferences.add(preference);
+              }
+            });
+          }),
+      NutritionalGoalsPage(
+          controller: _controllers[9],
+          onGoalSelected: (String nutritionalGoal) {
+            newProfile['nutritionalGoals'] = nutritionalGoal;
+          }),
+      FitnessEnvironmentPage(
+          controller: _controllers[10],
+          onEnvironmentSelected: (String space, {bool remove = false}) {
+            if (remove) {
+              newProfile['fitnessEnvironment'].remove(remove);
+            } else {
+              newProfile['fitnessEnvironment'].add(remove);
+            }
+          }),
+      TrainingStylesPage(
+          controller: _controllers[11],
+          onStyleSelected: (String style, {bool remove = false}) {
+            if (remove) {
+              newProfile['trainingStyle'].remove(style);
+            } else {
+              newProfile['trainingStyle'].add(remove);
+            }
+          }),
+      OthersPage(
+          controller: _controllers[12],
+          onSubmitted: (String other) {
+            newProfile['other'] = other;
+          })
+      // ADD THE OTHER PAGES
+    ]);
 
     _pageController =
         PageController(initialPage: widget.focusQuestionIndex ?? 0);
@@ -237,7 +177,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       appBar: provider.userProfile != null ? AppBar() : null,
       body: PageView.builder(
         controller: _pageController,
-        itemCount: _questions.length,
+        itemCount: questionPages.length,
         itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
@@ -246,18 +186,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: _buildInputMethod(_questions[index], index),
+                  child: questionPages[index],
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      _questions.length - 1 == index
-                          ? _completeForm(provider, user, _controllers,
-                              _questions, newProfile, context, widget.navigator)
-                          : _nextPage();
+                      // _questions.length - 1 == index
+                      //     ? _completeForm(provider, user, _controllers,
+                      //         _questions, newProfile, context, widget.navigator):
+                      _nextPage();
                     },
-                    child: _questions.length - 1 == index
-                        ? const Text("Send onboarding")
-                        : const Text("Next")),
+                    // child: _questions.length - 1 == index
+                    //     ? const Text("Send onboarding")
+                    //     : const Text("Next")),
+                    child: Text("Next")),
               ],
             ),
           );
