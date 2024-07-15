@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 class ActivityLevelPage extends StatefulWidget {
   final ValueChanged<String> onSelected;
+  final String? initialValue;
 
   const ActivityLevelPage({
     Key? key,
     required this.onSelected,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -20,6 +22,12 @@ class _ActivityLevelPageState extends State<ActivityLevelPage> {
       _selectedActivityLevel = value;
     });
     widget.onSelected(value!);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedActivityLevel = widget.initialValue;
   }
 
   @override
@@ -41,14 +49,17 @@ class _ActivityLevelPageState extends State<ActivityLevelPage> {
           onChanged: _handleRadioValueChange,
         ),
         RadioListTile<String>(
-          title: Text('Lightly Active: Light exercise or sports 1-3 days a week'),
+          title:
+              Text('Lightly Active: Light exercise or sports 1-3 days a week'),
           value: 'Lightly Active: Light exercise or sports 1-3 days a week',
           groupValue: _selectedActivityLevel,
           onChanged: _handleRadioValueChange,
         ),
         RadioListTile<String>(
-          title: Text('Moderately Active: Moderate exercise or sports 3-5 days a week'),
-          value: 'Moderately Active: Moderate exercise or sports 3-5 days a week',
+          title: Text(
+              'Moderately Active: Moderate exercise or sports 3-5 days a week'),
+          value:
+              'Moderately Active: Moderate exercise or sports 3-5 days a week',
           groupValue: _selectedActivityLevel,
           onChanged: _handleRadioValueChange,
         ),
@@ -59,8 +70,10 @@ class _ActivityLevelPageState extends State<ActivityLevelPage> {
           onChanged: _handleRadioValueChange,
         ),
         RadioListTile<String>(
-          title: Text('Super Active: Very hard exercise, physical job, or training twice a day'),
-          value: 'Super Active: Very hard exercise, physical job, or training twice a day',
+          title: Text(
+              'Super Active: Very hard exercise, physical job, or training twice a day'),
+          value:
+              'Super Active: Very hard exercise, physical job, or training twice a day',
           groupValue: _selectedActivityLevel,
           onChanged: _handleRadioValueChange,
         ),

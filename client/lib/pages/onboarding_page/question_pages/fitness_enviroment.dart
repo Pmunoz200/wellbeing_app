@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class FitnessEnvironmentPage extends StatefulWidget {
   final TextEditingController controller;
   final Function(String, {bool remove}) onEnvironmentSelected;
+  final List<String>? initialValue;
 
   const FitnessEnvironmentPage({
     Key? key,
     required this.controller,
     required this.onEnvironmentSelected,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -52,37 +54,40 @@ class _FitnessEnvironmentPageState extends State<FitnessEnvironmentPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedEnvironments = widget.initialValue!;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Fitness Environment',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          ...environments.map((environment) {
-            return CheckboxListTile(
-              title: Text(environment),
-              value: selectedEnvironments.contains(environment),
-              onChanged: (isChecked) =>
-                  _handleCheckboxChange(environment, isChecked ?? false),
-            );
-          }).toList(),
-          if (isCustomEnvironmentSelected)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: TextField(
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  labelText: 'Describe your custom fitness environment',
-                ),
-                onChanged: _handleCustomEnvironmentChange,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Fitness Environment',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        ...environments.map((environment) {
+          return CheckboxListTile(
+            title: Text(environment),
+            value: selectedEnvironments.contains(environment),
+            onChanged: (isChecked) =>
+                _handleCheckboxChange(environment, isChecked ?? false),
+          );
+        }).toList(),
+        if (isCustomEnvironmentSelected)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextField(
+              controller: widget.controller,
+              decoration: InputDecoration(
+                labelText: 'Describe your custom fitness environment',
               ),
+              // onChanged: _handleCustomEnvironmentChange,
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

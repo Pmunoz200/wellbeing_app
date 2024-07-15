@@ -33,13 +33,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   final user = FirebaseAuth.instance.currentUser;
   late PageController _pageController;
   final List<TextEditingController> _controllers =
-      List<TextEditingController>.filled(13, TextEditingController());
+      List.generate(13, (_) => TextEditingController());
   late Profile newProfile;
   // I use this so I dont change the profile each time the app builds but only at the first one (Can't be at the init)
   late bool profileInitialized;
   List<Widget> questionPages = [];
-  List<String> selectedGoals = [];
-  List<String> selectedDietaryPreferences = [];
 
   void _nextPage() {
     _pageController.nextPage(
@@ -54,54 +52,78 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     profileInitialized = false;
     newProfile = Profile.empty(userId: user!.uid, email: user!.email);
     questionPages.addAll([
-      PersonalInformationPage(controllerList: _controllers.sublist(0, 4)),
+      PersonalInformationPage(
+        controllerList: _controllers.sublist(0, 4),
+        onGenderChanged: (String value) {
+          newProfile.gender = value;
+        },
+        initialName: newProfile.name,
+        initialAge: newProfile.age.toString(),
+        initialGender: newProfile.gender,
+      ),
       PersonalMeasuresPage(controllerList: _controllers.sublist(4, 7)),
-      ActivityLevelPage(onSelected: (String activityLevel) {
-        newProfile['activityLevel'] = activityLevel;
-      }),
+      ActivityLevelPage(
+        onSelected: (String activityLevel) {
+          newProfile['activityLevel'] = activityLevel;
+        },
+        initialValue: newProfile.activityLevel,
+      ),
       GoalPage(
-          controller: _controllers[7],
-          onGoalSelected: (String goal, {bool remove = false}) {
-            if (remove) {
-              newProfile['goal'].remove(goal);
-            } else {
+        controller: _controllers[7],
+        onGoalSelected: (String goal, {bool remove = false}) {
+          if (remove) {
+            newProfile['goal'].remove(goal);
+          } else {
+            int index = newProfile.goal!.indexOf(goal);
+            if (index == -1) {
               newProfile['goal'].add(goal);
             }
-          }),
+          }
+        },
+        initialValue: newProfile.goal,
+      ),
       DietaryPreferencesPage(
-          controller: _controllers[8],
-          onPreferenceSelected: (String preference, {bool remove = false}) {
-            setState(() {
-              if (remove) {
-                selectedDietaryPreferences.remove(preference);
-              } else {
-                selectedDietaryPreferences.add(preference);
-              }
-            });
-          }),
+        controller: _controllers[8],
+        onSelected: (String value) {
+          newProfile.dietaryPreferences = value;
+        },
+        initialValue: newProfile.dietaryPreferences,
+      ),
       NutritionalGoalsPage(
-          controller: _controllers[9],
-          onGoalSelected: (String nutritionalGoal) {
-            newProfile['nutritionalGoals'] = nutritionalGoal;
-          }),
+        controller: _controllers[9],
+        onGoalSelected: (String nutritionalGoal) {
+          newProfile['nutritionalGoals'] = nutritionalGoal;
+        },
+        initialValue: newProfile.nutritionalGoals,
+      ),
       FitnessEnvironmentPage(
-          controller: _controllers[10],
-          onEnvironmentSelected: (String space, {bool remove = false}) {
-            if (remove) {
-              newProfile['fitnessEnvironment'].remove(remove);
-            } else {
-              newProfile['fitnessEnvironment'].add(remove);
+        controller: _controllers[10],
+        onEnvironmentSelected: (String space, {bool remove = false}) {
+          if (remove) {
+            newProfile['fitnessEnvironment'].remove(space);
+          } else {
+            int index = newProfile.fitnessEnvironment!.indexOf(space);
+            if (index == -1) {
+              newProfile.fitnessEnvironment!.add(space);
             }
-          }),
+          }
+        },
+        initialValue: newProfile.fitnessEnvironment,
+      ),
       TrainingStylesPage(
-          controller: _controllers[11],
-          onStyleSelected: (String style, {bool remove = false}) {
-            if (remove) {
-              newProfile['trainingStyle'].remove(style);
-            } else {
-              newProfile['trainingStyle'].add(remove);
+        controller: _controllers[11],
+        onStyleSelected: (String style, {bool remove = false}) {
+          if (remove) {
+            newProfile['trainingStyle'].remove(style);
+          } else {
+            int index = newProfile.trainingStyle!.indexOf(style);
+            if (index == -1) {
+              newProfile.trainingStyle!.add(style);
             }
-          }),
+          }
+        },
+        initialValue: newProfile.trainingStyle,
+      ),
       OthersPage(
           controller: _controllers[12],
           onSubmitted: (String other) {
@@ -190,15 +212,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 ),
                 ElevatedButton(
                     onPressed: () {
-                      // _questions.length - 1 == index
-                      //     ? _completeForm(provider, user, _controllers,
-                      //         _questions, newProfile, context, widget.navigator):
-                      _nextPage();
+                      questionPages.length - 1 == index
+                          ? newCompleteForm(_controllers, newProfile, user,
+                              provider, widget.navigator, context)
+                          : _nextPage();
                     },
-                    // child: _questions.length - 1 == index
-                    //     ? const Text("Send onboarding")
-                    //     : const Text("Next")),
-                    child: Text("Next")),
+                    child: questionPages.length - 1 == index
+                        ? const Text("Send onboarding")
+                        : const Text("Next")),
               ],
             ),
           );
@@ -208,71 +229,105 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 }
 
-// Function to complete the form and navigate to another page
-void _completeForm(
-    MainProvider provider,
-    User? user,
-    List<TextEditingController> controllers,
-    List<OnboardingQuestion> questions,
-    Profile newProfile,
-    BuildContext context,
-    GlobalKey<NavigatorState> navigator) async {
-  // Should I separate the concern of communicating with the db
-  // on a separate service?
+void newCompleteForm(
+  List<TextEditingController> controllers,
+  Profile newProfile,
+  User? user,
+  MainProvider provider,
+  GlobalKey<NavigatorState> navigator,
+  BuildContext context,
+) async {
   final userDoc = FirebaseFirestore.instance.collection('users').doc(user!.uid);
-  int pageIndex = 0;
   List<String> missingFields = [];
-  for (OnboardingQuestion question in questions) {
-    if (question.inputType != null) {
-      // Add to the profile the values from the controllers
-      if (controllers[pageIndex].text.isNotEmpty) {
-        newProfile[question.parameterName] = controllers[pageIndex].text;
-      } else {
-        if (!question.isOptional) {
-          missingFields.add(question.question);
-        }
-      }
-    } else if (question.options != null &&
-        question.allowMultipleSelections == true) {
-      // Control results for multiple selection
-      if (newProfile[question.parameterName].isEmpty && !question.isOptional) {
-        if (!question.isOptional) {
-          missingFields.add(question.question);
-        }
-      } else if (newProfile[question.parameterName].any((e) => e == "Custom") &&
-          controllers[pageIndex].text.isNotEmpty) {
-        // If there is a flag 'Custom' and the consroller is not empty
-        newProfile[question.parameterName].removeWhere((e) => e == "Custom");
-        newProfile[question.parameterName].add(controllers[pageIndex].text);
-      } else if (newProfile[question.parameterName].any((e) => e == "Custom") &&
-          controllers[pageIndex].text.isEmpty) {
-        if (!question.isOptional) {
-          missingFields.add("Custom field: ${question.question}");
-        }
-      }
-    } else if (question.options != null &&
-        question.allowMultipleSelections == false) {
-      // Control results for single answer multiple options
-      if (newProfile[question.parameterName] == null &&
-          question.isOptional != true) {
-        if (!question.isOptional) {
-          missingFields.add(question.question);
-        }
-      } else if (newProfile[question.parameterName] == "Custom") {
-        if (controllers[pageIndex].text.isNotEmpty) {
-          // If there is a custom answer, put it in the profile
-          newProfile[question.parameterName] = controllers[pageIndex].text;
-        } else {
-          if (!question.isOptional) {
-            missingFields.add("Custom field: ${question.question}");
-          }
-        }
+  // Personal Information
+  if (controllers[0].text.isEmpty) {
+    missingFields.add("Name");
+  }
+  if (controllers[1].text.isEmpty) {
+    missingFields.add("Lastname");
+  }
+  if (controllers[2].text.isEmpty) {
+    missingFields.add("Age");
+  } else {
+    newProfile.age = int.parse(controllers[2].text);
+  }
+  if (newProfile.gender == null) {
+    missingFields.add("Gender");
+  } else {
+    if (newProfile.gender == 'Other') {
+      newProfile.gender = controllers[3].text;
+    }
+  }
+  if (controllers[4].text.isEmpty) {
+    missingFields.add("Current Weight");
+  } else {
+    newProfile.currentWeight = double.parse(controllers[4].text);
+  }
+  if (controllers[5].text.isNotEmpty) {
+    newProfile.targetWeight = double.parse(controllers[5].text);
+  }
+  if (controllers[6].text.isEmpty) {
+    missingFields.add("Height");
+  } else {
+    newProfile.height = double.parse(controllers[6].text);
+  }
+  if (newProfile.activityLevel == null) {
+    missingFields.add("Activity Level");
+  }
+  if (newProfile.goal!.isEmpty) {
+    missingFields.add("Goal");
+  } else {
+    if (newProfile.goal!.contains("Custom Goal")) {
+      int index = newProfile.goal!.indexOf("Custom Goal");
+      if (index != -1) {
+        newProfile.goal![index] = controllers[7].text;
       }
     }
-    pageIndex++;
   }
-  if (missingFields.isNotEmpty) {
-    // If any non-optional question is unanswered, show an alert dialog
+  if (newProfile.dietaryPreferences == null ||
+      newProfile.dietaryPreferences!.isEmpty) {
+    missingFields.add("Dietary Preferences");
+  }
+  if (newProfile.nutritionalGoals == null ||
+      newProfile.nutritionalGoals!.isEmpty) {
+    missingFields.add("Nutritional Goal");
+  }
+  if (newProfile.trainingStyle!.isEmpty) {
+    missingFields.add("Training Style");
+  } else {
+    if (newProfile.trainingStyle!.contains("Custom")) {
+      int index = newProfile.trainingStyle!.indexOf("Custom");
+      if (index != -1) {
+        newProfile.trainingStyle![index] = controllers[11].text;
+      }
+    }
+  }
+  if(newProfile.fitnessEnvironment!.isEmpty){
+    missingFields.add("Training Style");
+  }else{
+    if (newProfile.fitnessEnvironment!.contains("Custom")) {
+      int index = newProfile.fitnessEnvironment!.indexOf("Custom");
+      if (index != -1) {
+        newProfile.fitnessEnvironment![index] = controllers[10].text;
+      }
+    }
+  }
+  if (missingFields.isEmpty) {
+    try {
+      newProfile.name =
+          user.displayName ?? controllers[0].text + ' ' + controllers[1].text;
+      newProfile.onboardingCompleted = true;
+      // Update user document in Firestore
+      await userDoc.set(newProfile.toMap());
+      // ignore: use_build_context_synchronously
+      provider.userProfile = newProfile;
+      navigator.currentState?.pushReplacementNamed('/home');
+    } catch (e) {
+      print("Error at sending the onboarding: $e");
+      showErrorToast("An error ocurred while saving the onboarding");
+      return;
+    }
+  } else {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -310,18 +365,5 @@ void _completeForm(
         ],
       ),
     );
-  } else {
-    try {
-      newProfile.name = user.displayName;
-      newProfile.onboardingCompleted = true;
-      // Update user document in Firestore
-      await userDoc.set(newProfile.toMap());
-      // ignore: use_build_context_synchronously
-      provider.userProfile = newProfile;
-      navigator.currentState?.pushReplacementNamed('/home');
-    } catch (e) {
-      showErrorToast("An error ocurred while saving the onboarding");
-      return;
-    }
   }
 }

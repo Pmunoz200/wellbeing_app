@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class NutritionalGoalsPage extends StatefulWidget {
   final TextEditingController controller;
   final Function(String) onGoalSelected;
+  final String? initialValue;
 
   const NutritionalGoalsPage({
     Key? key,
     required this.controller,
     required this.onGoalSelected,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -25,7 +27,8 @@ class _NutritionalGoalsPageState extends State<NutritionalGoalsPage> {
         isCustomGoalSelected = true;
       } else {
         isCustomGoalSelected = false;
-        widget.controller.clear(); // Clear custom goal text field if another option is selected
+        widget.controller
+            .clear(); // Clear custom goal text field if another option is selected
       }
     });
     widget.onGoalSelected(value!);
@@ -35,6 +38,12 @@ class _NutritionalGoalsPageState extends State<NutritionalGoalsPage> {
     if (customGoal.isNotEmpty) {
       widget.onGoalSelected(customGoal);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedGoal = widget.initialValue;
   }
 
   @override

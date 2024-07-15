@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class GoalPage extends StatefulWidget {
   final TextEditingController controller;
   final Function(String, {bool remove}) onGoalSelected;
+  final List<String>? initialValue;
 
   const GoalPage({
     Key? key,
     required this.controller,
     required this.onGoalSelected,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -55,37 +57,41 @@ class _GoalPageState extends State<GoalPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedGoals = widget.initialValue!;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Goal',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          ...goals.map((goal) {
-            return CheckboxListTile(
-              title: Text(goal),
-              value: selectedGoals.contains(goal),
-              onChanged: (isChecked) =>
-                  _handleCheckboxChange(goal, isChecked ?? false),
-            );
-          }).toList(),
-          if (isCustomGoalSelected)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: TextField(
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  labelText: 'Describe your custom goal',
-                ),
-                onChanged: _handleCustomGoalChange,
+    selectedGoals = widget.initialValue!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Goal',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        ...goals.map((goal) {
+          return CheckboxListTile(
+            title: Text(goal),
+            value: selectedGoals.contains(goal),
+            onChanged: (isChecked) =>
+                _handleCheckboxChange(goal, isChecked ?? false),
+          );
+        }).toList(),
+        if (isCustomGoalSelected)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextField(
+              controller: widget.controller,
+              decoration: InputDecoration(
+                labelText: 'Describe your custom goal',
               ),
+              // onChanged: _handleCustomGoalChange,
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }

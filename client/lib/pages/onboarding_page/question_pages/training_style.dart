@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class TrainingStylesPage extends StatefulWidget {
   final TextEditingController controller;
   final Function(String, {bool remove}) onStyleSelected;
+  final List<String>? initialValue;
 
   const TrainingStylesPage({
     Key? key,
     required this.controller,
     required this.onStyleSelected,
+    this.initialValue,
   }) : super(key: key);
 
   @override
@@ -54,37 +56,40 @@ class _TrainingStylesPageState extends State<TrainingStylesPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    selectedStyles = widget.initialValue!;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Training Styles',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          ...styles.map((style) {
-            return CheckboxListTile(
-              title: Text(style),
-              value: selectedStyles.contains(style),
-              onChanged: (isChecked) =>
-                  _handleCheckboxChange(style, isChecked ?? false),
-            );
-          }).toList(),
-          if (isCustomStyleSelected)
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: TextField(
-                controller: widget.controller,
-                decoration: InputDecoration(
-                  labelText: 'Describe your custom training style',
-                ),
-                onChanged: _handleCustomStyleChange,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Training Styles',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        ...styles.map((style) {
+          return CheckboxListTile(
+            title: Text(style),
+            value: selectedStyles.contains(style),
+            onChanged: (isChecked) =>
+                _handleCheckboxChange(style, isChecked ?? false),
+          );
+        }).toList(),
+        if (isCustomStyleSelected)
+          Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: TextField(
+              controller: widget.controller,
+              decoration: InputDecoration(
+                labelText: 'Describe your custom training style',
               ),
+              // onChanged: _handleCustomStyleChange,
             ),
-        ],
-      ),
+          ),
+      ],
     );
   }
 }
