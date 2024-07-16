@@ -52,42 +52,117 @@ class _PersonalInformationPageState extends State<PersonalInformationPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Personal Information',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        TextField(
-          controller: widget.controllerList[0],
-          decoration: InputDecoration(labelText: 'Name'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: widget.controllerList[0],
+            decoration: InputDecoration(
+              labelText: 'Name',
+              labelStyle: TextStyle(color: Colors.grey[800]),
+              filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
+          ),
         ),
-        TextField(
-          controller: widget.controllerList[1],
-          decoration: InputDecoration(labelText: 'Lastname'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: widget.controllerList[1],
+            decoration: InputDecoration(
+              labelText: 'Lastname',
+              labelStyle: TextStyle(color: Colors.grey[800]), filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
+          ),
         ),
-        TextField(
-          controller: widget.controllerList[2],
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: InputDecoration(labelText: 'Age'),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: widget.controllerList[2],
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: 'Age', 
+              labelStyle: TextStyle(color: Colors.grey[800]),filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
+          ),
         ),
-        DropdownButtonFormField<String>(
-          value: _selectedGender,
-          decoration: InputDecoration(labelText: 'Gender'),
-          items: ['Male', 'Female', 'Other']
-              .map((gender) => DropdownMenuItem(
-                    value: gender,
-                    child: Text(gender),
-                  ))
-              .toList(),
-          onChanged: _handleGenderChange,
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: DropdownButtonFormField<String>(
+            value: _selectedGender,
+            decoration: InputDecoration(
+              labelText: 'Gender', 
+              labelStyle: TextStyle(color: Colors.grey[800]),filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
+            items: ['Male', 'Female', 'Other']
+                .map((gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
+                    ))
+                .toList(),
+            onChanged: _handleGenderChange,
+          ),
         ),
         if (_isOtherSelected)
-          TextField(
-            controller: widget.controllerList[3],
-            decoration: InputDecoration(labelText: 'Please specify gender'),
-            onChanged: _handleCustomGenderChange,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+            child: TextField(
+              controller: widget.controllerList[3],
+              decoration: InputDecoration(
+                labelText: 'Please specify gender', 
+                labelStyle: TextStyle(color: Colors.grey[800]),filled: true,
+                fillColor:
+                    Colors.lightBlueAccent.withOpacity(0.1), // Background color
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                  borderSide: BorderSide.none, // No border
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+              ),
+              onChanged: _handleCustomGenderChange,
+            ),
           ),
       ],
     );

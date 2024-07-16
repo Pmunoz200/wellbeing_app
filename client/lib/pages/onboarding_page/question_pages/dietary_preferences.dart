@@ -43,43 +43,77 @@ class _DietaryPreferencesPageState extends State<DietaryPreferencesPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Dietary Preferences',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+// Dietary Preferences RadioListTiles
         RadioListTile<String>(
-          title: Text('Indifferent'),
+          title: Text(
+            'Indifferent',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Indifferent',
           groupValue: _selectedPreference,
           onChanged: _handleRadioValueChange,
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         RadioListTile<String>(
-          title: Text('Vegetarian'),
+          title: Text(
+            'Vegetarian',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Vegetarian',
           groupValue: _selectedPreference,
           onChanged: _handleRadioValueChange,
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         RadioListTile<String>(
-          title: Text('Vegan'),
+          title: Text(
+            'Vegan',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Vegan',
           groupValue: _selectedPreference,
           onChanged: _handleRadioValueChange,
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         RadioListTile<String>(
-          title: Text('Custom'),
+          title: Text(
+            'Custom',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Custom',
           groupValue: _selectedPreference,
-          onChanged: _handleRadioValueChange,
+          onChanged: (value) {
+            _handleRadioValueChange(value);
+            setState(() {
+              isCustomPreferenceSelected = value == 'Custom';
+            });
+          },
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         if (isCustomPreferenceSelected)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: TextField(
               controller: widget.controller,
               decoration: InputDecoration(
-                labelText: 'Describe your custom dietary preferences',
+                labelText: 'Custom dietary preferences',
+                labelStyle: TextStyle(color: Colors.grey[800]),
+                filled: true,
+                fillColor: Colors.lightBlueAccent.withOpacity(0.1),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
               ),
               onChanged: _handleCustomPreferenceChange,
             ),

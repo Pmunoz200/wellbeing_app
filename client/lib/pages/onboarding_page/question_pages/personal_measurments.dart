@@ -21,35 +21,76 @@ class PersonalMeasuresPage extends StatelessWidget {
     controllerList[1].text = initialTargetWeight ?? '';
     controllerList[2].text = initialHeight ?? '';
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Measurments',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        TextField(
-          controller: controllerList[0],
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: InputDecoration(
-            labelText: 'Current Weight',
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: controllerList[0],
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: 'Current Weight',
+              labelStyle: TextStyle(color: Colors.grey[800]),
+              filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
           ),
         ),
-        TextField(
-          controller: controllerList[1],
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: InputDecoration(
-            labelText: 'Target Weight (optional)',
-            hintText: 'optional',
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: controllerList[1],
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: 'Target Weight (optional)',
+              labelStyle: TextStyle(color: Colors.grey[800]),
+              hintText: 'optional',
+              filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
           ),
         ),
-        TextField(
-          controller: controllerList[2],
-          keyboardType: TextInputType.number,
-          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: InputDecoration(
-            labelText: 'Height',
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: controllerList[2],
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            decoration: InputDecoration(
+              labelText: 'Height',
+              labelStyle: TextStyle(color: Colors.grey[800]),
+              filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
           ),
         ),
       ],

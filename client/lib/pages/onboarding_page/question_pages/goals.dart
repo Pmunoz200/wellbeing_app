@@ -64,29 +64,50 @@ class _GoalPageState extends State<GoalPage> {
 
   @override
   Widget build(BuildContext context) {
-    selectedGoals = widget.initialValue!;
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Goal',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         ...goals.map((goal) {
-          return CheckboxListTile(
-            title: Text(goal),
-            value: selectedGoals.contains(goal),
-            onChanged: (isChecked) =>
-                _handleCheckboxChange(goal, isChecked ?? false),
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+            child: CheckboxListTile(
+              title: Text(
+                goal,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              value: selectedGoals.contains(goal),
+              onChanged: (isChecked) =>
+                  _handleCheckboxChange(goal, isChecked ?? false),
+              activeColor: Colors.blue,
+              checkColor: Colors.white,
+              // tileColor: Colors.lightBlueAccent.withOpacity(0.1),
+            ),
           );
         }).toList(),
         if (isCustomGoalSelected)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: TextField(
               controller: widget.controller,
               decoration: InputDecoration(
                 labelText: 'Describe your custom goal',
+                labelStyle: TextStyle(color: Colors.grey[800]),
+                filled: true,
+                fillColor:
+                    Colors.lightBlueAccent.withOpacity(0.1), // Background color
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                  borderSide: BorderSide.none, // No border
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
               ),
               // onChanged: _handleCustomGoalChange,
             ),

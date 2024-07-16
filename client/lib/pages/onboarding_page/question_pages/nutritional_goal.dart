@@ -49,31 +49,60 @@ class _NutritionalGoalsPageState extends State<NutritionalGoalsPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Nutritional Goals',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
+// RadioListTiles for Goals
         RadioListTile<String>(
-          title: Text('Let the App Decide'),
+          title: Text(
+            'Let the App Decide',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Let the App Decide',
           groupValue: _selectedGoal,
-          onChanged: _handleRadioValueChange,
+          onChanged: (value) {
+            _handleRadioValueChange(value);
+            setState(() {
+              isCustomGoalSelected = value == 'Custom';
+            });
+          },
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         RadioListTile<String>(
-          title: Text('Custom'),
+          title: Text(
+            'Custom',
+            style: TextStyle(color: Colors.black, fontSize: 20),
+          ),
           value: 'Custom',
           groupValue: _selectedGoal,
-          onChanged: _handleRadioValueChange,
+          onChanged: (value) {
+            _handleRadioValueChange(value);
+            setState(() {
+              isCustomGoalSelected = value == 'Custom';
+            });
+          },
+          activeColor: Colors.blue,
+          visualDensity: VisualDensity.compact,
         ),
         if (isCustomGoalSelected)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: TextField(
               controller: widget.controller,
               decoration: InputDecoration(
-                labelText: 'Describe your custom nutritional goal',
+                labelText: 'Custom nutritional goal',
+                labelStyle: TextStyle(color: Colors.grey[800]),
+                filled: true,
+                fillColor: Colors.lightBlueAccent.withOpacity(0.1),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
               ),
               onChanged: _handleCustomGoalChange,
             ),

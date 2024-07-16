@@ -62,31 +62,52 @@ class _FitnessEnvironmentPageState extends State<FitnessEnvironmentPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Fitness Environment',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
-        ...environments.map((environment) {
-          return CheckboxListTile(
-            title: Text(environment),
-            value: selectedEnvironments.contains(environment),
-            onChanged: (isChecked) =>
-                _handleCheckboxChange(environment, isChecked ?? false),
-          );
-        }).toList(),
-        if (isCustomEnvironmentSelected)
-          Padding(
-            padding: const EdgeInsets.only(top: 8.0),
-            child: TextField(
-              controller: widget.controller,
-              decoration: InputDecoration(
-                labelText: 'Describe your custom fitness environment',
-              ),
-              // onChanged: _handleCustomEnvironmentChange,
-            ),
-          ),
+...environments.map((environment) {
+  return Padding(
+    padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+    child: CheckboxListTile(
+      title: Text(
+        environment,
+        style: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      value: selectedEnvironments.contains(environment),
+      onChanged: (isChecked) =>
+          _handleCheckboxChange(environment, isChecked ?? false),
+      activeColor: Colors.blue,
+      checkColor: Colors.white,
+      // tileColor: Colors.lightBlueAccent.withOpacity(0.1),
+    ),
+  );
+}).toList(),
+if (isCustomEnvironmentSelected)
+  Padding(
+    padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+    child: TextField(
+      controller: widget.controller,
+      decoration: InputDecoration(
+        labelText: 'Custom fitness environment',
+        labelStyle: TextStyle(color: Colors.grey[800]),
+        filled: true,
+        fillColor: Colors.lightBlueAccent.withOpacity(0.1), // Background color
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(30.0)), // Curved edges
+          borderSide: BorderSide.none, // No border
+        ),
+        contentPadding:
+            EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+      ),
+      // onChanged: _handleCustomEnvironmentChange,
+    ),
+  ),
+
       ],
     );
   }

@@ -64,27 +64,49 @@ class _TrainingStylesPageState extends State<TrainingStylesPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Training Styles',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         ...styles.map((style) {
-          return CheckboxListTile(
-            title: Text(style),
-            value: selectedStyles.contains(style),
-            onChanged: (isChecked) =>
-                _handleCheckboxChange(style, isChecked ?? false),
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+            child: CheckboxListTile(
+              title: Text(
+                style,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              value: selectedStyles.contains(style),
+              onChanged: (isChecked) =>
+                  _handleCheckboxChange(style, isChecked ?? false),
+              activeColor: Colors.blue,
+              checkColor: Colors.white,
+              // tileColor: Colors.lightBlueAccent.withOpacity(0.1),
+            ),
           );
         }).toList(),
         if (isCustomStyleSelected)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
             child: TextField(
               controller: widget.controller,
               decoration: InputDecoration(
                 labelText: 'Describe your custom training style',
+                labelStyle: TextStyle(color: Colors.grey[800]),
+                filled: true,
+                fillColor:
+                    Colors.lightBlueAccent.withOpacity(0.1), // Background color
+                border: OutlineInputBorder(
+                  borderRadius:
+                      BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                  borderSide: BorderSide.none, // No border
+                ),
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
               ),
               // onChanged: _handleCustomStyleChange,
             ),

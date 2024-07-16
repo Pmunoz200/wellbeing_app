@@ -16,22 +16,35 @@ class OthersPage extends StatelessWidget {
   Widget build(BuildContext context) {
     controller.text = initialValue ?? '';
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           'Others',
           style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         SizedBox(height: 16.0),
-        TextField(
-          controller: controller,
-          maxLines: null, // Allows multiline input
-          keyboardType: TextInputType.multiline,
-          decoration: InputDecoration(
-            labelText: 'Anything else you want to add?',
-            border: OutlineInputBorder(),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 8, 4, 4),
+          child: TextField(
+            controller: controller,
+            maxLines: null, // Allows multiline input
+            maxLength: 128, // Maximum allowed characters
+            keyboardType: TextInputType.multiline,
+            decoration: InputDecoration(
+              labelText: 'Anything else you want to add?',
+              labelStyle: TextStyle(color: Colors.grey[800]),
+              filled: true,
+              fillColor:
+                  Colors.lightBlueAccent.withOpacity(0.1), // Background color
+              border: OutlineInputBorder(
+                borderRadius:
+                    BorderRadius.all(Radius.circular(30.0)), // Curved edges
+                borderSide: BorderSide.none, // No border
+              ),
+              contentPadding:
+                  EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+            ),
+            onChanged: onSubmitted,
           ),
-          onChanged: onSubmitted,
         ),
       ],
     );

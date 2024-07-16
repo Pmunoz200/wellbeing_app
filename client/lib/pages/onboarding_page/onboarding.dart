@@ -202,24 +202,50 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         itemCount: questionPages.length,
         itemBuilder: (context, index) {
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            padding: const EdgeInsets.all(8),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8.0),
-                  child: questionPages[index],
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        child: questionPages[index],
+                      ),
+                    ],
+                  ),
                 ),
-                ElevatedButton(
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                  child: ElevatedButton(
                     onPressed: () {
                       questionPages.length - 1 == index
                           ? newCompleteForm(_controllers, newProfile, user,
                               provider, widget.navigator, context)
                           : _nextPage();
                     },
-                    child: questionPages.length - 1 == index
-                        ? const Text("Send onboarding")
-                        : const Text("Next")),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blue, // Background color
+                      shape: RoundedRectangleBorder(
+                        borderRadius:
+                            BorderRadius.circular(16.0), // Rounded edges
+                      ),
+                      minimumSize: Size(double.infinity, 60), // Larger size
+                    ),
+                    child: Text(
+                      questionPages.length - 1 == index
+                          ? "Send onboarding"
+                          : "Next",
+                      style: TextStyle(
+                        color: Colors.white, // White text color
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           );
@@ -302,9 +328,9 @@ void newCompleteForm(
       }
     }
   }
-  if(newProfile.fitnessEnvironment!.isEmpty){
+  if (newProfile.fitnessEnvironment!.isEmpty) {
     missingFields.add("Training Style");
-  }else{
+  } else {
     if (newProfile.fitnessEnvironment!.contains("Custom")) {
       int index = newProfile.fitnessEnvironment!.indexOf("Custom");
       if (index != -1) {
@@ -345,19 +371,19 @@ void newCompleteForm(
         actions: [
           TextButton(
             onPressed: () {
-              String? value2Delete;
-              for (OnboardingQuestion question in questions) {
-                if (question.options != null &&
-                    question.allowMultipleSelections == true) {
-                  if (newProfile[question.parameterName]
-                      .any((e) => !question.options!.contains(e))) {
-                    value2Delete = newProfile[question.parameterName]
-                        .firstWhere((e) => !question.options!.contains(e));
-                    newProfile[question.parameterName]
-                        .removeWhere((e) => e == value2Delete);
-                  }
-                }
-              }
+              // String? value2Delete;
+              // for (OnboardingQuestion question in questions) {
+              //   if (question.options != null &&
+              //       question.allowMultipleSelections == true) {
+              //     if (newProfile[question.parameterName]
+              //         .any((e) => !question.options!.contains(e))) {
+              //       value2Delete = newProfile[question.parameterName]
+              //           .firstWhere((e) => !question.options!.contains(e));
+              //       newProfile[question.parameterName]
+              //           .removeWhere((e) => e == value2Delete);
+              //     }
+              //   }
+              // }
               Navigator.pop(context);
             },
             child: const Text('OK'),
