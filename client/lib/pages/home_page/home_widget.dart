@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gemini_folder/pages/widgets/text_response_container.dart';
-
-const String tryText =
-    "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap.";
-const List<String> textList = [tryText, "1" + tryText, "2" + tryText];
+import 'package:gemini_folder/providers/main_provider.dart';
 
 class HomeWidgetPage extends StatefulWidget {
   HomeWidgetPage({Key? key}) : super(key: key);
@@ -15,6 +12,8 @@ class HomeWidgetPage extends StatefulWidget {
 class _HomeWidgetPageState extends State<HomeWidgetPage> {
   bool _isSummaryExpanded = false;
   bool _isSuggestionsExpanded = false;
+  final mainProvider = MainProvider();
+
   void toggleSummary() {
     setState(() {
       _isSummaryExpanded = !_isSummaryExpanded;
@@ -35,8 +34,11 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
     return _isSuggestionsExpanded;
   }
 
+
   @override
   Widget build(BuildContext context) {
+    List<String> textList = mainProvider.getHomeWidgetTexts().isEmpty ? [""] : mainProvider.getHomeWidgetTexts();
+    print(textList);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
