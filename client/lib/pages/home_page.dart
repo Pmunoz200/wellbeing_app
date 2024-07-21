@@ -40,12 +40,14 @@ class _HomePageState extends State<HomePage> {
         _selectedDate = targetDate;
       }
     });
+    mainProvider.fetchMessagesAndUpdateThem(mainProvider.userProfile!.userId, _selectedDate);
   }
 
   void _goBackOneDayOnDate() {
     setState(() {
       _selectedDate = _selectedDate.subtract(const Duration(days: 1));
     });
+    mainProvider.fetchMessagesAndUpdateThem(mainProvider.userProfile!.userId, _selectedDate);
   }
 
   @override
@@ -58,6 +60,10 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(create: (context) => mainProvider, child: _buildScaffold());
+  }
+
+  Scaffold _buildScaffold() {
     return Scaffold(
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(kToolbarHeight),
@@ -78,7 +84,16 @@ class _HomePageState extends State<HomePage> {
           margin: const EdgeInsets.all(0),
           padding: const EdgeInsets.all(0),
           child: Center(
-            child: _widgetOptions.elementAt(_selectedIndex),
+            child: Column(
+              children: [
+                IconButton(
+              icon: Icon(Icons.add),
+              onPressed: () {
+                print(mainProvider.homeMessages);
+              },),
+                _widgetOptions.elementAt(_selectedIndex),
+              ],
+            ),
           ),
         ),
         bottomNavigationBar: HomeBottomBar(
