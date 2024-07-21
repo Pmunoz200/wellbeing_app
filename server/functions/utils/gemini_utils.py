@@ -1,6 +1,7 @@
 import google.generativeai as genai
 from datetime import datetime
 import logging
+import os
 
 from utils.date_utils import time_str
 from utils.prompt_utils import (
@@ -10,6 +11,7 @@ from utils.prompt_utils import (
 
 
 def get_gemini_response(
+    key: str,
     db_conversation: list,
     query: str,
     user_information: dict,
@@ -21,7 +23,7 @@ def get_gemini_response(
         # Add user query to the conversation
         db_conversation.append(db_message("user", query, date))
         query_messages = [message["gemini_message"] for message in db_conversation]
-        response = call_gemini(query_messages, user_information, output_format)
+        response = call_gemini(key, query_messages, user_information, output_format)
         db_conversation.append(db_message("model", response, date))
         return db_conversation
     except Exception as e:
@@ -40,12 +42,14 @@ def gemini_message(role: str, content: str, date: datetime) -> dict:
 
 
 def call_gemini(
+    key: str,
     messages: list[dict],
     user_information: dict,
     temperature: float = 0.7,
     max_output_tokens: int = 500,
     output_format: bool = True,
 ):
+    genai.configure(api_key=key)
     """Call the Gemini model to generate a response."""
     try:
         # Configure the generation parameters

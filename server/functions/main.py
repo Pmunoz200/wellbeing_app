@@ -4,6 +4,7 @@ import google.cloud.firestore
 import json
 from datetime import datetime
 import logging
+import os
 
 from utils.date_utils import parse_date, normalize_date, time_frame
 from utils.prompt_utils import (
@@ -134,7 +135,7 @@ def update_detailed_messages_db(
         raise
 
 
-@https_fn.on_request()
+@https_fn.on_request(secrets=["GOOGLE_API_KEY"])
 def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
     """Retrieve user messages by date."""
     try:
@@ -150,6 +151,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         # Retrieve messages document and user information
         doc = retrieve_messages_document(uid, date_obj)
         user_information = retrieve_user_information(uid)
+        print(user_information)
 
         # Check if document exists, if not, create a new conversation
         if doc is None:
@@ -160,6 +162,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         # Initialize messages if empty. If it has less than 2 messages, means the conversation is not complete
         if len(db_conversation) < 2:
             db_conversation = get_gemini_response(
+                os.environ.get("GOOGLE_API_KEY"),
                 db_conversation,
                 no_logs_user_prompt,
                 user_information,
@@ -178,6 +181,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
 
             if last_time_frame != current_time_frame:
                 db_conversation = get_gemini_response(
+                    os.environ.get("GOOGLE_API_KEY"),
                     db_conversation,
                     new_time_frame_user_prompt,
                     user_information,
@@ -202,7 +206,7 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response(f"Internal server error: {str(e)}", status=500)
 
 
-@https_fn.on_request()
+@https_fn.on_request(secrets=["GOOGLE_API_KEY"])
 def get_response(req: https_fn.Request) -> https_fn.Response:
     """Add a message to the Firestore database and get a response."""
     try:
@@ -230,7 +234,11 @@ def get_response(req: https_fn.Request) -> https_fn.Response:
 
         # Get response from Gemini model and update conversation
         db_conversation = get_gemini_response(
-            db_conversation, query, user_information, date_obj
+            os.environ.get("GOOGLE_API_KEY"),
+            db_conversation,
+            query,
+            user_information,
+            date_obj,
         )
 
         # Update Firestore with the new conversation
@@ -253,7 +261,7 @@ def get_response(req: https_fn.Request) -> https_fn.Response:
         return https_fn.Response(f"Internal server error: {str(e)}", status=500)
 
 
-@https_fn.on_request()
+@https_fn.on_request(secrets=["GOOGLE_API_KEY"])
 def get_detailed_response(req: https_fn.Request) -> https_fn.Response:
     """Add a message to the Firestore database and get a response."""
     try:
@@ -295,7 +303,12 @@ def get_detailed_response(req: https_fn.Request) -> https_fn.Response:
 
             # Get response from Gemini model and update conversation
             db_conversation = get_gemini_response(
-                db_conversation, user_query, user_information, date_obj, False
+                os.environ.get("GOOGLE_API_KEY"),
+                db_conversation,
+                user_query,
+                user_information,
+                date_obj,
+                False,
             )
             content = db_conversation[-1]["gemini_message"]["parts"][0]
             content = json.loads(content)["content"]
