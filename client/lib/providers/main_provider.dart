@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:gemini_folder/services/gemini_service/api_service.dart';
 import 'package:gemini_folder/services/gemini_service/conversation_model.dart';
+import 'dart:async';
 
 final String BASEURL = 'http://127.0.0.1:5001/wellbeing-app-d5a53/us-central1';
 class MainProvider with ChangeNotifier {
@@ -13,29 +14,34 @@ class MainProvider with ChangeNotifier {
         );
 
   // Method to fetch the user conversation for a specific date
-  void fetchMessagesAndUpdateThem(String uid, DateTime date) async {
+  Future<void> fetchMessagesAndUpdateThem(String uid, DateTime date) async {
     try{
       final ApiService apiService = ApiService(baseUrl: BASEURL);
       currentConversations = await apiService.getUserMessagesByDate(uid, date);
+      getHomeWidgetTexts(); // Call getHomeWidgetTexts to update the homeMessages
       notifyListeners();
     } catch (e) {
       print(e);
     }
   }
 
-  List<String> getHomeWidgetTexts() {
+  List<String> homeSummaryMessages = [];
+  List<String> homeSuggestionMessages = [];
+  void getHomeWidgetTexts() {
     if (currentConversations != null) {
       print(currentConversations!.toJson());
       final modelMessageList = currentConversations!.conversation
           .where((element) => element.role == "model");
-      print(modelMessageList);
-      List<String> returnMessageList = [];
+      List<String> returnSummaryMessageList = [];
+      List<String> returnSuggestionList = [];
       for (var message in modelMessageList) {
-        returnMessageList.add(message.content.summary);
+        returnSummaryMessageList.add(message.content.summary);
+        returnSuggestionList.add(message.content.suggestion);
       }
-      return returnMessageList;
+      homeSummaryMessages = returnSummaryMessageList;
+      homeSuggestionMessages = returnSuggestionList;
+      notifyListeners();
     }
-    return [];
   }
 
 }
