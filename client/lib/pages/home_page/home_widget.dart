@@ -16,34 +16,9 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
   final mainProvider = MainProvider();
   List<String> textList = [""];
 
-  @override
-  void initState() {
-    super.initState();
-    mainProvider.addListener(_onMainProviderChange);
-  }
-
-  @override
-  void dispose() {
-    mainProvider.removeListener(_onMainProviderChange);
-    super.dispose();
-  }
-
-  void _onMainProviderChange() {
-    print("MainProvider changed");
-      // Call getHomeWidgetTexts again when MainProvider changes
-      // and update the textList
-    updateTextList();
-  }
-
   void toggleSummary() {
     setState(() {
       _isSummaryExpanded = !_isSummaryExpanded;
-    });
-  }
-
-  void updateTextList() {
-    setState(() {
-      textList = mainProvider.homeMessages;
     });
   }
 
@@ -64,7 +39,7 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
 
   @override
   Widget build(BuildContext context) {
-    textList = mainProvider.homeMessages;
+    textList = mainProvider.homeSummaryMessages;
     return Consumer<MainProvider>(
       builder: (context, main, child) {
     return Column(
@@ -73,14 +48,14 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
         _isSuggestionsExpanded
             ? Container()
             : TextResponseContainer(
-                texts: main.homeMessages,
+                texts: main.homeSummaryMessages,
                 title: "Summary",
                 getIsExpanded: getSuggestionsExpandedValue,
                 callback: toggleSummary),
         _isSummaryExpanded
             ? Container()
             : TextResponseContainer(
-                texts: textList,
+                texts: main.homeSuggestionMessages,
                 title: "Suggestions",
                 getIsExpanded: getSuggestionsExpandedValue,
                 callback: toggleSuggestions,

@@ -89,7 +89,7 @@ class _HomePageState extends State<HomePage> {
                 IconButton(
               icon: Icon(Icons.add),
               onPressed: () {
-                print(mainProvider.homeMessages);
+                print(mainProvider.homeSummaryMessages);
               },),
                 _widgetOptions.elementAt(_selectedIndex),
               ],
