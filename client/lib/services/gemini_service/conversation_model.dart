@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ConversationModel {
   final List<ConversationEntry> conversation;
 
@@ -33,7 +35,7 @@ class ConversationEntry {
   factory ConversationEntry.fromJson(Map<String, dynamic> json) {
     return ConversationEntry(
       role: json['role'],
-      content: Content.fromJson(json['content']),
+      content: Content.fromJson(jsonDecode(json['content'])),
     );
   }
 
