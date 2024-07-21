@@ -37,7 +37,7 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> textList = mainProvider.getHomeWidgetTexts().isEmpty ? [""] : mainProvider.getHomeWidgetTexts();
+    List<String> textList = mainProvider.getHomeWidgetTexts().isEmpty ? ["No message yet for today!"] : mainProvider.getHomeWidgetTexts();
     print(textList);
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
