@@ -151,7 +151,6 @@ def get_user_messages_by_date(req: https_fn.Request) -> https_fn.Response:
         # Retrieve messages document and user information
         doc = retrieve_messages_document(uid, date_obj)
         user_information = retrieve_user_information(uid)
-        print(user_information)
 
         # Check if document exists, if not, create a new conversation
         if doc is None:

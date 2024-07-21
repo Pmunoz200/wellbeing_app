@@ -37,10 +37,10 @@ if __name__ == "__main__":
     uid = "manuel"
 
     # get user messages by date
-    messages_request = get_user_messages_by_date_request(server_url, date_str, uid)
+    """ messages_request = get_user_messages_by_date_request(server_url, date_str, uid)
     for message in messages_request["conversation"]:
         content = json.loads(message["content"])
-        print(json.dumps(content, indent=4))
+        print(json.dumps(content, indent=4)) """
 
     # get response
     """ query = "I ate three eggs for breakfast."
