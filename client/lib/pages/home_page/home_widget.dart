@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gemini_folder/pages/widgets/text_response_container.dart';
 import 'package:gemini_folder/providers/main_provider.dart';
+import 'package:provider/provider.dart';
 
 class HomeWidgetPage extends StatefulWidget {
   HomeWidgetPage({Key? key}) : super(key: key);
@@ -13,10 +14,36 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
   bool _isSummaryExpanded = false;
   bool _isSuggestionsExpanded = false;
   final mainProvider = MainProvider();
+  List<String> textList = [""];
+
+  @override
+  void initState() {
+    super.initState();
+    mainProvider.addListener(_onMainProviderChange);
+  }
+
+  @override
+  void dispose() {
+    mainProvider.removeListener(_onMainProviderChange);
+    super.dispose();
+  }
+
+  void _onMainProviderChange() {
+    print("MainProvider changed");
+      // Call getHomeWidgetTexts again when MainProvider changes
+      // and update the textList
+    updateTextList();
+  }
 
   void toggleSummary() {
     setState(() {
       _isSummaryExpanded = !_isSummaryExpanded;
+    });
+  }
+
+  void updateTextList() {
+    setState(() {
+      textList = mainProvider.homeMessages;
     });
   }
 
@@ -37,15 +64,16 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
 
   @override
   Widget build(BuildContext context) {
-    List<String> textList = mainProvider.getHomeWidgetTexts().isEmpty ? ["No message yet for today!"] : mainProvider.getHomeWidgetTexts();
-    print(textList);
+    textList = mainProvider.homeMessages;
+    return Consumer<MainProvider>(
+      builder: (context, main, child) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
         _isSuggestionsExpanded
             ? Container()
             : TextResponseContainer(
-                texts: textList,
+                texts: main.homeMessages,
                 title: "Summary",
                 getIsExpanded: getSuggestionsExpandedValue,
                 callback: toggleSummary),
@@ -59,5 +87,6 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
               ),
       ],
     );
+    });
   }
 }
