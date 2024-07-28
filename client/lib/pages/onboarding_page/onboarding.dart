@@ -58,7 +58,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           newProfile.gender = value;
         },
         initialName: newProfile.name,
-        initialAge: newProfile.age.toString(),
+        initialAge: newProfile.age != null ? newProfile.age.toString() : null,
         initialGender: newProfile.gender,
       ),
       PersonalMeasuresPage(controllerList: _controllers.sublist(4, 7)),
@@ -196,61 +196,78 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     }
 
     return Scaffold(
-      appBar: provider.userProfile != null ? AppBar() : null,
-      body: PageView.builder(
-        controller: _pageController,
-        itemCount: questionPages.length,
-        itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8.0),
-                        child: questionPages[index],
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 80.0),
-                  child: ElevatedButton(
-                    onPressed: () {
-                      questionPages.length - 1 == index
-                          ? newCompleteForm(_controllers, newProfile, user,
-                              provider, widget.navigator, context)
-                          : _nextPage();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue, // Background color
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(16.0), // Rounded edges
-                      ),
-                      minimumSize: Size(double.infinity, 60), // Larger size
-                    ),
-                    child: Text(
-                      questionPages.length - 1 == index
-                          ? "Send onboarding"
-                          : "Next",
-                      style: TextStyle(
-                        color: Colors.white, // White text color
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
+      appBar: AppBar(
+        actions: [
+          TextButton(
+            onPressed: _nextPage,
+            child: Text(
+              'Skip',
+              style: TextStyle(
+                color: Colors.blueGrey,
+                fontSize: 16.0,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          );
-        },
+          ),
+        ],
       ),
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: PageView.builder(
+          controller: _pageController,
+          itemCount: questionPages.length,
+          itemBuilder: (context, index) {
+            return Padding(
+              padding: const EdgeInsets.all(8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: questionPages[index],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 80.0),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        questionPages.length - 1 == index
+                            ? newCompleteForm(_controllers, newProfile, user,
+                                provider, widget.navigator, context)
+                            : _nextPage();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.blue,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16.0),
+                        ),
+                        minimumSize: Size(double.infinity, 60),
+                      ),
+                      child: Text(
+                        questionPages.length - 1 == index ? "Done" : "Next",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+      ),
+      resizeToAvoidBottomInset: false,
     );
   }
 }

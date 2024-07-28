@@ -35,6 +35,7 @@ class PersonalMeasuresPage extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'Current Weight',
               labelStyle: TextStyle(color: Colors.grey[800]),
+              suffixText: 'Kg',
               filled: true,
               fillColor:
                   Colors.lightBlueAccent.withOpacity(0.1), // Background color
@@ -57,6 +58,7 @@ class PersonalMeasuresPage extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'Target Weight (optional)',
               labelStyle: TextStyle(color: Colors.grey[800]),
+              suffixText: 'Kg',
               hintText: 'optional',
               filled: true,
               fillColor:
@@ -80,6 +82,7 @@ class PersonalMeasuresPage extends StatelessWidget {
             decoration: InputDecoration(
               labelText: 'Height',
               labelStyle: TextStyle(color: Colors.grey[800]),
+              suffixText: 'Cm',
               filled: true,
               fillColor:
                   Colors.lightBlueAccent.withOpacity(0.1), // Background color
