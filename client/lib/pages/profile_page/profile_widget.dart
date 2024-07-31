@@ -61,7 +61,7 @@ class _ProfileWidgetPageState extends State<ProfileWidgetPage> {
     Profile userProfile = provider.userProfile!;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile Page'),
+        title: const Text('Profile'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -71,14 +71,7 @@ class _ProfileWidgetPageState extends State<ProfileWidgetPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            ProfileTopContent(user: user),
-            const Divider(),
-            ProfileDataList(
-                profileQuestions: profileQuestions, userProfile: userProfile)
-          ],
-        ),
+        child: Text("Profile"),
       ),
     );
   }
