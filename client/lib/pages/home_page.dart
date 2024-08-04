@@ -40,14 +40,14 @@ class _HomePageState extends State<HomePage> {
         _selectedDate = targetDate;
       }
     });
-    mainProvider.fetchMessagesAndUpdateThem(mainProvider.userProfile!.userId, _selectedDate);
+    mainProvider.fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, _selectedDate);
   }
 
   void _goBackOneDayOnDate() {
     setState(() {
       _selectedDate = _selectedDate.subtract(const Duration(days: 1));
     });
-    mainProvider.fetchMessagesAndUpdateThem(mainProvider.userProfile!.userId, _selectedDate);
+    mainProvider.fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, _selectedDate);
   }
 
   @override
@@ -56,6 +56,7 @@ class _HomePageState extends State<HomePage> {
     startOfTomorrow = DateTime(
         startOfTomorrow.year, startOfTomorrow.month, startOfTomorrow.day + 1);
     mainProvider.fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, DateTime.now());
+    // mainProvider.fetchMessagesAndUpdateThem("manuel", DateTime.now());
   }
 
   @override
