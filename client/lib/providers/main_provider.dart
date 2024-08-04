@@ -19,6 +19,8 @@ class MainProvider with ChangeNotifier {
       final ApiService apiService = ApiService(baseUrl: BASEURL);
       currentConversations = await apiService.getUserMessagesByDate(uid, date);
       getHomeWidgetTexts(); // Call getHomeWidgetTexts to update the homeMessages
+      getFoodWidgetTexts(); // Call getFoodWidgetTexts to update the foodMessages
+      getExerciseWidgetTexts(); // Call getExerciseWidgetTexts to update the exerciseMessages
       notifyListeners();
     } catch (e) {
       print(e);
@@ -29,7 +31,6 @@ class MainProvider with ChangeNotifier {
   List<String> homeSuggestionMessages = [];
   void getHomeWidgetTexts() {
     if (currentConversations != null) {
-      print(currentConversations!.toJson());
       final modelMessageList = currentConversations!.conversation
           .where((element) => element.role == "model");
       List<String> returnSummaryMessageList = [];
@@ -43,5 +44,52 @@ class MainProvider with ChangeNotifier {
       notifyListeners();
     }
   }
+  
+  List<String> foodSummaryMessages = [];
+  List<String> foodSuggestionMessages = [];
+  void getFoodWidgetTexts() {
+    if (currentConversations != null) {
+      final modelMessageList = currentConversations!.conversation
+          .where((element) => element.role == "model");
+      List<String> returnSummaryMessageList = [];
+      List<String> returnSuggestionList = [];
+      for (var message in modelMessageList) {
+        returnSummaryMessageList.add(message.content.food.summary);
+        returnSuggestionList.add(message.content.food.suggestion);
+      }
+      foodSummaryMessages = returnSummaryMessageList;
+      foodSuggestionMessages = returnSuggestionList;
+      notifyListeners();
+    }
+  }
+
+  List<String> exerciseSummaryMessages = [];
+  List<String> exerciseSuggestionMessages = [];
+  void getExerciseWidgetTexts() {
+    if (currentConversations != null) {
+      final modelMessageList = currentConversations!.conversation
+          .where((element) => element.role == "model");
+      List<String> returnSummaryMessageList = [];
+      List<String> returnSuggestionList = [];
+      for (var message in modelMessageList) {
+        returnSummaryMessageList.add(message.content.exercise.summary);
+        returnSuggestionList.add(message.content.exercise.suggestion);
+      }
+      exerciseSummaryMessages = returnSummaryMessageList;
+      exerciseSuggestionMessages = returnSuggestionList;
+      notifyListeners();
+    }
+  }
+
+void sendMessage(String uid, String message) async{
+  if (message == "<error_on_request>") {
+    return;
+  }
+  final ApiService apiService = ApiService(baseUrl: BASEURL);
+  final response = await apiService.getResponse(uid, message, DateTime.now());
+  currentConversations = response;
+  getHomeWidgetTexts();
+  getFoodWidgetTexts();
+}
 
 }
