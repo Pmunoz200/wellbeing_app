@@ -1,10 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
 import '../widgets/text_response_container.dart';
+import 'package:gemini_folder/chat/message_class.dart';
+import 'package:gemini_folder/chat/message_input.dart';
+import 'package:gemini_folder/providers/main_provider.dart';
+import 'package:provider/provider.dart';
 
 
-const String tryText = "Excercise Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap.";
-const List<String> textList = [tryText, "1" + tryText, "2" + tryText];
+const List<String> textList = ["No messages yet"];
 
 class ExerciseWidgetPage extends StatefulWidget {
   @override
@@ -14,6 +17,7 @@ class ExerciseWidgetPage extends StatefulWidget {
 class _ExerciseWidgetPageState extends State<ExerciseWidgetPage> {
     bool _isSummaryExpanded = false;
   bool _isSuggestionsExpanded = false;
+  final mainProvider = MainProvider();
   void toggleSummary() {
     setState(() {
       _isSummaryExpanded = !_isSummaryExpanded;
@@ -30,14 +34,45 @@ class _ExerciseWidgetPageState extends State<ExerciseWidgetPage> {
   bool getSuggestionsExpandedValue() {
     return _isSuggestionsExpanded;
   }
+  void _sendMessage(MessageObject message) {
+    print(message.textMessage);
+    mainProvider.sendMessage(FirebaseAuth.instance.currentUser!.uid, message.textMessage ?? "<error_on_request>");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _isSuggestionsExpanded ? Container() : TextResponseContainer(texts: textList, title: "Summary", getIsExpanded: getSummaryExpandedValue, callback: toggleSummary),
-            _isSummaryExpanded ? Container() : TextResponseContainer(texts: textList, title: "Suggestions", getIsExpanded:  getSuggestionsExpandedValue, callback: toggleSuggestions,),
-          ],
-      );
+    return Consumer<MainProvider>(
+      builder: (context, main, child) {
+    return Expanded(
+      child: Column(
+        children: [
+          Expanded(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                _isSuggestionsExpanded
+                    ? Container()
+                    : TextResponseContainer(
+                        texts: main.exerciseSummaryMessages.isEmpty ? textList : main.exerciseSummaryMessages,
+                        title: "Summary",
+                        getIsExpanded: getSuggestionsExpandedValue,
+                        callback: toggleSummary),
+                _isSummaryExpanded
+                    ? Container()
+                    : TextResponseContainer(
+                        texts: main.exerciseSuggestionMessages.isEmpty ? textList : main.exerciseSuggestionMessages,
+                        title: "Suggestions",
+                        getIsExpanded: getSuggestionsExpandedValue,
+                        callback: toggleSuggestions,
+                      ),
+              ])),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+            child: MessageInput(sendMessageFunction: _sendMessage),
+          ),
+        ],
+      ),
+    );
+    });
   }
 }
