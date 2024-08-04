@@ -85,7 +85,7 @@ class TextResponseContainerWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                       child: Container(
-                          padding: EdgeInsets.all(12), child: Text('Text $i')));
+                          padding: EdgeInsets.all(12), child: Text('$i')));
                 },
               );
             }).toList()),
