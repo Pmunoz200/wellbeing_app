@@ -339,9 +339,8 @@ class _MessageInputState extends State<MessageInput> {
                                             .colorScheme
                                             .onPrimaryContainer,
                                       ),
-                                      fillColor: Theme.of(context)
-                                          .colorScheme
-                                          .primary,
+                                      fillColor:
+                                          Theme.of(context).colorScheme.primary,
                                       hintText: 'Audio file.',
                                       border: InputBorder.none,
                                     ),
@@ -351,8 +350,8 @@ class _MessageInputState extends State<MessageInput> {
                               if (_imageData != null) ...[
                                 Expanded(
                                   child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 4),
+                                    padding:
+                                        const EdgeInsets.symmetric(vertical: 4),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [

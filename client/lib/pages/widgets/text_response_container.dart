@@ -64,7 +64,7 @@ class TextResponseContainerWidget extends StatelessWidget {
       required this.callback});
   @override
   Widget build(BuildContext context) {
-    final double aspectRation = isExpanded ? 0.7 : 2;
+    final double aspectRation = isExpanded ? 0.7 : 1.5;
     return Column(
       children: [
         CarouselSlider(
@@ -79,7 +79,7 @@ class TextResponseContainerWidget extends StatelessWidget {
                 builder: (BuildContext context) {
                   return Container(
                       width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.fromLTRB(5, 0, 2, 0),
+                      margin: EdgeInsets.fromLTRB(4, 0, 4, 0),
                       decoration: BoxDecoration(
                         color: Theme.of(context).cardColor,
                         borderRadius: BorderRadius.circular(10.0),
@@ -91,7 +91,7 @@ class TextResponseContainerWidget extends StatelessWidget {
             }).toList()),
         Container(
           width: double.infinity,
-          padding: EdgeInsets.only(right: 16.0),
+          padding: const EdgeInsets.only(right: 16.0),
           child: Align(
             alignment: Alignment.bottomRight,
             child: Text(

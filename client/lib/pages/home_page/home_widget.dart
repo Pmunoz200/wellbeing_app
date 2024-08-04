@@ -72,7 +72,7 @@ class _HomeWidgetPageState extends State<HomeWidgetPage> {
                     ),
             ])),
         Padding(
-          padding: const EdgeInsets.fromLTRB(0, 0, 0, 8),
+          padding: const EdgeInsets.fromLTRB(0, 0, 8, 8),
           child: MessageInput(sendMessageFunction: _sendMessage),
         ),
       ],

@@ -4,16 +4,19 @@ class AppThemeData {
   static ThemeData getThemeData() {
     return ThemeData(
       primaryColor: const Color(0xFF0E86D4).withOpacity(0.8),
-      cardColor: const Color(0xFFE3E7EE),
-      textTheme: TextTheme(
-        headlineMedium: const TextStyle(
+      cardColor: const Color(0xFFEDF1F8),
+      textTheme: const TextTheme(
+        headlineMedium: TextStyle(
             fontFamily: 'Montserrat', fontSize: 30.0, color: Colors.black),
-        bodyMedium: const TextStyle(fontFamily: 'Montserrat', fontSize: 15.0),
+        bodyMedium: TextStyle(
+            fontFamily: 'Montserrat',
+            fontSize: 16.0,
+            fontWeight: FontWeight.w300),
         bodyLarge: TextStyle(
             fontFamily: 'Montserrat',
-            fontSize: 18.0,
-            color: Colors.grey[700],
-            fontWeight: FontWeight.bold),
+            fontSize: 16.0,
+            color: Color(0xFF737373),
+            fontWeight: FontWeight.w600),
       ),
     );
   }
