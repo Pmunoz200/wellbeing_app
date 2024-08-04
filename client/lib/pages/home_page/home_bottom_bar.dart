@@ -16,12 +16,13 @@ class HomeBottomBar extends StatelessWidget {
       decoration: const BoxDecoration(
         border: Border(
           top: BorderSide(
-            color: Colors.black,
+            color: Colors.grey,
             width: 0.5,
           ),
         ),
       ),
       child: BottomNavigationBar(
+        backgroundColor: Colors.white,
         selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey[400],
         items: const <BottomNavigationBarItem>[
