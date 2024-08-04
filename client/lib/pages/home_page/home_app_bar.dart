@@ -14,47 +14,63 @@ class HomeAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final startOfTomorrow = DateTime.now().add(const Duration(days: 1)).toLocal();
+    final textStyle = Theme.of(context).textTheme.headlineMedium;
+    const fontSize = 18.0;
+
     return AppBar(
-      leading: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: goBackOneDayOnDate,
-        color: Colors.black,
-      ),
-      title: Center(
-        child: Text(
-          DateFormat('EEEE, MMM d').format(selectedDate),
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
+      title: Stack(
+        children: [
+          Align(
+            alignment: Alignment.center,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back_ios),
+                  onPressed: goBackOneDayOnDate,
+                  color: Colors.black,
+                  iconSize: fontSize,
+                ),
+                Container(
+                  width: 160, // Fixed width for the text container
+                  child: Text(
+                    DateFormat('EEEE, MMM d').format(selectedDate),
+                    style: textStyle?.copyWith(fontSize: fontSize),
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Visibility(
+                  visible: selectedDate.isBefore(
+                      DateTime.now().subtract(const Duration(days: 1))),
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_forward_ios),
+                    onPressed: advanceOneDayOnDate,
+                    color: Colors.black,
+                    iconSize: fontSize,
+                  ),
+                  maintainAnimation: true,
+                  maintainSize: true,
+                  maintainState: true,
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
-      actions: [
-        if (selectedDate.isBefore(DateTime.now().subtract(const Duration(days: 1))))
-          IconButton(
-            padding: EdgeInsets.zero,
-            constraints: const BoxConstraints(),
-            icon: const Icon(Icons.arrow_forward),
-            onPressed: selectedDate == DateTime.now() ? null : advanceOneDayOnDate,
-            color: Colors.black,
-          )
-        else
-          const SizedBox(width: 2),
-        Container(
-          width: 40,
-          height: 40,
-          margin: EdgeInsets.zero,
-          child: IconButton(
-            onPressed: () {
-              Navigator.of(context).pushNamed('/profile');
-            },
-            constraints: const BoxConstraints(),
-            icon: Image.asset("assets/icon_profile.png"),
+          Align(
+            alignment: Alignment.centerRight,
+            child: IconButton(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/profile');
+              },
+              iconSize: fontSize * 1.2,
+              icon: const Icon(
+                Icons.account_circle,
+                color: Colors.black,
+              ),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
       backgroundColor: Theme.of(context).primaryColor,
     );
   }
