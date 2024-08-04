@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 // Define the FormFieldData class
 class FormFieldData {
   final String label;
+  final String db_label;
   final TextInputType keyboardType;
   final List<String>? dropdownItems;
   final List<String>? checkboxItems;
 
   FormFieldData({
     required this.label,
+    required this.db_label,
     this.keyboardType = TextInputType.text,
     this.dropdownItems,
     this.checkboxItems,
@@ -25,12 +27,12 @@ class FormStateData {
   FormStateData(this.fields) {
     for (var field in fields) {
       if (field.dropdownItems != null) {
-        dropdownValues[field.label] = null;
+        dropdownValues[field.db_label] = null;
       } else if (field.checkboxItems != null) {
-        checkboxValues[field.label] =
+        checkboxValues[field.db_label] =
             List<bool>.filled(field.checkboxItems!.length, false);
       } else {
-        textControllers[field.label] = TextEditingController();
+        textControllers[field.db_label] = TextEditingController();
       }
     }
   }
@@ -38,14 +40,24 @@ class FormStateData {
   Map<String, dynamic> toMap() {
     Map<String, dynamic> data = {};
     textControllers.forEach((key, value) {
-      data[key] = value.text;
+      var field = fields.firstWhere((field) => field.db_label == key);
+      if (field.keyboardType == TextInputType.number) {
+        // Attempt to parse as int, fall back to double if necessary
+        if (value.text.contains('.')) {
+          data[key] = double.tryParse(value.text);
+        } else {
+          data[key] = int.tryParse(value.text);
+        }
+      } else {
+        data[key] = value.text;
+      }
     });
     dropdownValues.forEach((key, value) {
       data[key] = value;
     });
     checkboxValues.forEach((key, value) {
       final selectedItems = fields
-          .firstWhere((field) => field.label == key)
+          .firstWhere((field) => field.db_label == key)
           .checkboxItems!
           .asMap()
           .entries
@@ -78,10 +90,10 @@ Widget buildFormPage(
                 }).toList(),
                 onChanged: (newValue) {
                   setState(() {
-                    formState.dropdownValues[field.label] = newValue;
+                    formState.dropdownValues[field.db_label] = newValue;
                   });
                 },
-                value: formState.dropdownValues[field.label],
+                value: formState.dropdownValues[field.db_label],
               );
             } else if (field.checkboxItems != null) {
               return Column(
@@ -98,10 +110,10 @@ Widget buildFormPage(
                   ...List.generate(field.checkboxItems!.length, (index) {
                     return CheckboxListTile(
                       title: Text(field.checkboxItems![index]),
-                      value: formState.checkboxValues[field.label]![index],
+                      value: formState.checkboxValues[field.db_label]![index],
                       onChanged: (newValue) {
                         setState(() {
-                          formState.checkboxValues[field.label]![index] =
+                          formState.checkboxValues[field.db_label]![index] =
                               newValue ?? false;
                         });
                       },
@@ -111,7 +123,7 @@ Widget buildFormPage(
               );
             } else {
               return TextFormField(
-                controller: formState.textControllers[field.label],
+                controller: formState.textControllers[field.db_label],
                 decoration: InputDecoration(labelText: field.label),
                 keyboardType: field.keyboardType,
               );
@@ -127,27 +139,39 @@ Widget buildFormPage(
 Map<String, List<FormFieldData>> getFormConfigs() {
   return {
     'personalInformation': [
-      FormFieldData(label: 'Name'),
-      FormFieldData(label: 'Age', keyboardType: TextInputType.number),
+      FormFieldData(label: 'Name', db_label: 'name'),
+      FormFieldData(
+          label: 'Age', db_label: 'age', keyboardType: TextInputType.number),
       FormFieldData(
         label: 'Gender',
+        db_label: 'gender',
         dropdownItems: ['Male', 'Female', 'Other'],
       ),
     ],
-    'contactInformation': [
-      FormFieldData(label: 'Address'),
-      FormFieldData(label: 'Phone Number', keyboardType: TextInputType.phone),
+    'physicalMeasurements': [
       FormFieldData(
-        label: 'Receive Newsletter',
-        checkboxItems: ['Yes'],
-      ),
+          label: 'Current Weight',
+          db_label: 'currentWeight',
+          keyboardType: TextInputType.number),
+      FormFieldData(
+          label: 'Target Weight',
+          db_label: 'targetWeight',
+          keyboardType: TextInputType.number),
+      FormFieldData(
+          label: 'Height',
+          db_label: 'height',
+          keyboardType: TextInputType.number),
     ],
-    'preferences': [
-      FormFieldData(label: 'Favorite Hobby'),
-      FormFieldData(label: 'Favorite Color'),
+    'activityLevel': [
       FormFieldData(
-        label: 'Favorite Food',
-        dropdownItems: ['Pizza', 'Burger', 'Pasta', 'Salad'],
+        label: 'Activity Level',
+        db_label: 'activityLevel',
+        dropdownItems: ['Sedentary', 'Lightly Active', 'Moderately Active'],
+      ),
+      FormFieldData(
+        label: 'Custom Activity Level',
+        db_label: 'customActivityLevel',
+        keyboardType: TextInputType.text,
       ),
     ],
   };
