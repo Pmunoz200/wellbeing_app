@@ -50,7 +50,7 @@ class LoginScreenState extends State<LoginScreen> {
       final Profile? userProfile =
           await DatabaseService().getUserProfile(user.uid);
       final onboardingCompleted =
-          userSnapshot.data()?['onboardingCompleted'] ?? false;
+          userSnapshot.data()?['completedOnboarding'] ?? false;
       if (onboardingCompleted && userProfile != null) {
         provider.userProfile = userProfile;
         widget.navigator.currentState?.pushReplacementNamed('/home');
