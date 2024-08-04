@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:gemini_folder/pages/onboarding_page/onboarding_forms.dart';
+import 'package:gemini_folder/pages/onboarding_page/onboarding_form.dart';
+import 'package:gemini_folder/pages/onboarding_page/onboarding_sections.dart';
 import 'package:gemini_folder/pages/user_authentication_page/profile_class.dart';
 import 'package:gemini_folder/providers/main_provider.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   // Map to hold the state of each form page
   Map<String, FormStateData> formStates = {};
+  Map<String, String> formTitles = {};
 
   void _nextPage() async {
     if (isLastPage) {
@@ -42,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _saveOnboarding() async {
     // 1. Set completedOnboarding to True
-    //newProfile.completedOnboarding = true;
+    newProfile.completedOnboarding = true;
 
     // 2. Update newProfile with data from formStates
     formStates.forEach((key, state) {
@@ -59,7 +61,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     Provider.of<MainProvider>(context, listen: false).userProfile = newProfile;
 
     // 4. Navigate to the home screen
-    //widget.navigator.currentState?.pushReplacementNamed('/home');
+    widget.navigator.currentState?.pushReplacementNamed('/home');
   }
 
   @override
@@ -88,7 +90,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     final formConfigs = getFormConfigs();
     formStates = {
       for (var entry in formConfigs.entries)
-        entry.key: FormStateData(entry.value)
+        entry.key: FormStateData(entry.value.fields)
+    };
+    formTitles = {
+      for (var entry in formConfigs.entries) entry.key: entry.value.title
     };
 
     // Add listener to update isLastPage
@@ -140,7 +145,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   List<Widget> getFormPages() {
     return formStates.entries.map((entry) {
-      return buildFormPage(entry.value, setState);
+      final title = formTitles[entry.key]!;
+      return buildFormPage(entry.value, setState, formTitles[entry.key]!);
     }).toList();
   }
 }

@@ -10,7 +10,7 @@ class Profile {
   Map<String, dynamic> nutritionalGoals;
   Map<String, dynamic> fitnessEnvironment;
   Map<String, dynamic> trainingStyle;
-  String? other;
+  Map<String, dynamic> other;
 
   Profile({
     required this.userId,
@@ -24,7 +24,7 @@ class Profile {
     Map<String, dynamic>? nutritionalGoals,
     Map<String, dynamic>? fitnessEnvironment,
     Map<String, dynamic>? trainingStyle,
-    this.other,
+    Map<String, dynamic>? other,
   })  : personalInformation = personalInformation ??
             {
               'name': null,
@@ -66,7 +66,8 @@ class Profile {
             {
               'trainingStyle': null,
               'customTrainingStyle': null,
-            };
+            },
+        other = other ?? {'additionalInformation': null};
 
   factory Profile.fromMap(Map<String, dynamic> map) {
     Map<String, dynamic> initializeMap(
@@ -120,7 +121,7 @@ class Profile {
         'trainingStyle': null,
         'customTrainingStyle': null,
       }),
-      other: map['other'],
+      other: initializeMap(map['other'], {'additionalInformation': null}),
     );
   }
 
@@ -151,8 +152,34 @@ class Profile {
       "nutritionalGoals": ["nutritionalGoals", "customNutritionalGoals"],
       "fitnessEnvironment": ["fitnessEnvironment", "customFitnessEnvironment"],
       "trainingStyle": ["trainingStyle", "customTrainingStyle"],
-      "other": null
+      "other": ["additionalInformation"],
     };
+  }
+
+  // Define the operator [] to get values
+  dynamic operator [](String key) {
+    switch (key) {
+      case 'personalInformation':
+        return personalInformation;
+      case 'physicalMeasurements':
+        return physicalMeasurements;
+      case 'activityLevel':
+        return activityLevel;
+      case 'goal':
+        return goal;
+      case 'dietaryPreferences':
+        return dietaryPreferences;
+      case 'nutritionalGoals':
+        return nutritionalGoals;
+      case 'fitnessEnvironment':
+        return fitnessEnvironment;
+      case 'trainingStyle':
+        return trainingStyle;
+      case 'other':
+        return other;
+      default:
+        throw ArgumentError('Invalid key: $key');
+    }
   }
 
   // Dynamic setter
@@ -183,7 +210,7 @@ class Profile {
         trainingStyle = value;
         break;
       case 'other':
-        other = value.toString();
+        other = value;
         break;
       default:
         throw ArgumentError('Invalid key: $key');
