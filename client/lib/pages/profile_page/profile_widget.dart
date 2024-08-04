@@ -103,9 +103,6 @@ class _ProfileWidgetPageState extends State<ProfileWidgetPage> {
       ),
     ).then((_) {
       setState(() {
-        formStates.forEach((key, state) {
-          print(state.toMap());
-        });
         _saveOnboarding();
       }); // Ensure state is updated when returning to the profile page
     });
