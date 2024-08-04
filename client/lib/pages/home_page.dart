@@ -28,6 +28,7 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onItemTapped(int index) {
+    mainProvider.fetchMessagesAndUpdateThem(FirebaseAuth.instance.currentUser!.uid, _selectedDate);
     setState(() {
       _selectedIndex = index;
     });
