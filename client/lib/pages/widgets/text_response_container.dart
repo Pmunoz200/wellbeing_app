@@ -7,13 +7,15 @@ class TextResponseContainer extends StatefulWidget {
   final String title;
   final ValueGetter<bool> getIsExpanded;
   final VoidCallback callback;
+  final bool isLoading;
 
   const TextResponseContainer(
       {super.key,
       required this.texts,
       required this.title,
       required this.getIsExpanded,
-      required this.callback});
+      required this.callback,
+      required this.isLoading});
 
   @override
   State<TextResponseContainer> createState() => _TextResponseContainerState();
@@ -21,6 +23,8 @@ class TextResponseContainer extends StatefulWidget {
 
 class _TextResponseContainerState extends State<TextResponseContainer> {
   bool isExpanded = false;
+
+  @override
   void initState() {
     super.initState();
     isExpanded = widget.getIsExpanded();
@@ -41,12 +45,14 @@ class _TextResponseContainerState extends State<TextResponseContainer> {
           texts: widget.texts,
           title: widget.title,
           isExpanded: this.isExpanded,
-          callback: handleExpandedChange),
+          callback: handleExpandedChange,
+          isLoading: widget.isLoading),
       expandedChild: TextResponseContainerWidget(
           texts: widget.texts,
           title: widget.title,
           isExpanded: this.isExpanded,
-          callback: handleExpandedChange),
+          callback: handleExpandedChange,
+          isLoading: widget.isLoading),
     );
   }
 }
@@ -56,39 +62,46 @@ class TextResponseContainerWidget extends StatelessWidget {
   final String title;
   final bool isExpanded;
   final VoidCallback callback;
+  final bool isLoading;
 
   const TextResponseContainerWidget(
       {required this.texts,
       required this.title,
       required this.isExpanded,
-      required this.callback});
+      required this.callback,
+      required this.isLoading});
+
   @override
   Widget build(BuildContext context) {
-    final double aspectRation = isExpanded ? 0.7 : 2;
+    final double aspectRatio = isExpanded ? 0.7 : 2;
+
     return Column(
       children: [
-        CarouselSlider(
-            options: CarouselOptions(
-                initialPage: texts.length,
-                aspectRatio: aspectRation,
-                enableInfiniteScroll: false,
-                autoPlay: false,
-                viewportFraction: 0.95),
-            items: texts.map((i) {
-              return Builder(
-                builder: (BuildContext context) {
-                  return Container(
-                      width: MediaQuery.of(context).size.width,
-                      margin: EdgeInsets.fromLTRB(5, 0, 2, 0),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                      child: Container(
-                          padding: EdgeInsets.all(12), child: Text('$i')));
-                },
-              );
-            }).toList()),
+        isLoading
+            ? Center(child: CircularProgressIndicator())
+            : CarouselSlider(
+                options: CarouselOptions(
+                    initialPage: texts.length,
+                    aspectRatio: aspectRatio,
+                    enableInfiniteScroll: false,
+                    autoPlay: false,
+                    viewportFraction: 0.95),
+                items: texts.map((i) {
+                  return Builder(
+                    builder: (BuildContext context) {
+                      return Container(
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.fromLTRB(5, 0, 2, 0),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).cardColor,
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          child: Container(
+                              padding: EdgeInsets.all(12), child: Text('$i')));
+                    },
+                  );
+                }).toList(),
+              ),
         Container(
           width: double.infinity,
           padding: EdgeInsets.only(right: 16.0),
