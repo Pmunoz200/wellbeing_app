@@ -113,12 +113,6 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: Column(
             children: [
-              IconButton(
-                icon: Icon(Icons.add),
-                onPressed: () {
-                  print(mainProvider.homeSummaryMessages);
-                },
-              ),
               _widgetOptions().elementAt(_selectedIndex),
             ],
           ),
