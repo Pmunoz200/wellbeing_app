@@ -1,31 +1,154 @@
-# gemini_folder
+<h3 align="center">Project Vitalis</h3>
 
-A new Flutter project.
+<div align="center">
 
-## Getting Started
+[![Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/Pmunoz200/wellbeing_app)
 
-This project is a starting point for a Flutter application.
+</div>
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+<p align="center">
+  Vitalis is a Flutter project designed to help users improve their healthy habits by eating well and exercising, leveraging the power of Gemini AI. This application allows users to easily communicate with the system and receive well-processed information and insights while tracking their progress.
+  <br>
+</p>
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
 
-## Set up for <u>development 🧑‍💻</u>
+## 📝 Table of Contents
 
-### 1. Set up the global Python virtual environment
-1. `python3.10 -m venv venv`
-2. `source venv/bin/activate`
-3. `pip install -r requirements-dev.txt`
-4. `pre-commit install`
+- [About the Project](#about)
+- [Features](#features)
+- [Dependencies](#dependencies)
+- [Limitations](#limitations)
+- [Future Scope](#future_scope)
+- [Getting Started](#getting_started)
+- [Usage](#usage)
+- [Technology Stack](#tech_stack)
+- [Contributing](#contributing)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgments)
 
-This adds automatic code formatting for Python (with Black) and JavaScript (with Prettier) files before committing (that is, when you run `git commit ...` first it runs the pre-commit linting hook, then if it doesn't fail it commits. If it fails and fixes the files, you have to re-add and re-commit the files after checking them).
-- to make Black [ignore](https://black.readthedocs.io/en/stable/the_black_code_style/current_style.html#code-style)
-  - a line -> append `# fmt: skip`
-  - a code block -> write it between `# fmt: off` and `# fmt: on`
-- to make Prettier [ignore](https://prettier.io/docs/en/ignore.html)
-  - a line or a scope -> prepend `// prettier-ignore`
+## 🔍 About the Project <a name = "about"></a>
+
+**Vitalis** is a Flutter application designed to assist users in improving their healthy habits, focusing on better eating and exercise routines, powered by Gemini AI. 
+
+The application enables users to:
+
+- **Track and Analyze**: Monitor their dietary habits and exercise routines.
+- **Receive Insights**: Get actionable recommendations and insights from Gemini AI.
+
+This project utilizes Firebase for user authentication and data storage, and integrates various device functions such as camera and microphone for capturing health-related data. 
+
+
+## ✨ Features <a name = "features"></a>
+
+- **User Enrollment**: New users go through an enrollment process on their first login, where they answer personal questions such as age, weight, exercise routines, eating preferences, and available exercise spaces.
+- **Personalized Communication**: Based on the collected data, the app establishes a tailored communication process using Gemini AI to provide customized health recommendations.
+- **Daily Chat Interactions**: Each day, users start a new chat with the AI, which also considers the information from previous interactions to offer more relevant advice.
+- **User Data Management**: Users can manage and update their personal data to refine the recommendations and insights provided by the AI.
+- **Secure Authentication**: Login and authentication are handled securely through Google and Firebase.
+- **Data Sync**: User data is automatically synced with Firebase Firestore, ensuring that all information is up-to-date and accessible across devices.
+- **In-App Media Capture**: Capture and upload images and audio directly within the app for tracking progress and sharing updates.
+- **Intuitive Interface**: The app features a responsive and user-friendly design, making it easy to navigate and interact with the AI.
+
+
+## ⛓️ Dependencies <a name = "dependencies"></a>
+
+This project relies on the following Flutter and Dart packages:
+
+- `firebase_auth`: For user authentication via Firebase.
+- `firebase_core`: Core functionalities for Firebase.
+- `google_sign_in`: Google Sign-In integration.
+- `cloud_firestore`: Firestore for data storage.
+- `flutter_sound`: To capture and play audio files.
+- `permission_handler`: To manage access permissions to media.
+- `fluttertoast`: To display toast messages.
+- `image_picker`: To capture or select images from the gallery.
+- `provider`: State management.
+- `carousel_slider`: To create image carousels.
+- `intl`: Internationalization support.
+- `drop_cap_text`: To style text with drop caps.
+
+## 🚧 Limitations <a name = "limitations"></a>
+- **Internet Dependency**: The app relies on an internet connection for most functionalities, including real-time data synchronization and communication with the AI. Offline usage is limited and may not support all features.
+- **Data Storage Constraints**: The current implementation utilizes Firebase's free tier, which has restrictions on storage capacity and database operations. Users with extensive data needs may encounter limitations related to storage and performance.
+- **Privacy and Data Security**: While Firebase provides secure data handling, users must be aware of the privacy implications of storing personal health data in the cloud.
+- **Initial Enrollment Complexity**: The initial data collection during the enrollment process might be seen as intrusive by some users, potentially affecting user experience and adoption.
+
+
+## 🚀 Future Scope <a name = "future_scope"></a>
+
+Planned improvements:
+
+- **Extended Media Support**: Add support for video files.
+- **Improved Offline Mode**: Allow users to access and organize files offline with subsequent sync.
+- **Advanced Search and Filtering**: Implement more robust search and filtering options.
+- **Sharing Capabilities**: Add options to share media files directly from the app.
+
+## 🏁 Getting Started <a name = "getting_started"></a>
+
+These instructions will help you set up the project on your local machine for development and testing purposes.
+
+### Prerequisites
+
+- **Flutter SDK**: Version 3.3.3 or higher.
+- **Android Studio/VS Code**: Preferred IDEs for Flutter development.
+- **Firebase Account**: To set up Firebase services.
+
+### Installing
+
+1. **Clone the repository**:
+
+```
+ git clone https://github.com/yourusername/gemini_folder.git
+```
+
+2. **Navigate to the project directory**:
+
+```
+   cd gemini_folder
+```
+
+3. **Install dependencies**:
+
+```
+   flutter pub get
+```
+
+4. **Configure Firebase**:
+
+   - Create a project in Firebase and configure it for your application (Android, iOS).
+   - Download the `google-services.json` file (for Android) or `GoogleService-Info.plist` file (for iOS) and place it in the appropriate directory.
+
+5. **Run the project**:
+
+   flutter run
+
+## 🎈 Usage <a name="usage"></a>
+
+Once installed, you can use the app to:
+
+- **Log in** using Google authentication.
+- **Capture and upload images** and audio files.
+- **Organize media** using folders and tags.
+- **Sync your media** with the cloud to access it across multiple devices.
+
+## ⛏️ Technology Stack <a name = "tech_stack"></a>
+
+- [Flutter](https://flutter.dev/) - UI Framework
+- [Firebase](https://firebase.google.com/) - Backend services
+- [Dart](https://dart.dev/) - Programming language
+
+## 🤝 Contributing <a name = "contributing"></a>
+
+Contributions are welcome! Please fork the repository and create a pull request with your changes. For major changes, open an issue first to discuss what you'd like to change.
+
+## ✍️ Authors <a name = "authors"></a>
+
+- **Your Name** - [@yourusername](https://github.com/yourusername) - Initial work and development
+
+## 🎉 Acknowledgments <a name = "acknowledgments"></a>
+
+- Thanks to [Flutter](https://flutter.dev/) for the amazing framework.
+- Inspiration from [Firebase](https://firebase.google.com/).
+- Special thanks to all contributors and users who provided feedback.
