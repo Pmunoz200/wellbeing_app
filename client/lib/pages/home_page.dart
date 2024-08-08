@@ -75,7 +75,7 @@ class _HomePageState extends State<HomePage> {
     startOfTomorrow = DateTime(
         startOfTomorrow.year, startOfTomorrow.month, startOfTomorrow.day + 1);
     mainProvider.fetchMessagesAndUpdateThem(
-        FirebaseAuth.instance.currentUser!.uid, DateTime.now());
+        FirebaseAuth.instance.currentUser!.uid, _selectedDate);
   }
 
   @override
