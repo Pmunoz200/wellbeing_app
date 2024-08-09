@@ -13,7 +13,6 @@
   <br>
 </p>
 
-
 ## 📝 Table of Contents
 
 - [About the Project](#about)
@@ -30,15 +29,14 @@
 
 ## 🔍 About the Project <a name = "about"></a>
 
-**Vitalis** is a Flutter application designed to assist users in improving their healthy habits, focusing on better eating and exercise routines, powered by Gemini AI. 
+**Vitalis** is a Flutter application designed to assist users in improving their healthy habits, focusing on better eating and exercise routines, powered by Gemini AI.
 
 The application enables users to:
 
 - **Track and Analyze**: Monitor their dietary habits and exercise routines.
 - **Receive Insights**: Get actionable recommendations and insights from Gemini AI.
 
-This project utilizes Firebase for user authentication and data storage, and integrates various device functions such as camera and microphone for capturing health-related data. 
-
+This project utilizes Firebase for user authentication and data storage, and integrates various device functions such as camera and microphone for capturing health-related data.
 
 ## ✨ Features <a name = "features"></a>
 
@@ -50,7 +48,6 @@ This project utilizes Firebase for user authentication and data storage, and int
 - **Data Sync**: User data is automatically synced with Firebase Firestore, ensuring that all information is up-to-date and accessible across devices.
 - **In-App Media Capture**: Capture and upload images and audio directly within the app for tracking progress and sharing updates.
 - **Intuitive Interface**: The app features a responsive and user-friendly design, making it easy to navigate and interact with the AI.
-
 
 ## ⛓️ Dependencies <a name = "dependencies"></a>
 
@@ -70,20 +67,22 @@ This project relies on the following Flutter and Dart packages:
 - `drop_cap_text`: To style text with drop caps.
 
 ## 🚧 Limitations <a name = "limitations"></a>
+
 - **Internet Dependency**: The app relies on an internet connection for most functionalities, including real-time data synchronization and communication with the AI. Offline usage is limited and may not support all features.
 - **Data Storage Constraints**: The current implementation utilizes Firebase's free tier, which has restrictions on storage capacity and database operations. Users with extensive data needs may encounter limitations related to storage and performance.
 - **Privacy and Data Security**: While Firebase provides secure data handling, users must be aware of the privacy implications of storing personal health data in the cloud.
 - **Initial Enrollment Complexity**: The initial data collection during the enrollment process might be seen as intrusive by some users, potentially affecting user experience and adoption.
 
-
 ## 🚀 Future Scope <a name = "future_scope"></a>
 
-Planned improvements:
+Planned improvements and future developments:
 
-- **Extended Media Support**: Add support for video files.
-- **Improved Offline Mode**: Allow users to access and organize files offline with subsequent sync.
-- **Advanced Search and Filtering**: Implement more robust search and filtering options.
-- **Sharing Capabilities**: Add options to share media files directly from the app.
+- **Expanded Data Tracking**: Introduce tracking for additional health metrics, such as sleep patterns and hydration levels, to provide a more comprehensive health profile.
+- **Integration with Wearables**: Allow integration with wearable devices to automatically sync exercise data, heart rate, and other vital statistics.
+- **Offline Functionality**: Improve the offline mode, enabling users to interact with the AI and track their progress even without an internet connection, with automatic syncing once reconnected.
+- **Audio and Video Support**: Add support for audio and video content, allowing users to record and review exercise sessions and food, and receive AI-generated feedback.
+- **Localization and Accessibility**: Expand language support and improve accessibility features to make the app usable by a broader audience.
+- **Customizable Notifications**: Implement a more advanced notification system that allows users to customize reminders and updates based on their personal preferences.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
@@ -91,9 +90,10 @@ These instructions will help you set up the project on your local machine for de
 
 ### Prerequisites
 
-- **Flutter SDK**: Version 3.3.3 or higher.
-- **Android Studio/VS Code**: Preferred IDEs for Flutter development.
-- **Firebase Account**: To set up Firebase services.
+- **Flutter SDK**: Version 3.3.3 or higher. Make sure Flutter is properly installed and added to your system path.
+- **Android Studio/VS Code**: Preferred Integrated Development Environments (IDEs) for Flutter development. Ensure that the Flutter and Dart plugins are installed.
+- **Firebase Account**: Required to set up Firebase services like authentication, Firestore, and cloud storage for the project.
+- **Git**: Version control system to clone the repository and manage project versions.
 
 ### Installing
 
@@ -128,16 +128,18 @@ These instructions will help you set up the project on your local machine for de
 
 Once installed, you can use the app to:
 
-- **Log in** using Google authentication.
-- **Capture and upload images** and audio files.
-- **Organize media** using folders and tags.
-- **Sync your media** with the cloud to access it across multiple devices.
+- **Log in** using Google authentication to securely access your personalized health dashboard.
+- **Complete Enrollment** by providing initial information such as age, weight, exercise routines, and dietary preferences.
+- **Engage in Daily Chats** with the Gemini AI to receive tailored health advice and track your progress over time.
+- **Track and update your data** as you progress on your health journey, with the AI adapting its recommendations based on your latest inputs.
+- **Sync your data** with the cloud to ensure it’s accessible across all your devices and safely stored.
+- **Review insights and analytics** provided by the AI to understand trends in your health habits and identify areas for improvement.
 
 ## ⛏️ Technology Stack <a name = "tech_stack"></a>
 
-- [Flutter](https://flutter.dev/) - UI Framework
-- [Firebase](https://firebase.google.com/) - Backend services
-- [Dart](https://dart.dev/) - Programming language
+- [Flutter](https://flutter.dev/) - The UI framework used to build the cross-platform application for both Android and iOS.
+- [Firebase](https://firebase.google.com/) - Backend services used for authentication, cloud storage, Firestore database, and real-time data syncing.
+- [Dart](https://dart.dev/) - The programming language used to write the application logic and manage state within the Flutter framework.
 
 ## 🤝 Contributing <a name = "contributing"></a>
 
@@ -145,10 +147,6 @@ Contributions are welcome! Please fork the repository and create a pull request 
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- **Your Name** - [@yourusername](https://github.com/yourusername) - Initial work and development
-
-## 🎉 Acknowledgments <a name = "acknowledgments"></a>
-
-- Thanks to [Flutter](https://flutter.dev/) for the amazing framework.
-- Inspiration from [Firebase](https://firebase.google.com/).
-- Special thanks to all contributors and users who provided feedback.
+- **Juan José Jaramillo Botero** - [@JuanJoseJ](https://github.com/JuanJoseJ) - Developer
+- **Pablo Muñoz** - [@Pmunoz200](https://github.com/Pmunoz200) - Developer
+- **Manuel Escobar Ferrer** - [@manuelescobar-de](https://github.com/manuelescobar-dev) - Developer and Designer
