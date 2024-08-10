@@ -27,7 +27,7 @@ class _ChatScaffoldState extends State<ChatScaffold> {
 
   // Function to send a message to a stream
   // Probably should be modified later
-  void _sendMessage(message) {
+  void _sendMessage(MessageObject message) {
     _chatService.addMessage(message);
   }
 

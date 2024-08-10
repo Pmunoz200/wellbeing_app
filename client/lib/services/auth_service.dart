@@ -79,7 +79,7 @@ class AuthService {
       final userSnapshot = await userDoc.get();
       if (!userSnapshot.exists) {
         await userDoc
-            .set(Profile.empty(userId: user.uid, email: user.email).toMap());
+            .set(Profile(userId: user.uid, email: user.email!).toMap());
       }
     }
   }
