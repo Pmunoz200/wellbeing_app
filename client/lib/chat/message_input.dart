@@ -103,7 +103,7 @@ class _MessageInputState extends State<MessageInput> {
     }
 
     if (missingPermissions.isNotEmpty) {
-      _showErrorToast("Permissions required: ${missingPermissions.join(', ')}");
+      // _showErrorToast("Permissions required: ${missingPermissions.join(', ')}");
       return;
     }
   }
