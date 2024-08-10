@@ -9,18 +9,20 @@
 ---
 
 <p align="center">
-  Vitalis is a comprehensive project designed to help users improve their healthy habits through better eating and exercise routines, powered by Gemini AI. This repository includes both the client-side application and the server-side components, which work together to deliver personalized health insights and secure data management.
+  Vitalis is a comprehensive project designed to help users improve their healthy habits through better eating and exercise routines, <b>powered by Gemini AI</b>. This repository includes both the client-side application and the server-side components, which work together to deliver personalized health insights and secure data management.
   <br>
 </p>
 
 ## 📝 Table of Contents
 
-- [Introduction](#introduction)
-- [Repository Structure](#repository_structure)
-- [Getting Started](#getting_started)
-- [Contributing](#contributing)
-- [Authors](#authors)
-- [License](#license)
+- [📝 Table of Contents](#-table-of-contents)
+- [📖 Introduction ](#-introduction-)
+- [📂 Repository Structure ](#-repository-structure-)
+- [🏁 Getting Started ](#-getting-started-)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [🤝 Contributing ](#-contributing-)
+- [✍️ Authors ](#️-authors-)
 
 ## 📖 Introduction <a name = "introduction"></a>
 
@@ -30,8 +32,8 @@
 
 The repository is organized into the following main directories:
 
-- **/client**: Contains the Flutter application code for the user-facing client.
-- **/server**: Houses the server-side code responsible for backend processing and AI communication.
+- **/client**: Contains the Flutter application code for the mobile client.
+- **/server**: Contains the server-side code responsible for backend processing and AI communication.
 - **/docs**: Documentation and guides related to the project.
 - **/assets**: Shared assets such as images, icons, and styles used across the project.
 
