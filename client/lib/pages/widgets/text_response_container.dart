@@ -77,6 +77,7 @@ class TextResponseContainerWidget extends StatelessWidget {
 
     return Column(
       children: [
+        isLoading ? AspectRatio(aspectRatio: aspectRatio, child: Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,))) :
         CarouselSlider(
                 options: CarouselOptions(
                     initialPage: texts.length,
@@ -95,7 +96,7 @@ class TextResponseContainerWidget extends StatelessWidget {
                             borderRadius: BorderRadius.circular(10.0),
                           ),
                           child: Container(
-                              padding: EdgeInsets.all(12), child: isLoading ? Center(child: CircularProgressIndicator(color: Theme.of(context).primaryColor,)) : Text('$i')));
+                              padding: EdgeInsets.all(12), child: Text('$i')));
                     },
                   );
                 }).toList(),
