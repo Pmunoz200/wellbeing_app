@@ -380,13 +380,16 @@ class _MessageInputState extends State<MessageInput> {
                         ),
                         LayoutBuilder(builder: (context, constraints) {
                           double maxHeight =
-                              MediaQuery.of(context).size.height / 5;
+                              MediaQuery.of(context).size.height / 8;
                           return SingleChildScrollView(
                               child: ConstrainedBox(
                             constraints: BoxConstraints(maxHeight: maxHeight),
                             child: TextField(
                               controller: _controller,
                               maxLines: null,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium,
                               keyboardType: TextInputType.multiline,
                               decoration: const InputDecoration(
                                 hintText: 'Enter text...',
