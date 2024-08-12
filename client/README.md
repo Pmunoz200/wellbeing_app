@@ -8,11 +8,6 @@
 
 ---
 
-<p align="center">
-  Vitalis is a Flutter project designed to help users improve their healthy habits by eating well and exercising, leveraging the power of Google's Gemini AI. This application allows users to easily track food and exercise and receive suggestions, leveraging Gemini's multi-modal capabilities.
-  <br>
-</p>
-
 ## 📝 Table of Contents
 
 - [About the Project](#about)
