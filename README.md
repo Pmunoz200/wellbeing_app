@@ -9,7 +9,7 @@
 ---
 
 <p align="center">
-  Vitalis is a comprehensive project designed to help users improve their healthy habits through better eating and exercise routines, <b>powered by Gemini AI</b>. This repository includes both the client-side application and the server-side components, which work together to deliver personalized health insights and secure data management.
+  Vitalis is a comprehensive project designed to help users improve their healthy habits through better eating and exercise routines, <b>powered by Google's Gemini AI</b>. This repository includes both the client-side application and the server-side components, which work together to deliver personalized health insights and secure data management.
   <br>
 </p>
 
