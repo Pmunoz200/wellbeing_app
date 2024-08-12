@@ -1,6 +1,3 @@
-Here’s the revised README for the server-side of Project Vitalis, incorporating the setup and deployment instructions you provided:
-
-```markdown
 <h3 align="center">Project Vitalis - Server Side</h3>
 
 <div align="center">
