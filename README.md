@@ -22,6 +22,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [🚀 App Features ](#-app-features-)
+- [✨ Gemini: The Key Differentiator ](#-gemini-the-key-differentiator-)
 - [🛠 Technology Stack ](#-technology-stack-)
 - [🚧 Limitations and Future Work ](#-limitations-and-future-work-)
 - [🤝 Contributing ](#-contributing-)
@@ -90,6 +91,16 @@ To set up the project locally, follow the instructions provided in the client an
 
 ### **Future Focus Areas**
 - The app will expand to include habit tracking, meditation, and sleep management features, further enhancing its holistic approach to health and wellness.
+
+## ✨ Gemini: The Key Differentiator <a name = "gemini-the-key-differentiator"></a>
+
+Gemini, Google’s state-of-the-art multi-modal AI, is the key differentiator that sets Project Vitalis apart from other health and wellness apps. Here's why:
+
+- **Multi-Modal Input**: Gemini supports multiple forms of input, including text, video, and audio, making it easier for users to log their health data in the way that suits them best. This flexibility enhances the user experience by reducing the barriers to accurate data entry.
+
+- **Long Context Understanding**: Gemini's ability to process and analyze long contexts allows the app to provide suggestions based on extensive tracking histories and multiple health aspects. This means that users receive more informed and tailored advice, taking into account their overall health journey rather than just isolated data points.
+
+- **High Accuracy**: By leveraging Gemini's advanced AI capabilities, Project Vitalis ensures that the health recommendations and data interpretations are highly accurate. This level of precision is crucial for users who rely on the app to make informed decisions about their diet, exercise, and overall wellness.
 
 ## 🛠 Technology Stack <a name = "technology_stack"></a>
 
