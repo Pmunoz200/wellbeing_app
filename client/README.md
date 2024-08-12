@@ -48,7 +48,6 @@ This project relies on the following Flutter and Dart packages:
 - `provider`: State management.
 - `carousel_slider`: To create image carousels.
 - `intl`: Internationalization support.
-- `drop_cap_text`: To style text with drop caps.
 
 ## 🚧 Limitations <a name = "limitations"></a>
 
