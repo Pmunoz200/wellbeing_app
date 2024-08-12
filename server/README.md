@@ -1,29 +1,34 @@
-# Firebase Functions API
+Here’s the revised README for the server-side of Project Vitalis, incorporating the setup and deployment instructions you provided:
 
-This API provides endpoints for retrieving messages by user and date, and for adding messages to the Firestore database and generating responses using the Gemini model.
+```markdown
+<h3 align="center">Project Vitalis - Server Side</h3>
 
-## Table of Contents
-- [Firebase Functions API](#firebase-functions-api)
-  - [Table of Contents](#table-of-contents)
-  - [Endpoints](#endpoints)
-    - [GET /get\_user\_messages\_by\_date](#get-get_user_messages_by_date)
-      - [Request](#request)
-      - [Response](#response)
-      - [Example](#example)
-    - [GET /get\_response](#get-get_response)
-      - [Request](#request-1)
-      - [Response](#response-1)
-      - [Example](#example-1)
-    - [GET /get\_detailed\_response](#get-get_detailed_response)
-      - [Request](#request-2)
-      - [Response](#response-2)
-      - [Example](#example-2)
-  - [Error Handling](#error-handling)
-  - [Additional Notes](#additional-notes)
+<div align="center">
 
-## Endpoints
+[![Status](https://img.shields.io/badge/status-active-success.svg)](https://github.com/Pmunoz200/wellbeing_app)
 
-### GET /get_user_messages_by_date
+</div>
+
+---
+
+## 📝 Table of Contents
+
+- [Endpoints](#endpoints)
+  - [GET /get_user_messages_by_date](#get-get_user_messages_by_date)
+  - [GET /get_response](#get-get_response)
+  - [GET /get_detailed_response](#get-get_detailed_response)
+- [Error Handling](#error-handling)
+- [Technology Stack](#technology-stack)
+- [Setup](#setup)
+- [Local Testing](#local-testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgments)
+
+## 🌐 Endpoints <a name = "endpoints"></a>
+
+### GET /get_user_messages_by_date <a name="get-get_user_messages_by_date"></a>
 
 Retrieve user messages by date.
 
@@ -63,8 +68,7 @@ Retrieve user messages by date.
             "suggestion": "Exercise suggestion"
           }
         }
-      },
-      ...
+      }
     ]
   }
   ```
@@ -83,10 +87,10 @@ curl -X GET "https://your-api-url/get_user_messages_by_date?uid=user123&date=202
     {
       "role": "model",
       "content": {
-        "summary": "You haven't logged any food or exercise yet today.  Let's get started with a healthy breakfast to fuel your day.",
+        "summary": "You haven't logged any food or exercise yet today. Let's get started with a healthy breakfast to fuel your day.",
         "suggestion": "Start your day with a balanced breakfast, such as oatmeal with berries and nuts, or a smoothie with protein powder and fruit. This will provide sustained energy and keep you feeling full until your next meal.",
         "food": {
-          "summary": "You haven't eaten anything yet today.  Start with a balanced breakfast to fuel your day.",
+          "summary": "You haven't eaten anything yet today. Start with a balanced breakfast to fuel your day.",
           "calories_consumed": 0,
           "carbs": 0,
           "protein": 0,
@@ -94,7 +98,7 @@ curl -X GET "https://your-api-url/get_user_messages_by_date?uid=user123&date=202
           "suggestion": "Start your day with a balanced breakfast, such as oatmeal with berries and nuts, or a smoothie with protein powder and fruit. This will provide sustained energy and keep you feeling full until your next meal."
         },
         "exercise": {
-          "summary": "You haven't logged any exercise yet today.  Consider starting your day with a light workout.",
+          "summary": "You haven't logged any exercise yet today. Consider starting your day with a light workout.",
           "calories_burned": 0,
           "type": null,
           "muscle_groups": [],
@@ -106,7 +110,7 @@ curl -X GET "https://your-api-url/get_user_messages_by_date?uid=user123&date=202
 }
 ```
 
-### GET /get_response
+### GET /get_response <a name="get-get_response"></a>
 
 Add a message to the Firestore database and get a response from the Gemini model.
 
@@ -147,8 +151,7 @@ Add a message to the Firestore database and get a response from the Gemini model
             "suggestion": "Exercise suggestion"
           }
         }
-      },
-      ...
+      }
     ]
   }
   ```
@@ -170,7 +173,7 @@ curl -X GET "https://your-api-url/get_response?uid=user123&query=Tell%20me%20a%2
         "summary": "You haven't logged any food or exercise yet today. Let's get started!",
         "suggestion": "It's early in the day. How about starting with a nutritious breakfast to fuel your morning?",
         "food": {
-          "summary": "You haven't logged any food yet today.  Let's start with a healthy breakfast!",
+          "summary": "You haven't logged any food yet today. Let's start with a healthy breakfast!",
           "calories_consumed": 0,
           "carbs": 0,
           "protein": 0,
@@ -178,33 +181,11 @@ curl -X GET "https://your-api-url/get_response?uid=user123&query=Tell%20me%20a%2
           "suggestion": "A balanced breakfast with protein, fiber, and healthy fats will keep you energized throughout the morning. Consider oatmeal with berries and nuts, or eggs with whole-wheat toast."
         },
         "exercise": {
-          "summary": "You haven't logged any exercise yet today.  Let's get moving!",
+          "summary": "You haven't logged any exercise yet today. Let's get moving!",
           "calories_burned": 0,
           "type": null,
           "muscle_groups": [],
-          "suggestion": "Even a short walk or some light stretching can help you feel more energized and focused.  Choose an activity you enjoy and get your body moving!"
-        }
-      }
-    },
-    {
-      "role": "model",
-      "content": {
-        "summary": "You've had a great start to the day with a protein-packed breakfast!  Let's keep the momentum going with a balanced lunch and some exercise.",
-        "suggestion": "It's early in the day.  Consider a light, healthy snack before your next meal to keep you feeling satisfied.",
-        "food": {
-          "summary": "You've started your day with a good amount of protein from your eggs.  Keep up the good work!",
-          "calories_consumed": 210,
-          "carbs": 0,
-          "protein": 18,
-          "fat": 15,
-          "suggestion": "Try adding some fiber-rich fruits or vegetables to your next meal to keep your energy levels stable throughout the day.  Consider a salad with grilled chicken or a whole-wheat wrap with hummus and veggies."
-        },
-        "exercise": {
-          "summary": "You haven't logged any exercise yet today.  Let's get moving!",
-          "calories_burned": 0,
-          "type": null,
-          "muscle_groups": [],
-          "suggestion": "Even a short walk or some light stretching can help you feel more energized and focused.  Choose an activity you enjoy and get your body moving!"
+          "suggestion": "Even a short walk or some light stretching can help you feel more energized and focused. Choose an activity you enjoy and get your body moving!"
         }
       }
     }
@@ -212,7 +193,7 @@ curl -X GET "https://your-api-url/get_response?uid=user123&query=Tell%20me%20a%2
 }
 ```
 
-### GET /get_detailed_response
+### GET /get_detailed_response <a name="get-get_detailed_response"></a>
 
 Add a message to the Firestore database and get a detailed response.
 
@@ -250,12 +231,81 @@ curl -X GET "https://your-api-url/get_detailed_response?uid=user123&index=0&cont
 }
 ```
 
-## Error Handling
+## 🚨 Error Handling <a name = "error-handling"></a>
 
 Errors are returned with appropriate HTTP status codes and a descriptive message.
 
 - **400 Bad Request:** Returned when the required query parameters are missing or invalid.
 - **500 Internal Server Error:** Returned for any unexpected errors on the server.
 
-## Additional Notes
-[Gemini API Docs](https://ai.google.dev/gemini-api/docs/get-started/tutorial?lang=python&authuser=0)
+## 🛠 Technology Stack <a name = "technology-stack"></a>
+
+The server-side of Project Vitalis uses the following technologies:
+
+- **Firebase Functions**: A serverless framework from Firebase to deploy backend code that automatically scales up to meet demand.
+- **Google Cloud Firestore**: A NoSQL document database built for automatic scaling, high performance, and ease of application development. It stores and syncs user data in real-time.
+- **Gemini (Google AI)**: Gemini is Google's state-of-the-art multi-modal AI model that powers the core functionalities of the app, enabling personalized health recommendations and responses based on user data.
+
+## ⚙️ Setup <a name = "setup"></a>
+
+Follow these steps to set up the server-side of the project:
+
+1. **Clone the repository:**
+
+    ```sh
+    git clone https://github.com/yourusername/gemini_folder.git
+    ```
+
+2. **Go to the functions directory:**
+
+    ```sh
+    cd functions
+    ```
+
+3. **Create a virtual environment:**
+
+    ```sh
+    python -m venv venv
+    ```
+
+4. **Activate the virtual environment:**
+
+    ```sh
+    source venv/bin/activate
+    ```
+
+5. **Install the required dependencies:**
+
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+## 🧪 Local Testing <a name = "local-testing"></a>
+
+1. **Add Google Gemini API Key** to your environment variables or by adding it to the `util/gemini_utils.py` file:
+
+    ```python
+    genai.configure(api_key="YOUR_API_KEY")
+    ```
+
+    **Important:** Do not commit the API key to the repository.
+
+2. **Go to the server directory:**
+
+    ```sh
+    cd server
+    ```
+
+3. **Start the Firebase emulators:**
+
+    ```sh
+    firebase emulators:start
+    ```
+
+## 🚀 Deployment <a name = "deployment"></a>
+
+Deploy the functions to Firebase using the following command:
+
+```sh
+firebase deploy --only functions
+```
