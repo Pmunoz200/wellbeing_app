@@ -17,9 +17,6 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Technology Stack](#tech_stack)
-- [Contributing](#contributing)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgments)
 
 ## ✨ Features <a name = "features"></a>
 
