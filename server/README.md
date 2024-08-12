@@ -19,9 +19,6 @@
 - [Setup](#setup)
 - [Local Testing](#local-testing)
 - [Deployment](#deployment)
-- [Contributing](#contributing)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgments)
 
 ## 🌐 Endpoints <a name = "endpoints"></a>
 
