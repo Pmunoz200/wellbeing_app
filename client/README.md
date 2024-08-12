@@ -22,17 +22,6 @@
 - [Authors](#authors)
 - [Acknowledgments](#acknowledgments)
 
-## 🔍 About the Project <a name = "about"></a>
-
-**Vitalis** is a Flutter application designed to assist users in improving their healthy habits, focusing on better eating and exercise routines, powered by Gemini AI.
-
-The application enables users to:
-
-- **Track and Analyze**: Monitor their dietary habits and exercise routines.
-- **Receive Insights**: Get actionable recommendations and insights from Gemini AI.
-
-This project utilizes Firebase for user authentication and data storage, and integrates various device functions such as camera and microphone for capturing health-related data.
-
 ## ✨ Features <a name = "features"></a>
 
 - **User Enrollment**: New users go through an enrollment process on their first login, where they answer personal questions such as age, weight, exercise routines, eating preferences, and available exercise spaces.
