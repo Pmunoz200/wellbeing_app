@@ -1,4 +1,4 @@
-<h3 align="center">Project Vitalis</h3>
+<h3 align="center">Project Vitalis - Client Side</h3>
 
 <div align="center">
 
@@ -8,14 +8,8 @@
 
 ---
 
-<p align="center">
-  Vitalis is a Flutter project designed to help users improve their healthy habits by eating well and exercising, leveraging the power of Gemini AI. This application allows users to easily communicate with the system and receive well-processed information and insights while tracking their progress.
-  <br>
-</p>
-
 ## 📝 Table of Contents
 
-- [About the Project](#about)
 - [Features](#features)
 - [Dependencies](#dependencies)
 - [Limitations](#limitations)
@@ -23,20 +17,6 @@
 - [Getting Started](#getting_started)
 - [Usage](#usage)
 - [Technology Stack](#tech_stack)
-- [Contributing](#contributing)
-- [Authors](#authors)
-- [Acknowledgments](#acknowledgments)
-
-## 🔍 About the Project <a name = "about"></a>
-
-**Vitalis** is a Flutter application designed to assist users in improving their healthy habits, focusing on better eating and exercise routines, powered by Gemini AI.
-
-The application enables users to:
-
-- **Track and Analyze**: Monitor their dietary habits and exercise routines.
-- **Receive Insights**: Get actionable recommendations and insights from Gemini AI.
-
-This project utilizes Firebase for user authentication and data storage, and integrates various device functions such as camera and microphone for capturing health-related data.
 
 ## ✨ Features <a name = "features"></a>
 
@@ -64,14 +44,12 @@ This project relies on the following Flutter and Dart packages:
 - `provider`: State management.
 - `carousel_slider`: To create image carousels.
 - `intl`: Internationalization support.
-- `drop_cap_text`: To style text with drop caps.
 
 ## 🚧 Limitations <a name = "limitations"></a>
 
 - **Internet Dependency**: The app relies on an internet connection for most functionalities, including real-time data synchronization and communication with the AI. Offline usage is limited and may not support all features.
 - **Data Storage Constraints**: The current implementation utilizes Firebase's free tier, which has restrictions on storage capacity and database operations. Users with extensive data needs may encounter limitations related to storage and performance.
 - **Privacy and Data Security**: While Firebase provides secure data handling, users must be aware of the privacy implications of storing personal health data in the cloud.
-- **Initial Enrollment Complexity**: The initial data collection during the enrollment process might be seen as intrusive by some users, potentially affecting user experience and adoption.
 
 ## 🚀 Future Scope <a name = "future_scope"></a>
 
@@ -86,7 +64,7 @@ Planned improvements and future developments:
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will help you set up the project on your local machine for development and testing purposes.
+These instructions will help you set up the client-side of the project on your local machine for development and testing purposes.
 
 ### Prerequisites
 
@@ -103,10 +81,10 @@ These instructions will help you set up the project on your local machine for de
  git clone https://github.com/yourusername/gemini_folder.git
 ```
 
-2. **Navigate to the project directory**:
+2. **Navigate to the client-side directory**:
 
 ```
-   cd gemini_folder
+   cd gemini_folder/client
 ```
 
 3. **Install dependencies**:
@@ -122,7 +100,9 @@ These instructions will help you set up the project on your local machine for de
 
 5. **Run the project**:
 
+```
    flutter run
+```
 
 ## 🎈 Usage <a name="usage"></a>
 
@@ -134,19 +114,17 @@ Once installed, you can use the app to:
 - **Track and update your data** as you progress on your health journey, with the AI adapting its recommendations based on your latest inputs.
 - **Sync your data** with the cloud to ensure it’s accessible across all your devices and safely stored.
 - **Review insights and analytics** provided by the AI to understand trends in your health habits and identify areas for improvement.
+- **Capture and upload media** such as images and audio directly through the app to document your health journey and receive feedback.
+- **Manage personal data** within the app to keep your profile up to date, which helps refine the recommendations and insights provided by the AI.
 
-## ⛏️ Technology Stack <a name = "tech_stack"></a>
+## 🛠 Technology Stack <a name = "tech_stack"></a>
 
-- [Flutter](https://flutter.dev/) - The UI framework used to build the cross-platform application for both Android and iOS.
-- [Firebase](https://firebase.google.com/) - Backend services used for authentication, cloud storage, Firestore database, and real-time data syncing.
-- [Dart](https://dart.dev/) - The programming language used to write the application logic and manage state within the Flutter framework.
+The technology stack used in the client-side of Project Vitalis includes:
 
-## 🤝 Contributing <a name = "contributing"></a>
+- **Flutter**: A UI toolkit from Google that enables the development of natively compiled applications for mobile, web, and desktop from a single codebase. Flutter powers the client-side of the Vitalis app, ensuring a smooth and responsive user interface.
 
-Contributions are welcome! Please fork the repository and create a pull request with your changes. For major changes, open an issue first to discuss what you'd like to change.
+- **Firebase Authentication**: A robust and secure authentication system from Google, used to manage user sign-in, sign-up, and authentication processes in the app. This ensures that user data is protected and accessible only to authorized users.
 
-## ✍️ Authors <a name = "authors"></a>
+- **Firebase Firestore Database**: A flexible, scalable database for mobile, web, and server development from Firebase. Firestore is used to store and sync user data in real-time, making it integral to the backend of the app for managing health logs, user profiles, and personalized recommendations.
 
-- **Juan José Jaramillo Botero** - [@JuanJoseJ](https://github.com/JuanJoseJ) - Developer
-- **Pablo Muñoz** - [@Pmunoz200](https://github.com/Pmunoz200) - Developer
-- **Manuel Escobar Ferrer** - [@manuelescobar-de](https://github.com/manuelescobar-dev) - Developer and Designer
+- **Gemini (Google AI)**: Gemini is Google’s state-of-the-art multi-modal AI model that powers the app’s core functionalities. It enables the app to process and understand various forms of input (text, video, audio), providing personalized and accurate health recommendations and improving the overall user experience.
