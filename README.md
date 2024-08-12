@@ -23,6 +23,7 @@
   - [Installation](#installation)
 - [🚀 App Features ](#-app-features-)
 - [🛠 Technology Stack ](#-technology-stack-)
+- [🚧 Limitations and Future Work ](#-limitations-and-future-work-)
 - [🤝 Contributing ](#-contributing-)
 - [✍️ Authors ](#️-authors-)
 
@@ -100,7 +101,21 @@ The technology stack used in Project Vitalis includes:
 
 - **Firebase Firestore Database**: A flexible, scalable database for mobile, web, and server development from Firebase. Firestore is used to store and sync user data in real-time, making it integral to the backend of the app for managing health logs, user profiles, and personalized recommendations.
 
+- **Firebase Functions**: A serverless framework from Firebase that allows the backend code to be deployed and executed in response to events, automatically scaling up as needed. It handles the backend processing and communication with Gemini AI.
+
 - **Gemini (Google AI)**: Gemini is Google’s state-of-the-art multi-modal AI model that powers the app’s core functionalities. It enables the app to process and understand various forms of input (text, video, audio), providing personalized and accurate health recommendations and improving the overall user experience.
+
+## 🚧 Limitations and Future Work <a name = "limitations-and-future-work"></a>
+
+### **Limitations**
+- **Text-Only Logging**: Currently, the server only supports logging with text. However, the app is designed to easily incorporate other input methods like video and audio in the future.
+- **Local Server Deployment**: The server is not deployed online and is intended for local use only due to budget constraints, particularly involving the deployment and subscription to Gemini's API.
+- **Limited Features**: At this stage, only exercise and food tracking are available. Other aspects of health management are not yet implemented.
+
+### **Future Work**
+- **Multi-Modal Logging**: Expand the server to support logging via video, audio, and other input methods to fully leverage the multi-modal capabilities of Gemini.
+- **Full Deployment**: Plan to deploy the server online, including a subscription to Gemini’s API to make the app fully operational and accessible to a broader audience.
+- **Comprehensive Health Features**: Future development will focus on creating a complete all-in-one holistic health app that covers all aspects of wellbeing, beyond just exercise and food.
 
 ## 🤝 Contributing <a name = "contributing"></a>
 
