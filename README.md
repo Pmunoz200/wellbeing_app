@@ -58,7 +58,7 @@ To set up the project locally, follow the instructions provided in the client an
 
 1. **Clone the repository**:
 ```
-   git clone https://github.com/yourusername/vitalis.git
+   https://github.com/Pmunoz200/vitalis.git
 ```
 2. **Set up the client-side**:
 
