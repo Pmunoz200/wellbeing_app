@@ -22,6 +22,7 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [🚀 App Features ](#-app-features-)
+- [🛠 Technology Stack ](#-technology-stack-)
 - [🤝 Contributing ](#-contributing-)
 - [✍️ Authors ](#️-authors-)
 
@@ -88,6 +89,18 @@ To set up the project locally, follow the instructions provided in the client an
 
 ### **Future Focus Areas**
 - The app will expand to include habit tracking, meditation, and sleep management features, further enhancing its holistic approach to health and wellness.
+
+## 🛠 Technology Stack <a name = "technology_stack"></a>
+
+The technology stack used in Project Vitalis includes:
+
+- **Flutter**: A UI toolkit from Google that enables the development of natively compiled applications for mobile, web, and desktop from a single codebase. Flutter powers the client-side of the Vitalis app, ensuring a smooth and responsive user interface.
+
+- **Firebase Authentication**: A robust and secure authentication system from Google, used to manage user sign-in, sign-up, and authentication processes in the app. This ensures that user data is protected and accessible only to authorized users.
+
+- **Firebase Firestore Database**: A flexible, scalable database for mobile, web, and server development from Firebase. Firestore is used to store and sync user data in real-time, making it integral to the backend of the app for managing health logs, user profiles, and personalized recommendations.
+
+- **Gemini (Google AI)**: Gemini is Google’s state-of-the-art multi-modal AI model that powers the app’s core functionalities. It enables the app to process and understand various forms of input (text, video, audio), providing personalized and accurate health recommendations and improving the overall user experience.
 
 ## 🤝 Contributing <a name = "contributing"></a>
 
