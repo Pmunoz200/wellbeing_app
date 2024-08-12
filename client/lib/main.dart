@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
       theme: AppThemeData.getThemeData(),
       initialRoute: '/authentication',
       navigatorKey: mainNavigatorKey,
+      debugShowCheckedModeBanner: false,
       routes: {
         "/authentication": (context) => LoginScreen(
               navigator: mainNavigatorKey,
